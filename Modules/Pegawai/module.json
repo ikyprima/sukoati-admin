@@ -1,0 +1,11 @@
+{
+    "name": "Pegawai",
+    "alias": "pegawai",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Pegawai\\Providers\\PegawaiServiceProvider"
+    ],
+    "files": []
+}
