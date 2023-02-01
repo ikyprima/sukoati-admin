@@ -6,28 +6,33 @@
         <div class="relative w-full px-4 max-w-full flex-grow flex-1">
           <h3 class="font-semibold text-lg" :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']">
             <!-- Lists {{ $page.props.flash.appName }} -->
-          
-            Menu 
-            
+
+            Menu
+
           </h3>
         </div>
-        <div
-          class="relative w-full px-4 max-w-full flex-grow flex-1 text-right"
-        >
-        <slot name="button" />
-         
+        <div class=" relative md:w-full px-4 md:max-w-full flex-grow flex-1 text-right">
+
+
+          <slot name="button" />
+
         </div>
       </div>
     </div>
     <div class="block w-full overflow-x-auto">
 
-      <div class="flex flex-col container mt-2  mx-auto w-full items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow">
-        <Accordion title="consectetur adipiscing elit">
-                    Lorem ipsum dolor sit amet, consectetur adipiscin  </Accordion>
-                    <Accordion title="consectetur adipiscing elit">
-                    Lorem ipsum dolor sit amet, consectetur adipiscin  </Accordion>
-                    <Accordion title="consectetur adipiscing elit">
-                    Lorem ipsum dolor sit amet, consectetur adipiscin  </Accordion>
+      <div
+        class="flex flex-col container mt-2  mx-auto w-full items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow">
+        <Accordion v-for='i in list' :title="i.name">
+          <div
+            class="flex flex-col container  mx-auto w-full items-center justify-center bg-white  dark:bg-gray-800  shadow">
+            <div class="flex flex-col divide-y w-full ">
+              <List v-for="menu in i.menu_item" :item="menu" :depth="0"/>
+            </div>
+
+          </div>
+        </Accordion>
+
       </div>
 
     </div>
@@ -37,6 +42,9 @@
 import TableDropdown from "@/Components/Dropdowns/TableDropdown.vue";
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Accordion from "@/Components/Cards/CardAccordion.vue";
+import List from "@/Components/List/List.vue";
+import draggable from 'vuedraggable'
+
 import { Inertia } from '@inertiajs/inertia'
 export default {
 
@@ -45,13 +53,14 @@ export default {
 
     return {
       isOpen: false,
-     
+
     };
   },
   components: {
     TableDropdown,
     PrimaryButton,
-    Accordion
+    Accordion, List,
+    draggable
   },
   props: {
     color: {
@@ -67,26 +76,26 @@ export default {
   },
   methods: {
     onClickChild(value) {
-    
+
     }
-    , 
+    ,
     tes() {
       Inertia.post('/admin/test', {
-  headers: {
-    'Custom-Header': 'value',
-  },
-  onSuccess: () => {
-    console.log('sukses');
-  },
-  onFinish: visit => {
-    console.log('finis');
-  },
-})
+        headers: {
+          'Custom-Header': 'value',
+        },
+        onSuccess: () => {
+          console.log('sukses');
+        },
+        onFinish: visit => {
+          console.log('finis');
+        },
+      })
       // Inertia.get('/tes', { search: 'John' }, { replace: true })
-// console.log('tes');
+      // console.log('tes');
 
 
-},
+    },
   }
 };
 </script>

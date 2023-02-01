@@ -65,18 +65,25 @@
             {{ data.header }}
           </h6>
           <!-- Navigation -->
-          <ul class="md:flex-col md:min-w-full flex flex-col list-none">
+          <!-- <ul class="md:flex-col md:min-w-full flex flex-col list-none">
             <li class="items-center">
 
-              <SidebarLink v-for="( data, index ) in data.menu" :key="data.id" :href="route(data.name_route)"
+              <SidebarLink v-for="( data, index ) in data.menu" :key="data.id" :href="route().has(data.name_route)?route(data.name_route):''"
                 :active="route().current(data.name_route)" :icon="'fas fa-tv mr-2 text-sm'">
                 {{ data.title }}
+
               </SidebarLink>
 
             </li>
 
-          </ul>
+          </ul> -->
+          <ul class="md:flex-col md:min-w-full flex flex-col list-none">
+          <MenuItem v-for="item in data.menu" :item="item" :items="item.children" :key="item.id" :isChild="false" :depth="0">
+          </MenuItem> 
+        </ul>
         </div>
+       
+        
 
       </div>
     </div>
@@ -88,12 +95,42 @@
 import NotificationDropdown from "@/Components/Dropdowns/NotificationDropdown.vue";
 import UserDropdown from "@/Components/Dropdowns/UserDropdown.vue";
 import SidebarLink from "@/Components/Sidebar/SidbarLink.vue";
+import MenuItem from "@/Components/Sidebar/Menu.vue";
+
+
 import { Link } from '@inertiajs/inertia-vue3';
 
 export default {
+
   data() {
     return {
       collapseShow: "hidden",
+      menuItems: [
+        {
+          id: 1,
+          name: 'Home',
+          url: 'menu.index',
+          children: [
+            {
+              id: 2, name: 'Submenu 1', url: '/submenu1',
+              children: [
+                { id: 3, name: 'Submenu dah 1.1', url: 'dashboard' },
+                { id: 4, name: 'Submenu 1.2', url: '/submenu2' },
+              ],
+            },
+            { id: 5, name: 'Submenu 2', url: '/submenu2' },
+          ],
+        },
+        {
+          id: 6,
+          name: 'About',
+          url: '/about',
+          children: [
+            { id: 7, name: 'Submenu 1', url: '/submenu about' },
+            { id: 8, name: 'Submenu 2', url: '/submenu2 about' },
+          ],
+        },
+      ],
       list: [
         {
           id: 1,
@@ -116,7 +153,8 @@ export default {
     NotificationDropdown,
     UserDropdown,
     Link,
-    SidebarLink
+    SidebarLink,
+    MenuItem
   },
 };
 </script>

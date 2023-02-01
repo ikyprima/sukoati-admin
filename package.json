@@ -35,6 +35,7 @@
         "@fullcalendar/interaction": "^5.11.3",
         "@fullcalendar/timegrid": "^5.11.3",
         "@fullcalendar/vue3": "^5.11.3",
-        "tw-elements": "^1.0.0-alpha13"
+        "tw-elements": "^1.0.0-alpha13",
+        "vuedraggable": "^4.1.0"
     }
 }

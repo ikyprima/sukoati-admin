@@ -17,4 +17,7 @@ Route::prefix('admin')->group(function() {
     Route::get('/menu', 'MenuController@index')->name('menu.index');
     Route::get('/tes', 'MenuController@tes')->name('tes');
     Route::post('/test', 'MenuController@tes')->name('test');
+
+    //menu
+    Route::put('/menu/update-child/{id}','MenuController@updateMenuChild')->name('menu.update.child');
 });

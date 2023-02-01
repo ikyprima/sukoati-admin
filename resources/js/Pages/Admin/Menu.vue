@@ -35,11 +35,39 @@ Inertia.reload({ only: ['admin/menu'] });
 
                 <card :list=listMenu.data :header=header>
                     <template #button>
-                        <button class="bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-sm px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" type="button">
-  <i class="fas fa-plus"></i> Tambah
-</button>
+                        <div class="hidden md:block">
+                            <button 
+                                class=" bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-sm px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                type="button">
+                                <i class="fas fa-plus"></i> Recycle
+                            </button>
+                            <button
+                                class="bg-indigo-500 text-white active:bg-indigo-600 font-bold uppercase text-sm px-6 py-3 rounded-full shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                type="button">
+                                <i class="fas fa-plus"></i> Tambah
+                            </button>
+                        </div>
+
+                        <div class="md:min-w-full md:hidden block">
+                            <div class="flex flex-wrap">
+
+                                <div class="w-full">
+
+                                    <button
+                                        class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
+                                        type="button">
+                                        <i class="fas fa-bars"></i>
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- <button class="md:hidden">Tombol Saya</button> -->
+
+
                     </template>
                 </card>
+
 
 
 
@@ -47,7 +75,10 @@ Inertia.reload({ only: ['admin/menu'] });
 
 
         </div>
+        
+
     </AdminLayout>
+
 </template>
 
 <script>
@@ -58,9 +89,11 @@ export default {
         listMenu: Object,
 
     },
+  
     data() {
 
         return {
+         
             header: [
                 {
                     id: 1,
@@ -106,10 +139,23 @@ export default {
             ],
         };
     },
+    methods: {
+        
+    },
 
 
 };
 </script>
-<style>
+<style scoped>
+.drop-zone {
+    background-color: #eee;
+    margin-bottom: 10px;
+    padding: 10px;
+}
 
+.drag-el {
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 5px;
+}
 </style>

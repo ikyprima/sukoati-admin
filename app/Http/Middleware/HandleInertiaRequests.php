@@ -6,8 +6,12 @@ use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
 use Auth;
+use App\Traits\convertRecursive;
+use App\Traits\buatRecursive;
 class HandleInertiaRequests extends Middleware
 {
+    use convertRecursive,buatRecursive;
+    
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -65,10 +69,13 @@ class HandleInertiaRequests extends Middleware
                 $item = collect([
                     "id"=> $item->menuitem->id,
                     "id_menu"=>$item->menuitem->id_menu,
+                    "id_parent"=>$item->menuitem->id_parent,
                     "title"=>$item->menuitem->title,
                     "url"=>$item->menuitem->url,
                     "name_route"=>$item->menuitem->name_route,
                     "icon"=>$item->menuitem->icon,
+                    "children" => $item->menuitem->children,
+                    "parent" => $item->menuitem->parent,
                     "deleted_at"=>$item->menuitem->deleted_at,
                     "created_at"=>$item->menuitem->created_at,
                     "updated_at"=>$item->menuitem->updated_at,
@@ -86,10 +93,13 @@ class HandleInertiaRequests extends Middleware
             return [
                 "id"=> $item->menuitem->id,
                 "id_menu"=>$item->menuitem->id_menu,
+                "id_parent"=>$item->menuitem->id_parent,
                 "title"=>$item->menuitem->title,
                 "url"=>$item->menuitem->url,
                 "name_route"=>$item->menuitem->name_route,
                 "icon"=>$item->menuitem->icon,
+                "children" => $item->menuitem->children,
+                "parent" => $item->menuitem->parent,
                 "deleted_at"=>$item->menuitem->deleted_at,
                 "created_at"=>$item->menuitem->created_at,
                 "updated_at"=>$item->menuitem->updated_at,
@@ -102,24 +112,56 @@ class HandleInertiaRequests extends Middleware
         $menucollect = $menucollect->merge($menuRole);
         // return $menucollect;
         
-        $group =  $menucollect->groupBy(function($item,$key){
+        $group =  $menucollect->unique('id')->groupBy(function($item,$key){
             return $item['id_menu'];
         })->map(function($item,$key){
             $header = $item->first();
+            // $menu = array(
+            //     'id_header' => $header['menu']['id'],
+            //     'header' => $header['menu']['name'],
+            //     'order' => $header['menu']['order'],
+            //     'menu' => $item->map(function($item){
+            //         return [
+            //             'id'=> $item['id'],
+            //             'title'=> $item['title'],
+            //             'url'=> $item['url'],
+            //             'name_route'=> $item['name_route'],
+            //             'icon'=> $item['icon'],
+            //             'children'=> $item['children']
+            //         ];
+                
+            //     })
+            // );
+
+            $itemHasParent = collect($item)->where('parent','!=',null);
+
+            $menuAnak = $itemHasParent->values()->map(function($item){
+                $item = $this->dataObj($item);
+                $this->resetObj();
+                return $item;
+            })->collapse()->unique('id');
+
+            $menuAnak = $this->ubahRecursive($menuAnak); //menu jika didalam parent
+            $menusaja = $item->whereNotIn('id', $itemHasParent->pluck('id'))->map(function($item) {
+                return [
+                    'id'=> $item['id'],
+                    'id_parent'=> $item['id_parent'],
+                    'title'=> $item['title'],
+                    'url'=> $item['url'],
+                    'name_route'=> $item['name_route'],
+                    'icon'=> $item['icon'],
+                    'parent'=>$item['parent'],
+                    'children'=> $item['children'],
+                ];
+            }); //menu tanpa parent
+
+            $menuAkhir = $menusaja->merge($menuAnak);
             $menu = array(
                 'id_header' => $header['menu']['id'],
                 'header' => $header['menu']['name'],
                 'order' => $header['menu']['order'],
-                'menu' => $item->map(function($item){
-                    return [
-                        'id'=> $item['id'],
-                        'title'=> $item['title'],
-                        'url'=> $item['url'],
-                        'name_route'=> $item['name_route'],
-                        'icon'=> $item['icon']
-                    ];
-                
-                })
+                // 'menuparent'=> $menuAnak,
+                'menu' => $menuAkhir
             );
             return $menu;
         
@@ -135,14 +177,16 @@ class HandleInertiaRequests extends Middleware
                     "title"=> "Dashboard",
                     "url"=> "dashboard",
                     "name_route"=> "dashboard",
-                    "icon"=> null
+                    "icon"=> null,
+                    'children'=>[]
+
                 ]
             )
             ]
 
         );
             $menu = $group->push($menuDashboard)->sortBy('order')->values()->all();
-            // $menu=[];
+            
         }else{
             $menu=[];
         }

@@ -29,7 +29,6 @@ export default {
   components: {
     AdminNavbar,
     Sidebar,
-    
     FooterAdmin,
   },
 };
