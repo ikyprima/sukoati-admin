@@ -9,8 +9,7 @@ build:
   image: node
   script:
     - git pull
-    - npm -v
-    - npm run build
+    - nvm -v
     - echo "Build successfully!"
 
 test:
