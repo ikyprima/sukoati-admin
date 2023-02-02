@@ -19,7 +19,7 @@ import { Head } from '@inertiajs/inertia-vue3';
                 <template #kontenheader>
 
                     <div class="w-full lg:w-6/12 xl:w-3/12 px-4">
-                        <card-stats statSubtitle="PEGAWAIS" statTitle="924" statArrow="down" statPercent="1.10"
+                        <card-stats statSubtitle="PEGAWAIS Pelajaran hidup" statTitle="924" statArrow="down" statPercent="1.10"
                             statPercentColor="text-orange-500" statDescripiron="Since yesterday"
                             statIconName="fas fa-users" statIconColor="bg-pink-500" />
                     </div>
