@@ -9,6 +9,7 @@ build:
   image: node
   script:
     - git pull
+    - source ~/.nvm/nvm.sh
     - nvm -v
     - echo "Build successfully!"
 
