@@ -11,6 +11,8 @@ build:
     - git pull
     - source ~/.nvm/nvm.sh
     - nvm -v
+    - nvm use 16
+    - npm run build
     - echo "Build successfully!"
 
 test:
