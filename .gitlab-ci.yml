@@ -9,6 +9,7 @@ build:
   image: node
   script:
     - git pull
+    - php artisan optimize
     - php artisan migrate
     - source ~/.nvm/nvm.sh
     - nvm -v
