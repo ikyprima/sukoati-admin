@@ -33,7 +33,7 @@ class BarangController extends Controller
     public function listBarangTes(){
         $data = array(
             'id'=>1,
-            'nama'=>'nama',
+            'nama'=>'namas',
             'data'=>[
                 ['id'=>2,
                 'nama'=>'tes'],
@@ -42,7 +42,8 @@ class BarangController extends Controller
                 
             ]
         );
-        return $data;
+        return response()->json($data, 200);
+      
     }
 
     /**
