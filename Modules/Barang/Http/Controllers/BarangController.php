@@ -30,6 +30,21 @@ class BarangController extends Controller
         return MBarang::all();
     }
 
+    public function listBarangTes(){
+        $data = array(
+            'id'=>1,
+            'nama'=>'nama',
+            'data'=>[
+                ['id'=>2,
+                'nama'=>'tes'],
+                ['id'=>3,
+                'nama'=>'tess']
+                
+            ]
+        );
+        return $data;
+    }
+
     /**
      * Store a newly created resource in storage.
      * @param Request $request
