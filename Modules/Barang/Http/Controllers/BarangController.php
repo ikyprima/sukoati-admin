@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Barang\Entities\MBarang;
+use Http;
 
 class BarangController extends Controller
 {
@@ -43,7 +44,18 @@ class BarangController extends Controller
             ]
         );
         return response()->json($data, 200);
-      
+    
+    }
+
+    public function initLokasi(){
+        $response = Http::post('https://presensi.payakumbuhkota.go.id/Servicedev/initPresensiTagging', [
+            'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJlLWtpbmVyamEucGF5YWt1bWJ1aGtvdGEuZ28uaWQiLCJhdWQiOiJwcmVzZW5zaS5wYXlha3VtYnVoa290YS5nby5pZCIsImV4cCI6MTY3NjQ0MjgzNiwiaWF0IjoxNjczODUwODM2LCJuaXAiOiIwMTA3MDUxOTkyMSJ9.dMd4o7sbcxySbLydmQWLdlJDB5DkVZlp-b4feixeZi7exQxWRVEAwsuhTcYBeNkmqbSQeQRIN_Lnm1Ip8lIYAj56SGwY99aHISbhRAtDleq-Nidipff23bvq4FF632Xvbulx7FAZ9oT6HSC68vql-Gj5gfi5735kP0ZOq4aoapY',
+        
+        ])->json();
+        
+
+        return response()->json($response, 200);
+        
     }
 
     /**
