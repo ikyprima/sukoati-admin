@@ -57,6 +57,9 @@ class BarangController extends Controller
         return response()->json($response, 200);
         
     }
+    public function postAbsen(Request $request){
+        return $request->all();
+    }
 
     /**
      * Store a newly created resource in storage.
