@@ -58,11 +58,26 @@ class BarangController extends Controller
         
     }
     public function postAbsen(Request $request){
-        $data = array(
-            'status'=>true,
-            'message'=>'ok'
-        );
-        return response()->json($data, 200);
+        $post = Http::post('https://presensi.payakumbuhkota.go.id/Servicedev/prosesPresensiTagging', [
+            'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJlLWtpbmVyamEucGF5YWt1bWJ1aGtvdGEuZ28uaWQiLCJhdWQiOiJwcmVzZW5zaS5wYXlha3VtYnVoa290YS5nby5pZCIsImV4cCI6MTY3NjQ0MjgzNiwiaWF0IjoxNjczODUwODM2LCJuaXAiOiIwMTA3MDUxOTkyMSJ9.dMd4o7sbcxySbLydmQWLdlJDB5DkVZlp-b4feixeZi7exQxWRVEAwsuhTcYBeNkmqbSQeQRIN_Lnm1Ip8lIYAj56SGwY99aHISbhRAtDleq-Nidipff23bvq4FF632Xvbulx7FAZ9oT6HSC68vql-Gj5gfi5735kP0ZOq4aoapY',
+            'lat'=> $request->lat,
+            'lon'=> $request->lon
+        ])->json();
+        if (condition) {
+            # code...
+            $data = array(
+                'status'=>true,
+                'message'=>'sukses'
+            );
+            return response()->json($data, 200);
+        }else{
+            $data = array(
+                'status'=>false,
+                'message'=>'gagal'
+            );
+            return response()->json($data, 404);
+        }
+       
     
     }
 
