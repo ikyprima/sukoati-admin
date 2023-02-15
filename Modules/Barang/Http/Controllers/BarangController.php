@@ -63,7 +63,7 @@ class BarangController extends Controller
             'lat'=> $request->lat,
             'lon'=> $request->lon
         ])->json();
-        if (condition) {
+        if ($post) {
             # code...
             $data = array(
                 'status'=>true,
