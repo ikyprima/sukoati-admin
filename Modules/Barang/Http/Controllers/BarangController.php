@@ -60,7 +60,7 @@ class BarangController extends Controller
     public function postAbsen(Request $request){
         $data = array(
             'status'=>true,
-            'message'=>'sukses'
+            'message'=>'ok'
         );
         return response()->json($data, 200);
     
