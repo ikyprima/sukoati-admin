@@ -6,8 +6,9 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Barang\Entities\MBarang;
-use Http;
+// use Http;
 
+use Illuminate\Support\Facades\Http;
 class BarangController extends Controller
 {
     /**
@@ -80,7 +81,18 @@ class BarangController extends Controller
        
     
     }
+    
 
+    public function login(Request $request){
+        // return $request->all();
+        $post = Http::post('https://sso.payakumbuhkota.go.id/module.php/authpyk/service_login.php', [
+            'username'=> "01070519921",
+            'password'=> "kominfo2019"
+        ]);
+        
+        return $post;
+
+    }
     /**
      * Store a newly created resource in storage.
      * @param Request $request
