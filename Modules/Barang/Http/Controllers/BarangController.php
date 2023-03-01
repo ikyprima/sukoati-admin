@@ -40,7 +40,7 @@ class BarangController extends Controller
                 ['id'=>2,
                 'nama'=>'tes'],
                 ['id'=>3,
-                'nama'=>'tess']
+                'nama'=>'tesss']
                 
             ]
         );
