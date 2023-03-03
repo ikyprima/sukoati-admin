@@ -48,9 +48,9 @@ class BarangController extends Controller
     
     }
 
-    public function initLokasi(){
+    public function initLokasi(Request $request){
         $response = Http::post('https://presensi.payakumbuhkota.go.id/Servicedev/initPresensiTagging', [
-            'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJlLWtpbmVyamEucGF5YWt1bWJ1aGtvdGEuZ28uaWQiLCJhdWQiOiJwcmVzZW5zaS5wYXlha3VtYnVoa290YS5nby5pZCIsImV4cCI6MTY3NjQ0MjgzNiwiaWF0IjoxNjczODUwODM2LCJuaXAiOiIwMTA3MDUxOTkyMSJ9.dMd4o7sbcxySbLydmQWLdlJDB5DkVZlp-b4feixeZi7exQxWRVEAwsuhTcYBeNkmqbSQeQRIN_Lnm1Ip8lIYAj56SGwY99aHISbhRAtDleq-Nidipff23bvq4FF632Xvbulx7FAZ9oT6HSC68vql-Gj5gfi5735kP0ZOq4aoapY',
+            'token' => $request->token,
         
         ])->json();
         
@@ -60,7 +60,7 @@ class BarangController extends Controller
     }
     public function postAbsen(Request $request){
         $post = Http::post('https://presensi.payakumbuhkota.go.id/Servicedev/prosesPresensiTagging', [
-            'token' => 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJlLWtpbmVyamEucGF5YWt1bWJ1aGtvdGEuZ28uaWQiLCJhdWQiOiJwcmVzZW5zaS5wYXlha3VtYnVoa290YS5nby5pZCIsImV4cCI6MTY3NjQ0MjgzNiwiaWF0IjoxNjczODUwODM2LCJuaXAiOiIwMTA3MDUxOTkyMSJ9.dMd4o7sbcxySbLydmQWLdlJDB5DkVZlp-b4feixeZi7exQxWRVEAwsuhTcYBeNkmqbSQeQRIN_Lnm1Ip8lIYAj56SGwY99aHISbhRAtDleq-Nidipff23bvq4FF632Xvbulx7FAZ9oT6HSC68vql-Gj5gfi5735kP0ZOq4aoapY',
+            'token' => $request->token,
             'lat'=> $request->lat,
             'lon'=> $request->lon
         ])->json();

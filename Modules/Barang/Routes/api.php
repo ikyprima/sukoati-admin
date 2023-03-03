@@ -21,7 +21,7 @@ Route::get('list-barang', 'BarangController@listBarang')->name('api.listBarang')
 
 Route::get('list-barang-tes', 'BarangController@listBarangTes')->name('api.listBarang.tes');
 
-Route::get('init-lokasi', 'BarangController@initLokasi')->name('init.lokasi');
+Route::post('init-lokasi', 'BarangController@initLokasi')->name('init.lokasi');
 
 Route::post('post-lokasi', 'BarangController@postAbsen')->name('post.absen');
 
