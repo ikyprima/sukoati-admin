@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('id_menu');
             $table->string('title');
-            $table->string('url');
-            $table->string('name_route');
-            $table->string('icon')->nullable();;
+            $table->string('url')->nullable();
+            $table->string('name_route')->nullable();
+            $table->string('icon')->nullable();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
             $table->timestamps();
         });

@@ -15,15 +15,15 @@ return new class extends Migration
     {
         Schema::create('table_barang', function (Blueprint $table) {
             $table->id();
-            $table->string('sku');
+            $table->string('sku')->nullable();
             $table->string('nama');
-            $table->string('barcode');
-            $table->string('merk');
-            $table->integer('stok_min');
+            $table->string('barcode')->nullable();
+            $table->string('merk')->nullable();
+            $table->integer('stok_min')->nullable();
             $table->bigInteger('id_kategori');
             $table->bigInteger('id_satuan');
-            $table->string('photo');
-            $table->text('keterangan');
+            $table->string('photo')->nullable();
+            $table->text('keterangan')->nullable();
             $table->softDeletes($column = 'deleted_at', $precision = 0);
             $table->timestamps();
         });

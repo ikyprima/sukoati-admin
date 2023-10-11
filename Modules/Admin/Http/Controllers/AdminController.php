@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use App\Models\User;
 use App\Models\MenuItem;
 
+
 use Auth;
 use App\Models\Permission;
 use App\Traits\ListNamaRoute;
@@ -41,17 +42,19 @@ class AdminController extends Controller
         }
         
     }
-    public function index()
-    {
+    public function index(){
+
         $user = Auth::user();
     
         $permissions = $user->permissions;
 
-        $arrRolePermissions = collect(); // permission didalam role
-        $arrPermissionMenu = collect(); //menu has permission
+        $arrRolePermissions = collect(); 
+        // permission didalam role
+        $arrPermissionMenu = collect(); 
+        //menu has permission
         $arrRoleMenu = collect(); //menu has role
         // $user->roles->append(['menurole']); //append atribute role
-
+        // return $user->roles;
         $user->roles->map(function($item) use (&$arrRolePermissions,&$arrRoleMenu){
 
             $detMenuRolePermission = $item->permissions->map(function($item) use (&$arrRolePermissions){  
@@ -66,51 +69,67 @@ class AdminController extends Controller
     
         // $user['menu'] = $permissions->merge($arrRolePermissions);
     
-        $listMenu = $permissions->merge($arrRolePermissions);  //gabung semua permission dari role dan dari user
-        
-        $menu =  $listMenu->map(function($item) use (&$arrPermissionMenu){ //list menu dari permission dan permission di dalam role
-        
+        $semuaPermission = $permissions->merge($arrRolePermissions);  //gabung semua permission dari role dan dari has user
+    
+        $menu =  $semuaPermission->map(function($item) use (&$arrPermissionMenu){ //list menu dari permission dan permission di dalam role
+            // return $item->menu;
             $menu  = $item->menu->map(function($item)use (&$arrPermissionMenu){
-                $item = collect([
-                    "id"=> $item->menuitem->id,
-                    "id_menu"=>$item->menuitem->id_menu,
-                    "id_parent"=>$item->menuitem->id_parent,
-                    "title"=>$item->menuitem->title,
-                    "url"=>$item->menuitem->url,
-                    "name_route"=>$item->menuitem->name_route,
-                    "icon"=>$item->menuitem->icon,
-                    "children" => $item->menuitem->children,
-                    "parent" => $item->menuitem->parent,
-                    "deleted_at"=>$item->menuitem->deleted_at,
-                    "created_at"=>$item->menuitem->created_at,
-                    "updated_at"=>$item->menuitem->updated_at,
-                    "menu"=>collect($item->menuitem->menu)]
-                );
-                $arrPermissionMenu->push($item); 
+                //  return $item;
+                if ($item->menuitem !== null) {
+                    if (count($item->menuitem->children) == 0) {
+                        $item = collect([
+                            "id"=> $item->menuitem->id,
+                            "id_menu"=>$item->menuitem->id_menu,
+                            "id_parent"=>$item->menuitem->id_parent,
+                            "title"=>$item->menuitem->title,
+                            "url"=>$item->menuitem->url,
+                            "name_route"=>$item->menuitem->name_route,
+                            "icon"=>$item->menuitem->icon,
+                            "children" => $item->menuitem->children,
+                            "parent" => $item->menuitem->parent,
+                            "deleted_at"=>$item->menuitem->deleted_at,
+                            "created_at"=>$item->menuitem->created_at,
+                            "updated_at"=>$item->menuitem->updated_at,
+                            "menu"=>collect($item->menuitem->menu)]
+        
+                        );
+                        $arrPermissionMenu->push($item); 
+                    }
+                }
+            
+            
             });
             
         });
 
-        // return $arrPermissionMenu;
+        
 
         $menuRole = $arrRoleMenu->map(function($item){ //list menu dari role
-            return [
-                "id"=> $item->menuitem->id,
-                "id_menu"=>$item->menuitem->id_menu,
-                "id_parent"=>$item->menuitem->id_parent,
-                "title"=>$item->menuitem->title,
-                "url"=>$item->menuitem->url,
-                "name_route"=>$item->menuitem->name_route,
-                "icon"=>$item->menuitem->icon,
-                "children" => $item->menuitem->children,
-                "parent" => $item->menuitem->parent,
-                "deleted_at"=>$item->menuitem->deleted_at,
-                "created_at"=>$item->menuitem->created_at,
-                "updated_at"=>$item->menuitem->updated_at,
-                "menu"=>collect($item->menuitem->menu)
-            ];
-        });
+            
+            if ($item->menuitem !== null) {
+                # code...
+                if (count($item->menuitem->children) == 0) {
+                    
+                    return [
+                        "id"=> $item->menuitem->id,
+                        "id_menu"=>$item->menuitem->id_menu,
+                        "id_parent"=>$item->menuitem->id_parent,
+                        "title"=>$item->menuitem->title,
+                        "url"=>$item->menuitem->url,
+                        "name_route"=>$item->menuitem->name_route,
+                        "icon"=>$item->menuitem->icon,
+                        "children" => $item->menuitem->children,
+                        "parent" => $item->menuitem->parent,
+                        "deleted_at"=>$item->menuitem->deleted_at,
+                        "created_at"=>$item->menuitem->created_at,
+                        "updated_at"=>$item->menuitem->updated_at,
+                        "menu"=>collect($item->menuitem->menu)
+                    ];
+                }
+            }
         
+        })->filter();
+    
         $menucollect = collect();
         $menucollect = $menucollect->merge($arrPermissionMenu->unique());
         $menucollect = $menucollect->merge($menuRole);
@@ -148,7 +167,6 @@ class AdminController extends Controller
                 'id_header' => $header['menu']['id'],
                 'header' => $header['menu']['name'],
                 'order' => $header['menu']['order'],
-            
                 // 'menuparent'=> $menuAnak,
                 'menu' => $menuAkhir
             );
@@ -175,9 +193,10 @@ class AdminController extends Controller
         );
 
         $menu = $group->push($menuDashboard);
-         return $menu->sortBy('order')->values()->all();
-       
-        return $this->namaRoute();
+        
+        return $menu->sortBy('order')->values()->all();
+    
+        // return $this->namaRoute();
     
 
 

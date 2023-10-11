@@ -1,0 +1,448 @@
+<script setup>
+import AdminLayout from '@/Layouts/Admin.vue';
+import ButtonTambah from '@/Components/Buttons/ButtonTambah.vue';
+import Card from "@/Components/Cards/Card.vue";
+import Headers from "@/Components/Headers/Headers.vue";
+import { Head } from '@inertiajs/inertia-vue3';
+import { Inertia } from '@inertiajs/inertia'
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+</script>
+
+<template>
+    <Head>
+        <title>Manajemen Database</title>
+        <meta name="description" content="halaman manajemen menu" />
+        <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
+    </Head>
+
+    <AdminLayout>
+        <template #textnavbar>
+            manajemen database
+        </template>
+
+        <template #header>
+            <headers>
+                <template #kontenheader>
+                    <card :minheigth="'min-h-0'">
+                        <div class="bg-white overflow-hidden  w-full transform transition-all sm:w-full sm:mx-auto ">
+
+                            <div class="relative p-6 flex-auto">
+                                <div class="grid grid-cols-2 md:grid-cols-2 gap-2 ">
+                                    <div class="relative  ">
+                                        <InputLabel value="Name Table" class="" />
+                                        <TextInput id="namaTable" ref="namaTableInput" type="text" class="mt-1 block w-full"
+                                            placeholder="name table" v-model="tableName" />
+
+                                    </div>
+                                    <div class="relative  ">
+                                        <InputLabel value="Nama Table" class="" />
+                                        <TextInput id="namaTables" ref="namaTableInput" type="text"
+                                            class="mt-1 block w-full" placeholder="nama table" />
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </card>
+                </template>
+            </headers>
+        </template>
+
+        <div class="flex flex-wrap mt-4 ">
+            <div class="w-full mb-12 ">
+                <card :minheigth="'min-h-32'">
+                    <template #headercard>
+                        <div class="rounded-t mb-0 px-4 pt-6 border-0">
+                            <div class="flex flex-wrap items-center">
+                                <div class="relative w-full px-4 max-w-full flex-grow flex-1">
+                                    <h3 class="font-semibold text-lg"
+                                        :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']">
+                                        Table Column
+                                    </h3>
+                                </div>
+                                <div class=" relative md:w-full px-4 md:max-w-full flex-grow flex-1 text-right">
+                                    <div class="hidden md:block">
+                                        <ButtonTambah v-on:click="simpan">Simpan</ButtonTambah>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </template>
+                    <div class="bg-white overflow-hidden px-8 pb-4 w-full transform transition-all sm:w-full sm:mx-auto ">
+                        <div class="flex flex-col">
+                            <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+                                    <div class="overflow-hidden">
+                                        <table
+                                            class="min-w-full border text-center text-sm font-light dark:border-neutral-500">
+                                            <thead class="border-b bg-gray-100 font-medium dark:border-neutral-500">
+                                                <tr>
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+                                                        Name
+                                                    </th>
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+                                                        Type
+                                                    </th>
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+                                                        Length
+                                                    </th>
+                                                    <th scope="col"
+                                                        class="border-r px-4 py-4 dark:border-neutral-500 text-left">
+                                                        Not Null
+                                                    </th>
+                                                    <th scope="col" class="border-r px-2 py-4 dark:border-neutral-500 ">
+                                                        Unsigned
+                                                    </th>
+                                                    <th scope="col" class="border-r px-2 py-4 dark:border-neutral-500">
+                                                        Auto Increment
+                                                    </th>
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500 ">
+                                                        Index
+                                                    </th>
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+                                                        Default
+                                                    </th>
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(item, index) in formTable.columns" :key="index"
+                                                    class="border-b dark:border-neutral-500">
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                            ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
+                                                            focus:ring-indigo-600 sm:text-sm sm:leading-6 w-40"
+                                                            v-model="formTable.columns[index].name"
+                                                            @input="(e) => inputNamaKolom(e.target.value, index)"
+                                                            @blur="(e) => cekNamaSama(e.target.value, index)">
+                                                    </td>
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <select class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                            ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
+                                                            focus:ring-indigo-600 sm:text-sm sm:leading-6 w-32"
+                                                            @change="(e) => pilihType(e, index)">
+                                                            <optgroup v-for="(group, name) in master[index].dataType"
+                                                                :label="name">
+                                                                <option v-for="option in group" :value="option.name">
+                                                                    {{ option.name }}
+                                                                </option>
+                                                            </optgroup>
+                                                        </select>
+                                                    </td>
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <input type="number" min="0" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                            ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
+                                                            focus:ring-indigo-600 sm:text-sm sm:leading-6 w-24"
+                                                            v-model="formTable.columns[index].length">
+                                                    </td>
+
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-2 py-2 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <input class="form-check-input appearance-none h-4 w-2 border
+                                                        border-gray-300 rounded-sm bg-white 
+                                                        checked:bg-blue-600 checked:border-blue-600 
+                                                        focus:outline-none transition duration-200 mt-1 
+                                                        align-top bg-no-repeat bg-center bg-contain float-center 
+                                                        cursor-pointer" type="checkbox"
+                                                            v-model="formTable.columns[index].notnull">
+                                                    </td>
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-2 py-2 text-center w-4 font-medium dark:border-neutral-500">
+                                                        <input class="form-check-input appearance-none h-4 w-2 border
+                                                        border-gray-300 rounded-sm bg-white 
+                                                        checked:bg-blue-600 checked:border-blue-600 
+                                                        focus:outline-none transition duration-200 mt-1 
+                                                        align-top bg-no-repeat bg-center bg-contain float-center 
+                                                        cursor-pointer" type="checkbox"
+                                                            v-model="formTable.columns[index].unsigned">
+                                                    </td>
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-2 py-2 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <input class="form-check-input appearance-none h-4 w-2 border
+                                                        border-gray-300 rounded-sm bg-white 
+                                                        checked:bg-blue-600 checked:border-blue-600 
+                                                        focus:outline-none transition duration-200 mt-1 
+                                                        align-top bg-no-repeat bg-center bg-contain float-center 
+                                                        cursor-pointer" type="checkbox"
+                                                            v-model="formTable.columns[index].autoincrement">
+                                                    </td>
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <select class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                            ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
+                                                            focus:ring-indigo-600 sm:text-sm sm:leading-6 w-28"
+                                                            @change="(e) => pilihIndex(e, index)">
+                                                            <template v-for="option in master[index].index">
+                                                                <option
+                                                                    v-if="index == 0 && formTable.columns[index].name == 'id' && option == 'PRIMARY'"
+                                                                    :value="option" selected>
+                                                                    {{ option }}
+                                                                </option>
+                                                                <option v-else :value="option">
+                                                                    {{ option }}
+                                                                </option>
+                                                            </template>
+                                                        </select>
+                                                    </td>
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                            ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
+                                                            focus:ring-indigo-600 sm:text-sm sm:leading-6 w-32">
+                                                    </td>
+                                                    <td
+                                                        class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
+                                                        <PrimaryButton v-on="{ click: () => hapusKolom(index) }"
+                                                            class="bg-red-700 border-red-700 hover:bg-red-800 focus:ring-red-300 focus:bg-red-500">
+                                                            <span class="ml-0.5 "> <i class="fas fa-lg fa-trash-alt"></i>
+                                                            </span>
+                                                        </PrimaryButton>
+                                                    </td>
+
+
+
+                                                </tr>
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <template #footercard>
+                        <div class="flex mb-4 justify-center">
+                            <PrimaryButton v-on="{ click: () => tambahKolom() }">
+                                <span class="mr-2"> <i class="fas fa-plus "></i> </span>
+                                Add column
+                            </PrimaryButton>
+                            <PrimaryButton class="ml-3">
+                                <span class="mr-2"> <i class="fas fa-plus "></i> </span>
+                                Add Timestamp
+                            </PrimaryButton>
+                            <PrimaryButton class="ml-3">
+                                <span class="mr-2"> <i class="fas fa-plus "></i> </span>
+                                Add Softdelete
+                            </PrimaryButton>
+                        </div>
+                    </template>
+                </card>
+            </div>
+        </div>
+    </AdminLayout>
+</template>
+
+<script>
+
+export default {
+
+    props: {
+        color: {
+            default: "light",
+            validator: function (value) {
+                // The value must match one of these strings
+                return ["light", "dark"].indexOf(value) !== -1;
+            },
+        },
+        dataTypes: Object,
+        tables: Object,
+
+    },
+    components: {
+
+    },
+    watch: {
+
+        tableName(newTableName) {
+            this.formTable.name = newTableName;
+            for (let i in this.formTable.indexes) {
+                this.formTable.indexes[i].table = newTableName;
+            }
+        },
+
+
+    },
+    created() {
+
+    },
+    data() {
+        return {
+            tableName: null,
+            formTable: this.$inertia.form({
+                name: null,
+                // oldName : '',
+                columns: [
+                    {
+                        name: 'id',
+                        // oldName : null,
+                        type: {
+                            name: "integer",
+                            category: "Numbers",
+                            default: {
+                                type: "number",
+                                step: "any"
+                            }
+                        },
+                        length: null,
+                        fixed: false,
+                        unsigned: true,
+                        autoincrement: true,
+                        notnull: true,
+                        default: null,
+                        // index : 'PRIMARY'
+                    },
+                ],
+                indexes: [
+                    {
+                        indexColumns: 0,
+                        columns: ['id'],
+                        type: 'PRIMARY',
+                        name: 'primary',
+                        table: null
+                    },
+                ],
+                primaryKeyName: 'primary',
+                foreignKeys: [],
+                options: {
+                    create_options: []
+                }
+
+            }),
+
+            master: [
+                {
+                    dataType: this.dataTypes.types,
+                    index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
+                }
+
+            ],
+        };
+    },
+
+    computed: {
+
+    },
+
+    methods: {
+        inputNamaKolom: function (e, index) {
+            const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
+            if (i !== -1) {
+                this.formTable.indexes[i].columns = [e];
+            }
+        },
+        cekNamaSama: function (e, kecualiIndex) {
+            //cari value nama 
+            const cari = this.formTable.columns.find((element, index) => {
+                if (index === kecualiIndex) {
+                    return false;
+                }
+                return element.name === e;
+            });
+            if (cari) {
+                console.log(e + ' sudah ada');
+            }
+        },
+        pilihType: function (e, index) {
+            const i = e.target.selectedIndex;
+            const option = e.target.options[i];
+            const optgroup = option.parentElement;
+            const countryGroup = optgroup.getAttribute('label');
+            const master = this.master[index]['dataType'][countryGroup]
+            this.formTable.columns[index].type = master.find(item => item.name === option.value);
+
+        },
+
+        pilihIndex: function (e, index) {
+            const i = e.target.selectedIndex;
+            const option = e.target.options[i];
+
+            if (option.value !== '') {
+                const tambahFieldIndex = {
+                    indexColumns: index,
+                    columns: [this.formTable.columns[index].name],
+                    type: option.value,
+                    name: option.value.toLowerCase(),
+                    table: this.formTable.name
+                };
+                this.formTable.indexes.push(tambahFieldIndex);
+                this.formTable.columns[index].index = option.value;
+            } else {
+                //jika pilih index  ==  '' maka cari di array indexes dengan indexColumns == index 
+                //jika ada hapus.
+                const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
+                if (i !== -1) {
+                    this.formTable.indexes.splice(i, 1);
+                    this.formTable.columns[index].index = null;
+                }
+            }
+
+
+        },
+        tambahKolom: function () {
+            const tambahField = {
+                name: null,
+                // oldName : null,
+                type: {
+                    name: "integer",
+                    category: "Numbers",
+                    default: {
+                        type: "number",
+                        step: "any"
+                    }
+                },
+                length: null,
+                fixed: false,
+                unsigned: false,
+                autoincrement: false,
+                notnull: false,
+                default: null,
+                // index : null
+            };
+            const fieldMaster = {
+                dataType: this.dataTypes.types,
+                index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
+            };
+            this.master.push(fieldMaster);
+            this.formTable.columns.push(tambahField);
+
+
+        },
+        hapusKolom: function (index) {
+            //hapus
+            this.master.splice(index, 1);
+            this.formTable.columns.splice(index, 1);
+
+            //hapus indexes jika ada
+            const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
+            if (i !== -1) {
+                this.formTable.indexes.splice(i, 1);
+            }
+        },
+        simpan() {
+            this.formTable.post(route('database.store'), {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: () => {
+                    this.master.splice(1); //hapus semua dari index 1
+                    this.formTable.reset();
+                },
+            })
+
+        },
+    },
+};
+</script>

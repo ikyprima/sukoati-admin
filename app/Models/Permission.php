@@ -22,4 +22,7 @@ class Permission extends SpatiePermission
             return $this->hasMany('App\Models\MenuHasPermission', 'id_permissions', 'id')->with('menuItem.menu')->get();
         
         }
+    public function rute(){
+        return $this->hasOne('App\Models\RuteHasPermission','id_permission','id');
+    }
 }

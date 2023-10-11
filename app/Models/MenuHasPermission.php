@@ -10,8 +10,8 @@ class MenuHasPermission extends Model
 
     use HasFactory;
     protected $table= 'menu_has_permissions';
-    
+    protected $fillable = ['id_menu','id_permissions',"ket"];
     public function menuItem(){
-        return $this->hasOne('App\Models\MenuItem','id','id_menu');
+        return $this->hasOne('App\Models\MenuItem','id','id_menu')->whereNull('deleted_at');
     }
 }

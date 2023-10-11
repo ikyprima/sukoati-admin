@@ -7,7 +7,7 @@
           <h3 class="font-semibold text-lg" :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']">
             <!-- Lists {{ $page.props.flash.appName }} -->
 
-            Menu
+            LIST MENU
 
           </h3>
         </div>
@@ -22,14 +22,17 @@
     <div class="block w-full overflow-x-auto">
 
       <div
-        class="flex flex-col container mt-2  mx-auto w-full items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow">
-        <Accordion v-for='i in list' :title="i.name">
-          <div
-            class="flex flex-col container  mx-auto w-full items-center justify-center bg-white  dark:bg-gray-800  shadow">
-            <div class="flex flex-col divide-y w-full ">
-              <List v-for="menu in i.menu_item" :item="menu" :depth="0"/>
-            </div>
+        class="flex flex-col container mt-2 mx-auto w-full items-center justify-center bg-white dark:bg-gray-800 rounded-lg shadow">
 
+        <Accordion v-for='i in list' :id="i.id" :title="i.name" :posisi = "i.posisi" @clickaddHeaderMenu= "mclickaddHeaderMenu"
+          @clickEditHeaderMenu="mclickEditHeaderMenu">
+          <div
+            class="flex flex-col container  ml-8 w-full items-center justify-center bg-white  dark:bg-gray-800  shadow">
+            <div class="flex flex-col divide-y w-full " >
+              
+                <List v-for="menu in i.menu_item"  :item="menu" @clickadd="clickadds" :depth="0" />
+              
+            </div>
           </div>
         </Accordion>
 
@@ -47,12 +50,13 @@ import draggable from 'vuedraggable'
 
 import { Inertia } from '@inertiajs/inertia'
 export default {
-
-
+ 
+  emits: ['clickadd','clickaddHeaderMenu','clickEditHeaderMenu'],
   data() {
 
     return {
       isOpen: false,
+    
 
     };
   },
@@ -75,10 +79,18 @@ export default {
 
   },
   methods: {
-    onClickChild(value) {
-
-    }
-    ,
+    
+    mclickaddHeaderMenu(value){
+      
+      this.$emit('clickaddHeaderMenu', value);
+    },
+    mclickEditHeaderMenu(value){
+      const index = this.list.findIndex(item => item.id === value.id);
+      this.$emit('clickEditHeaderMenu', this.list[index]);
+    },
+    clickadds(value){
+      this.$emit('clickadd', value);
+    },
     tes() {
       Inertia.post('/admin/test', {
         headers: {

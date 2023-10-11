@@ -14,19 +14,22 @@ trait listNamaRoute{
     //       }
     //   }
 
-    $routeCollection = Route::getRoutes();
-    $r= collect($routeCollection)->map(function($item){
+        $routeCollection = Route::getRoutes();
     
-        return [
-            'method' => $item->methods()[0],
-            'uri' => $item->uri(),
-            'nama' => $item->getName(),
-            'action' => $item->getActionName()
+        $r= collect($routeCollection)->map(function($item){
+            
+            return [
+                'method' => $item->methods()[0],
+                'uri'=> $item->uri(),
+                'url' => config('app.url').'/'.$item->uri(),
+                'nama' => $item->getName(),
+                'action' => $item->getActionName()
 
-        ];
-    });
-
-    return $r->where('method','GET')->where('nama','!=', null)->values();
-    
+            ];
+        });
+       return $route =  $r->whereIn('method',['GET'])->where('nama','!=', null)->reject(function ($route) {
+            // Menggunakan ekspresi reguler untuk mencocokkan URI dengan parameter
+            return preg_match('/\{[^}]+\}/', $route['uri']);
+        })->values()->all();
     }
 }

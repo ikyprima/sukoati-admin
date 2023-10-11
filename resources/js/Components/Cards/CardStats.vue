@@ -45,7 +45,7 @@ export default {
     },
     statTitle: {
       type: String,
-      default: "350,8asd",
+      default: "350,8",
     },
     statArrow: {
       default: "up",

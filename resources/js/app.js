@@ -9,12 +9,12 @@ import "../css/tailwind.css";
 
 
 
-
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+// import VueMultiselect from 'vue-multiselect'
 
 
 
@@ -24,7 +24,9 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, app, props, plugin }) {
-        const myApp = createApp({ render: () => h(app, props) })
+        const myApp = createApp({ 
+           
+            render: () => h(app, props) })
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .mixin({ methods: { 
@@ -51,6 +53,7 @@ createInertiaApp({
                     // return allPermissions;
                 },
             } });
+            // myApp.component('VueMultiselect', VueMultiselect)
             myApp.mount(el);
             return myApp;
 

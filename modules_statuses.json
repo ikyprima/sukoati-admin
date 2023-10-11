@@ -1,5 +1,6 @@
 {
     "Pegawai": true,
     "Admin": true,
+    "Master": true,
     "Barang": true
 }

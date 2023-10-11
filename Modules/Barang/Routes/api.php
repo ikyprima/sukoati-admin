@@ -25,5 +25,5 @@ Route::post('init-lokasi', 'BarangController@initLokasi')->name('init.lokasi');
 
 Route::post('post-lokasi', 'BarangController@postAbsen')->name('post.absen');
 
-Route::post('login','BarangController@login')->name('login');
+Route::post('login-sso','BarangController@login')->name('login-sso');
 

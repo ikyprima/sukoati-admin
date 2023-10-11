@@ -5,16 +5,43 @@ namespace Modules\Admin\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-
+use Inertia\Inertia;
+use App\Traits\listMidleware;
+use App\Models\Permission;
+use Auth;
+use Validator;
+use Illuminate\Support\MessageBag;
+use Redirect;
 class PermissionController extends Controller
 {
+    use listMidleware;
     /**
      * Display a listing of the resource.
      * @return Renderable
      */
-    public function index()
+    public function __construct()
     {
-        return view('admin::index');
+        // $midlw = ['role_or_permission:admins|'.$this->namaMidleware(class_basename(get_class($this)))];
+        // $this->middleware(['permission:update permission']);
+    }
+    public function index(Request $request)
+    {
+    
+        $permission = Permission::with('rute')->paginate(10)->through(function($item){
+            return collect([
+            
+                'guard_name'=>$item->guard_name,
+                'id'=>$item->id,
+                'name'=>$item->name,
+                'controller'=>$item->rute?$item->rute->controller:'-',
+                'function'=>$item->rute?$item->rute->function:'-'
+            
+            ]);
+        });
+        return Inertia::render('Admin/Permissions',[
+            'permission'=>$permission
+        ]);
+
     }
 
     /**
@@ -33,7 +60,31 @@ class PermissionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            $rules = [
+                'permission' => [
+                    'required',
+                ],
+            ];
+            
+            $customMessages = [
+                'required' => ':attribute harus di isi.',
+                'unique'=> ':attribute sudah terdaftar',
+                'email'=> 'format :attribute salah'
+            ];
+            $validator = Validator::make($request->all(), $rules, $customMessages)->validate();
+            $permission = Permission::firstOrCreate([
+                'name' => $request->permission
+            ]);
+            return back(303);
+
+        } catch(\Illuminate\Database\QueryException $e){
+            // return dd($e);
+            $text= $e->getMessage();
+            $errors = new MessageBag(['permission' => [$e->errorInfo[2]]]);
+            return Redirect::back()->withErrors($errors);
+        }
+        
     }
 
     /**
@@ -64,7 +115,36 @@ class PermissionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $rules = [
+                'permission' => [
+                    'required',
+                ],
+            ];
+            
+            
+            $customMessages = [
+                'required' => ':attribute harus di isi.',
+                'unique'=> ':attribute sudah terdaftar',
+                'email'=> 'format :attribute salah'
+            ];
+            $validator = Validator::make($request->all(), $rules, $customMessages)->validate();
+            $permission = Permission::where('id',$id)->update(
+            
+                [
+                
+                    'name' => $request->permission,
+                
+                ],
+            );
+    
+            return back(303);
+        } catch(\Illuminate\Database\QueryException $e){
+            // return dd($e);
+            $text= $e->getMessage();
+            $errors = new MessageBag(['permission' => [$e->errorInfo[2]]]);
+            return Redirect::back()->withErrors($errors);
+        }
     }
 
     /**
@@ -74,6 +154,16 @@ class PermissionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+
+            Permission::where('id',$id )
+            ->delete();
+            return back(303);
+        } catch(\Illuminate\Database\QueryException $e){
+            // return dd($e);
+            $text= $e->getMessage();
+            $errors = new MessageBag(['nama' => [$e->errorInfo[2]]]);
+            return Redirect::back()->withErrors($errors);
+        }
     }
 }

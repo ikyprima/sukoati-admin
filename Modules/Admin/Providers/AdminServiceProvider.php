@@ -5,6 +5,7 @@ namespace Modules\Admin\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 
+use Modules\Admin\Facades\Voyager as VoyagerFacade;
 class AdminServiceProvider extends ServiceProvider
 {
     /**
@@ -38,6 +39,11 @@ class AdminServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->loadHelpers();
+
+        $this->app->singleton('voyager', function () {
+            return new Voyager();
+        });
     }
 
     /**
@@ -110,5 +116,12 @@ class AdminServiceProvider extends ServiceProvider
             }
         }
         return $paths;
+    }
+    protected function loadHelpers()
+    {
+        $path = module_path($this->moduleName, 'Helpers');
+        foreach ( glob($path.'/*.php') as $filename) {
+            require_once $filename;
+        }
     }
 }

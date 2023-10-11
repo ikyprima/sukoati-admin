@@ -57,32 +57,36 @@ class HandleInertiaRequests extends Middleware
                 $arrRoleMenu->push($item);
             });
         });
-       
+    
     
         // $user['menu'] = $permissions->merge($arrRolePermissions);
         
-        $listMenu = $permissions->merge($arrRolePermissions);  //gabung semua permission dari role dan dari user
+        $semuaPermission = $permissions->merge($arrRolePermissions);  //gabung semua permission dari role dan dari user
         
-         $menu =  $listMenu->map(function($item) use (&$arrPermissionMenu){ //list menu dari permission dan permission di dalam role
+         $menu =  $semuaPermission->map(function($item) use (&$arrPermissionMenu){ //list menu dari permission dan permission di dalam role
             $menu  = $item->menu->map(function($item)use (&$arrPermissionMenu){
-                
-                $item = collect([
-                    "id"=> $item->menuitem->id,
-                    "id_menu"=>$item->menuitem->id_menu,
-                    "id_parent"=>$item->menuitem->id_parent,
-                    "title"=>$item->menuitem->title,
-                    "url"=>$item->menuitem->url,
-                    "name_route"=>$item->menuitem->name_route,
-                    "icon"=>$item->menuitem->icon,
-                    "children" => $item->menuitem->children,
-                    "parent" => $item->menuitem->parent,
-                    "deleted_at"=>$item->menuitem->deleted_at,
-                    "created_at"=>$item->menuitem->created_at,
-                    "updated_at"=>$item->menuitem->updated_at,
-                    "menu"=>collect($item->menuitem->menu)]
-                );
-                $arrPermissionMenu->push($item);
-                
+                if ($item->menuitem !== null) {
+                    # code...
+                    if (count($item->menuitem->children) == 0) {
+                        $item = collect([
+                            "id"=> $item->menuitem->id,
+                            "id_menu"=>$item->menuitem->id_menu,
+                            "id_parent"=>$item->menuitem->id_parent,
+                            "title"=>$item->menuitem->title,
+                            "url"=>$item->menuitem->url,
+                            "name_route"=>$item->menuitem->name_route,
+                            "icon"=>$item->menuitem->icon,
+                            "children" => $item->menuitem->children,
+                            "parent" => $item->menuitem->parent,
+                            "deleted_at"=>$item->menuitem->deleted_at,
+                            "created_at"=>$item->menuitem->created_at,
+                            "updated_at"=>$item->menuitem->updated_at,
+                            "menu"=>collect($item->menuitem->menu)]
+                        );
+                        $arrPermissionMenu->push($item);
+                    }
+                }
+            
             });
             
         });
@@ -90,22 +94,28 @@ class HandleInertiaRequests extends Middleware
         
         
         $menuRole = $arrRoleMenu->map(function($item){ //list menu dari role
-            return [
-                "id"=> $item->menuitem->id,
-                "id_menu"=>$item->menuitem->id_menu,
-                "id_parent"=>$item->menuitem->id_parent,
-                "title"=>$item->menuitem->title,
-                "url"=>$item->menuitem->url,
-                "name_route"=>$item->menuitem->name_route,
-                "icon"=>$item->menuitem->icon,
-                "children" => $item->menuitem->children,
-                "parent" => $item->menuitem->parent,
-                "deleted_at"=>$item->menuitem->deleted_at,
-                "created_at"=>$item->menuitem->created_at,
-                "updated_at"=>$item->menuitem->updated_at,
-                "menu"=>collect($item->menuitem->menu)
-            ];
-        });
+            if ($item->menuitem !== null) {
+                
+                if (count($item->menuitem->children) == 0) {
+                    return [
+                        "id"=> $item->menuitem->id,
+                        "id_menu"=>$item->menuitem->id_menu,
+                        "id_parent"=>$item->menuitem->id_parent,
+                        "title"=>$item->menuitem->title,
+                        "url"=>$item->menuitem->url,
+                        "name_route"=>$item->menuitem->name_route,
+                        "icon"=>$item->menuitem->icon,
+                        "children" => $item->menuitem->children,
+                        "parent" => $item->menuitem->parent,
+                        "deleted_at"=>$item->menuitem->deleted_at,
+                        "created_at"=>$item->menuitem->created_at,
+                        "updated_at"=>$item->menuitem->updated_at,
+                        "menu"=>collect($item->menuitem->menu)
+                    ];
+                }
+            }
+            
+        })->filter();
         
         $menucollect = collect();
         $menucollect = $menucollect->merge($arrPermissionMenu->unique());
@@ -190,12 +200,12 @@ class HandleInertiaRequests extends Middleware
         }else{
             $menu=[];
         }
-    
+        // $menu=[];
 
         return array_merge(parent::share($request), [
             'flash' => [
                 'message' => fn () => $request->session()->get('message'),
-                'tes' => fn () => $request->session()->get('tes'),
+                // 'tes' => fn () => $request->session()->get('tes'),
                 'appName' => $request->session()->get('tesd'),
             ],
             'appName' => 'appNames',

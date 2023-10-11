@@ -10,12 +10,14 @@
 
       <slot name="header" />
     
-      <div class="px-4 md:px-10 mx-auto w-full -m-24">
+      <div class="px-4 md:px-10 mx-auto w-full -m-32 min-h-full ">
         <main>
-                <slot />
-            </main>
-        <footer-admin />
+            <slot />
+        </main>
+            <footer-admin />
       </div>
+      
+      
     </div>
   </div>
 </template>
