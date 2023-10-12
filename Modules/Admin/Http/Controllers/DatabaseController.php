@@ -20,7 +20,7 @@ use Modules\Admin\Database\Types\Type;
 use Modules\Admin\Events\TableAdded;
 use Modules\Admin\Events\TableDeleted;
 use Modules\Admin\Events\TableUpdated;
-use Modules\Admin\Facades\Voyager;
+use Modules\Admin\Facades\Admin;
 
 class DatabaseController extends Controller
 {
@@ -31,8 +31,8 @@ class DatabaseController extends Controller
     public function index()
     {
        
-       
-        $dataTypes = Voyager::model('DataType')->select('id', 'name', 'slug')->get()->keyBy('name')->toArray();
+  
+        $dataTypes = Admin::model('DataType')->select('id', 'name', 'slug')->get()->keyBy('name')->toArray();
         // $tables = array_map(function ($table) use ($dataTypes) {
         //     $table = Str::replaceFirst(DB::getTablePrefix(), '', $table);
 

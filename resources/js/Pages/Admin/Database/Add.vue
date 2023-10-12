@@ -38,9 +38,7 @@ import TextInput from '@/Components/TextInput.vue';
 
                                     </div>
                                     <div class="relative  ">
-                                        <InputLabel value="Nama Table" class="" />
-                                        <TextInput id="namaTables" ref="namaTableInput" type="text"
-                                            class="mt-1 block w-full" placeholder="nama table" />
+                              
 
                                     </div>
 
