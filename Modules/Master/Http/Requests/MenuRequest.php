@@ -4,7 +4,7 @@ namespace Modules\Master\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class menu_request extends FormRequest
+class MenuRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
