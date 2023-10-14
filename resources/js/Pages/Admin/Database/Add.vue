@@ -133,9 +133,15 @@ import TextInput from '@/Components/TextInput.vue';
                                                             @change="(e) => pilihType(e, index)">
                                                             <optgroup v-for="(group, name) in master[index].dataType"
                                                                 :label="name">
-                                                                <option v-for="option in group" :value="option.name">
+                                                                <template v-for="option in group">
+                                                                    <option v-if="formTable.columns[index].type.name == option.name" :value="option.name" selected >
+                                                                        {{ option.name }}
+                                                                    </option>
+                                                                    <option v-else :value="option.name">
                                                                     {{ option.name }}
-                                                                </option>
+                                                                    </option>
+                                                                </template>
+                                                            
                                                             </optgroup>
                                                         </select>
                                                     </td>
@@ -154,8 +160,8 @@ import TextInput from '@/Components/TextInput.vue';
                                                         checked:bg-blue-600 checked:border-blue-600 
                                                         focus:outline-none transition duration-200 mt-1 
                                                         align-top bg-no-repeat bg-center bg-contain float-center 
-                                                        cursor-pointer" type="checkbox"
-                                                            v-model="formTable.columns[index].notnull">
+                                                        cursor-pointer" type="checkbox" 
+                                                            v-model="formTable.columns[index].notnull"  >
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-2 py-2 text-center w-4 font-medium dark:border-neutral-500">
@@ -165,7 +171,9 @@ import TextInput from '@/Components/TextInput.vue';
                                                         focus:outline-none transition duration-200 mt-1 
                                                         align-top bg-no-repeat bg-center bg-contain float-center 
                                                         cursor-pointer" type="checkbox"
-                                                            v-model="formTable.columns[index].unsigned">
+                                                            v-model="formTable.columns[index].unsigned"
+                                                            :disabled="formTable.columns[index].type.category !== 'Numbers'"
+                                                            @change="(e) => unsignedKlik(item,e,index)">
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-2 py-2 text-center w-8 font-medium dark:border-neutral-500">
@@ -197,7 +205,11 @@ import TextInput from '@/Components/TextInput.vue';
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
-                                                        <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                        <input
+                                                            :type="formTable.columns[index].type.category == 'Numbers'?'number':'text'" 
+                                                            :min ="formTable.columns[index].type.category == 'Numbers' && formTable.columns[index].unsigned == true ? '0':'' "
+                                                            v-model="formTable.columns[index].default"
+                                                            class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                             ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                             focus:ring-indigo-600 sm:text-sm sm:leading-6 w-32">
                                                     </td>
@@ -361,6 +373,15 @@ export default {
             const countryGroup = optgroup.getAttribute('label');
             const master = this.master[index]['dataType'][countryGroup]
             this.formTable.columns[index].type = master.find(item => item.name === option.value);
+            if (countryGroup !== 'Numbers') {
+                this.formTable.columns[index].unsigned = false;
+                this.formTable.columns[index].autoincrement = false;
+                
+            }else{
+                this.formTable.columns[index].default = 0;
+                this.formTable.columns[index].unsigned = true;
+                this.formTable.columns[index].autoincrement = true;
+            }
 
         },
 
@@ -389,6 +410,12 @@ export default {
             }
 
 
+        },
+        unsignedKlik : function(data, e, index){
+            
+            if (e.target.checked && data.type.category === 'Numbers') {
+                this.formTable.columns[index].default = 0
+            }
         },
         tambahKolom: function () {
             const tambahField = {
