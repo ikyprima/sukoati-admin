@@ -32,11 +32,10 @@ class Table extends DoctrineTable
             $foreignKey = ForeignKey::make($foreignKeyArr);
             $foreignKeys[$foreignKey->getName()] = $foreignKey;
         }
-
+        
         $options = $table['options'];
-        $fkConstraints = $table['fkConstraints'];
 
-        return new self($name, $columns, $indexes, $foreignKeys, $fkConstraints, $options);
+        return new self($name, $columns, $indexes,[], $foreignKeys, $options);
     }
 
     public function getColumnsIndexes($columns, $sort = false)
