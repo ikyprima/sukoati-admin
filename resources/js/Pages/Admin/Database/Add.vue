@@ -9,6 +9,8 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { useVuelidate } from '@vuelidate/core'
+import { required, helpers } from '@vuelidate/validators'
 </script>
 
 <template>
@@ -35,19 +37,16 @@ import TextInput from '@/Components/TextInput.vue';
                                         <InputLabel value="Name Table" class="" />
                                         <TextInput id="namaTable" ref="namaTableInput" type="text" class="mt-1 block w-full"
                                             placeholder="name table" v-model="tableName" />
-
+                                        <p v-if="v$.tableName.$error" class="mt-2 text-sm text-red-600 dark:text-red-500">
+                                            silahkan isi dengan format / karakter yang ditentukan <b>"a-z A-Z 0-9 _"</b> dan
+                                            kata selain ['select', 'insert', 'update', 'delete']
+                                        </p>
                                     </div>
                                     <div class="relative  ">
-                              
-
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
-
-
                     </card>
                 </template>
             </headers>
@@ -123,7 +122,21 @@ import TextInput from '@/Components/TextInput.vue';
                                                             focus:ring-indigo-600 sm:text-sm sm:leading-6 w-40"
                                                             v-model="formTable.columns[index].name"
                                                             @input="(e) => inputNamaKolom(e.target.value, index)"
-                                                            @blur="(e) => cekNamaSama(e.target.value, index)">
+                                                            @keyup="(e) => cekNamaSama(e.target.value, index)">
+                                                        <template v-if="v$.formTable.columns.$errors.length > 0">
+                                                            <p v-if="v$.formTable.columns.$each.$response.$errors[index].name[0]"
+                                                                class="mt-2 text-sm text-red-600 dark:text-red-500">
+                                                                {{
+                                                                    v$.formTable.columns.$each.$response.$errors[index].name[0].$message
+                                                                }}
+                                                            </p>
+                                                        </template>
+                                                        <p v-if="formTable.errors['kolom.' + index + '.name']"
+                                                            class="mt-2 text-sm text-red-600 dark:text-red-500">
+                                                            {{ formTable.errors['kolom.' + index + '.name'] }}
+                                                        </p>
+
+
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
@@ -134,14 +147,16 @@ import TextInput from '@/Components/TextInput.vue';
                                                             <optgroup v-for="(group, name) in master[index].dataType"
                                                                 :label="name">
                                                                 <template v-for="option in group">
-                                                                    <option v-if="formTable.columns[index].type.name == option.name" :value="option.name" selected >
+                                                                    <option
+                                                                        v-if="formTable.columns[index].type.name == option.name"
+                                                                        :value="option.name" selected>
                                                                         {{ option.name }}
                                                                     </option>
                                                                     <option v-else :value="option.name">
-                                                                    {{ option.name }}
+                                                                        {{ option.name }}
                                                                     </option>
                                                                 </template>
-                                                            
+
                                                             </optgroup>
                                                         </select>
                                                     </td>
@@ -160,8 +175,8 @@ import TextInput from '@/Components/TextInput.vue';
                                                         checked:bg-blue-600 checked:border-blue-600 
                                                         focus:outline-none transition duration-200 mt-1 
                                                         align-top bg-no-repeat bg-center bg-contain float-center 
-                                                        cursor-pointer" type="checkbox" 
-                                                            v-model="formTable.columns[index].notnull"  >
+                                                        cursor-pointer" type="checkbox"
+                                                            v-model="formTable.columns[index].notnull">
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-2 py-2 text-center w-4 font-medium dark:border-neutral-500">
@@ -173,7 +188,7 @@ import TextInput from '@/Components/TextInput.vue';
                                                         cursor-pointer" type="checkbox"
                                                             v-model="formTable.columns[index].unsigned"
                                                             :disabled="formTable.columns[index].type.category !== 'Numbers'"
-                                                            @change="(e) => unsignedKlik(item,e,index)">
+                                                            @change="(e) => unsignedKlik(item, e, index)">
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-2 py-2 text-center w-8 font-medium dark:border-neutral-500">
@@ -206,10 +221,9 @@ import TextInput from '@/Components/TextInput.vue';
                                                     <td
                                                         class="whitespace-nowrap border-r px-1 py-1 text-center w-8 font-medium dark:border-neutral-500">
                                                         <input
-                                                            :type="formTable.columns[index].type.category == 'Numbers'?'number':'text'" 
-                                                            :min ="formTable.columns[index].type.category == 'Numbers' && formTable.columns[index].unsigned == true ? '0':'' "
-                                                            v-model="formTable.columns[index].default"
-                                                            class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                            :type="formTable.columns[index].type.category == 'Numbers' ? 'number' : 'text'"
+                                                            :min="formTable.columns[index].type.category == 'Numbers' && formTable.columns[index].unsigned == true ? '0' : ''"
+                                                            v-model="formTable.columns[index].default" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                             ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                             focus:ring-indigo-600 sm:text-sm sm:leading-6 w-32">
                                                     </td>
@@ -221,12 +235,7 @@ import TextInput from '@/Components/TextInput.vue';
                                                             </span>
                                                         </PrimaryButton>
                                                     </td>
-
-
-
                                                 </tr>
-
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -278,6 +287,8 @@ export default {
     watch: {
 
         tableName(newTableName) {
+
+
             this.formTable.name = newTableName;
             for (let i in this.formTable.indexes) {
                 this.formTable.indexes[i].table = newTableName;
@@ -291,6 +302,9 @@ export default {
     },
     data() {
         return {
+
+            v$: useVuelidate(),
+            disallowedNames: ['select', 'insert', 'update', 'delete'],
             tableName: null,
             formTable: this.$inertia.form({
                 name: null,
@@ -347,13 +361,81 @@ export default {
 
     },
 
+    validations() {
+        return {
+            tableName: {
+                required,
+                regex: helpers.regex(/^[a-zA-Z0-9_][a-zA-Z0-9_]*$/),
+
+                isNotInDisallowedNames(value) {
+                    return !this.disallowedNames.includes(value.toLowerCase());
+                }
+            },
+
+            formTable: {
+                columns: {
+                    $each: helpers.forEach({
+                        name: {
+                            required,
+                            regex: helpers.withMessage(
+                                ({
+                                    $pending,
+                                    $invalid,
+                                    $params,
+                                    $model
+                                }) => `karakter '${$model}' tidak diperbolehkan `, helpers.regex(/^[a-zA-Z0-9_][a-zA-Z0-9_]*$/)),
+
+
+                        }
+                    })
+                },
+
+            },
+            isUniqueArray() {
+                const names = this.formTable.columns.map(column => column.name);
+                const uniqueNames = new Set(names);
+                return names.length === uniqueNames.size;
+            }
+            // isUniqueArray() {
+            //     // Mengimplementasikan logika untuk memeriksa unik nama di dalam formTable.columns
+            //     const names = this.formTable.columns.map(column => column.name);
+            //     const uniqueNames = new Set(names);
+            //     // let findDuplicates = arr => arr.reduce((acc, item, index) => {
+            //     //     if (arr.indexOf(item) !== index && !acc.includes(item)) {
+            //     //         acc.push(item);
+            //     //     }
+            //     //     return acc;
+            //     // }, []);
+            //     // const duplicates = findDuplicates(names);
+            //     // const result = duplicates.map(value => {
+            //     //     return {
+            //     //         val: value,
+            //     //         index: names.reduce((acc, item, index) => {
+            //     //             if (item === value) {
+            //     //                 this.formTable.errors['kolom.'+index+'.name']='Duplicate Entri'
+            //     //                 acc.push(index);
+            //     //             }
+            //     //             return acc;
+            //     //         }, [])
+            //     //     };
+            //     // });
+            //     // console.log([...new Set(findDuplicates(names))]);   
+            //     return names.length === uniqueNames.size;
+            // }
+        }
+    },
+
+
     methods: {
+        //-------kolom table-------//
         inputNamaKolom: function (e, index) {
             const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
             if (i !== -1) {
                 this.formTable.indexes[i].columns = [e];
             }
         },
+
+
         cekNamaSama: function (e, kecualiIndex) {
             //cari value nama 
             const cari = this.formTable.columns.find((element, index) => {
@@ -363,9 +445,12 @@ export default {
                 return element.name === e;
             });
             if (cari) {
-                console.log(e + ' sudah ada');
+                this.formTable.errors['kolom.' + kecualiIndex + '.name'] = 'Duplicate Entri'
+            } else {
+                delete this.formTable.errors['kolom.' + kecualiIndex + '.name'];
             }
         },
+
         pilihType: function (e, index) {
             const i = e.target.selectedIndex;
             const option = e.target.options[i];
@@ -376,8 +461,8 @@ export default {
             if (countryGroup !== 'Numbers') {
                 this.formTable.columns[index].unsigned = false;
                 this.formTable.columns[index].autoincrement = false;
-                
-            }else{
+
+            } else {
                 this.formTable.columns[index].default = 0;
                 this.formTable.columns[index].unsigned = true;
                 this.formTable.columns[index].autoincrement = true;
@@ -408,15 +493,15 @@ export default {
                     this.formTable.columns[index].index = null;
                 }
             }
-
-
         },
-        unsignedKlik : function(data, e, index){
-            
+
+        unsignedKlik: function (data, e, index) {
+
             if (e.target.checked && data.type.category === 'Numbers') {
                 this.formTable.columns[index].default = 0
             }
         },
+
         tambahKolom: function () {
             const tambahField = {
                 name: null,
@@ -446,6 +531,7 @@ export default {
 
 
         },
+
         hapusKolom: function (index) {
             //hapus
             this.master.splice(index, 1);
@@ -457,15 +543,25 @@ export default {
                 this.formTable.indexes.splice(i, 1);
             }
         },
+
+        //-------batas kolom table-------//
+
         simpan() {
-            this.formTable.post(route('database.store'), {
+            this.v$.$validate();
+            if (!this.v$.$error) {
+                this.formTable.post(route('database.store'), {
                 preserveScroll: true,
                 preserveState: true,
                 onSuccess: () => {
                     this.master.splice(1); //hapus semua dari index 1
                     this.formTable.reset();
                 },
-            })
+                })
+            
+            } else {
+                console.log('ada error');
+            }
+
 
         },
     },
