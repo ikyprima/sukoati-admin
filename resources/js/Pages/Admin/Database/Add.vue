@@ -249,11 +249,11 @@ import { required, helpers } from '@vuelidate/validators'
                                 <span class="mr-2"> <i class="fas fa-plus "></i> </span>
                                 Add column
                             </PrimaryButton>
-                            <PrimaryButton class="ml-3">
+                            <PrimaryButton class="ml-3" v-on="{ click: () => tambahKolom(1) }">
                                 <span class="mr-2"> <i class="fas fa-plus "></i> </span>
                                 Add Timestamp
                             </PrimaryButton>
-                            <PrimaryButton class="ml-3">
+                            <PrimaryButton class="ml-3" v-on="{ click: () => tambahKolom(2) }">
                                 <span class="mr-2"> <i class="fas fa-plus "></i> </span>
                                 Add Softdelete
                             </PrimaryButton>
@@ -502,33 +502,113 @@ export default {
             }
         },
 
-        tambahKolom: function () {
-            const tambahField = {
-                name: null,
-                // oldName : null,
-                type: {
-                    name: "integer",
-                    category: "Numbers",
-                    default: {
-                        type: "number",
-                        step: "any"
-                    }
-                },
-                length: null,
-                fixed: false,
-                unsigned: false,
-                autoincrement: false,
-                notnull: false,
-                default: null,
-                // index : null
-            };
-            const fieldMaster = {
-                dataType: this.dataTypes.types,
-                index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
-            };
-            this.master.push(fieldMaster);
-            this.formTable.columns.push(tambahField);
+        tambahKolom: function (jenis) {
+            if (jenis === 1) {
+                //jika timestamp
+                const cariCreatedAt = this.formTable.columns.find((element, index) => {
+                    return element.name === 'created_at';
+                });
+                if (!cariCreatedAt) {
+                    const tambahField = {
+                        name: 'created_at',
+                        type: {
+                            name: "timestamp",
+                            category: "Date and Time"
+                        },
+                        length: null,
+                        fixed: false,
+                        unsigned: false,
+                        autoincrement: false,
+                        notnull: false,
+                        default: null,
+                    };
+                    const fieldMaster = {
+                        dataType: this.dataTypes.types,
+                        index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
+                    };
+                    this.formTable.columns.push(tambahField);
+                    this.master.push(fieldMaster);
+                }
 
+                const cariUpdatedAt = this.formTable.columns.find((element, index) => {
+                    return element.name === 'updated_at';
+                });
+                if (!cariUpdatedAt) {
+                    const tambahFieldUpdated = {
+                        name: 'updated_at',
+                        type: {
+                            name: "timestamp",
+                            category: "Date and Time"
+                        },
+                        length: null,
+                        fixed: false,
+                        unsigned: false,
+                        autoincrement: false,
+                        notnull: false,
+                        default: null,
+                    };
+                    const fieldMasterupdated = {
+                        dataType: this.dataTypes.types,
+                        index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
+                    };
+                    this.formTable.columns.push(tambahFieldUpdated);
+                    this.master.push(fieldMasterupdated);
+                }
+
+            } else if (jenis === 2) {
+                //jika softdelete
+                const cariDeletedAt = this.formTable.columns.find((element, index) => {
+                    return element.name === 'deleted_at';
+                });
+                if (!cariDeletedAt) {
+                    const tambahField = {
+                        name: 'deleted_at',
+                        type: {
+                            name: "timestamp",
+                            category: "Date and Time"
+                        },
+                        length: null,
+                        fixed: false,
+                        unsigned: false,
+                        autoincrement: false,
+                        notnull: false,
+                        default: null,
+                    };
+                    const fieldMaster = {
+                        dataType: this.dataTypes.types,
+                        index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
+                    };
+                    this.formTable.columns.push(tambahField);
+                    this.master.push(fieldMaster);
+                }
+            } else {
+                const tambahField = {
+                    name: null,
+                    // oldName : null,
+                    type: {
+                        name: "integer",
+                        category: "Numbers",
+                        default: {
+                            type: "number",
+                            step: "any"
+                        }
+                    },
+                    length: null,
+                    fixed: false,
+                    unsigned: false,
+                    autoincrement: false,
+                    notnull: false,
+                    default: null,
+                    // index : null
+                };
+                const fieldMaster = {
+                    dataType: this.dataTypes.types,
+                    index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
+                };
+                this.master.push(fieldMaster);
+                this.formTable.columns.push(tambahField);
+
+            }
 
         },
 
@@ -536,11 +616,12 @@ export default {
             //hapus
             this.master.splice(index, 1);
             this.formTable.columns.splice(index, 1);
-
+            delete this.formTable.errors['kolom.' + index + '.name'];
             //hapus indexes jika ada
             const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
             if (i !== -1) {
                 this.formTable.indexes.splice(i, 1);
+
             }
         },
 
@@ -550,14 +631,14 @@ export default {
             this.v$.$validate();
             if (!this.v$.$error) {
                 this.formTable.post(route('database.store'), {
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => {
-                    this.master.splice(1); //hapus semua dari index 1
-                    this.formTable.reset();
-                },
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        this.master.splice(1); //hapus semua dari index 1
+                        this.formTable.reset();
+                    },
                 })
-            
+
             } else {
                 console.log('ada error');
             }
