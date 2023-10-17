@@ -483,14 +483,14 @@ export default {
                     table: this.formTable.name
                 };
                 this.formTable.indexes.push(tambahFieldIndex);
-                this.formTable.columns[index].index = option.value;
+                // this.formTable.columns[index].index = option.value;
             } else {
                 //jika pilih index  ==  '' maka cari di array indexes dengan indexColumns == index 
                 //jika ada hapus.
                 const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
                 if (i !== -1) {
                     this.formTable.indexes.splice(i, 1);
-                    this.formTable.columns[index].index = null;
+                    // this.formTable.columns[index].index = null;
                 }
             }
         },
