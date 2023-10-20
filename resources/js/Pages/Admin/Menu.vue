@@ -8,7 +8,7 @@ import Multiselect from '@vueform/multiselect'
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Modal from '@/Components/Modal.vue';
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head } from '@inertiajs/vue3';
 import Card from "@/Components/Cards/CardKosong.vue";
 import { Inertia } from '@inertiajs/inertia'
 import { ref } from 'vue';

@@ -2,7 +2,7 @@
 import AdminLayout from '@/Layouts/Admin.vue';
 import HeaderStats from "@/Components/Headers/HeaderStats.vue";
 
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head } from '@inertiajs/vue3';
 import CardTable from "@/Components/Cards/CardTable.vue";
 import { Link } from '@inertiajs/inertia-vue3';
 import VueMultiselect from 'vue-multiselect';

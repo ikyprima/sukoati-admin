@@ -2,7 +2,7 @@
 import AdminLayout from '@/Layouts/Admin.vue';
 import HeaderStats from "@/Components/Headers/HeaderStats.vue";
 import ButtonCard from "@/Components/Buttons/ButtonCard.vue";
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/inertia-vue3';
 </script>
 
