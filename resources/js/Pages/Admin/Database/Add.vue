@@ -3,14 +3,16 @@ import AdminLayout from '@/Layouts/Admin.vue';
 import ButtonTambah from '@/Components/Buttons/ButtonTambah.vue';
 import Card from "@/Components/Cards/Card.vue";
 import Headers from "@/Components/Headers/Headers.vue";
-import { Head } from '@inertiajs/inertia-vue3';
+import { Head } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia'
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
+import ToastList from '@/Components/Notifications/ToastList.vue';
 import { useVuelidate } from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
+import toast from '@/Stores/toast.js';
 </script>
 
 <template>
@@ -24,8 +26,14 @@ import { required, helpers } from '@vuelidate/validators'
         <template #textnavbar>
             manajemen database
         </template>
+        <template #notif>
+         
+        <ToastList/>
+
+        </template>
 
         <template #header>
+
             <headers>
                 <template #kontenheader>
                     <card :minheigth="'min-h-0'">
@@ -34,6 +42,7 @@ import { required, helpers } from '@vuelidate/validators'
                             <div class="relative p-6 flex-auto">
                                 <div class="grid grid-cols-2 md:grid-cols-2 gap-2 ">
                                     <div class="relative  ">
+
                                         <InputLabel value="Name Table" class="" />
                                         <TextInput id="namaTable" ref="namaTableInput" type="text" class="mt-1 block w-full"
                                             placeholder="name table" v-model="tableName" />
@@ -47,6 +56,7 @@ import { required, helpers } from '@vuelidate/validators'
                                 </div>
                             </div>
                         </div>
+
                     </card>
                 </template>
             </headers>
@@ -369,7 +379,7 @@ export default {
 
                 isNotInDisallowedNames(value) {
                     return !this.disallowedNames.includes(value.toLowerCase());
-                }
+                },
             },
 
             formTable: {
@@ -427,6 +437,11 @@ export default {
 
 
     methods: {
+
+        async cekNamaTable(value) {
+            const response = await axios.get(route('database.show', value));
+            return response.data;
+        },
         //-------kolom table-------//
         inputNamaKolom: function (e, index) {
             const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
@@ -628,19 +643,40 @@ export default {
         //-------batas kolom table-------//
 
         simpan() {
+        
+            
             this.v$.$validate();
+
             if (!this.v$.$error) {
-                this.formTable.post(route('database.store'), {
-                    preserveScroll: true,
-                    preserveState: true,
-                    onSuccess: () => {
-                        this.master.splice(1); //hapus semua dari index 1
-                        this.formTable.reset();
-                    },
-                })
+                const cekTable = this.cekNamaTable(this.tableName);
+                cekTable.then(result => {
+                    if (Object.keys(result).length > 0) {
+                        toast.add({
+                            message: 'Table Sudah Ada Di Database',
+                            category : 'warning'
+                        })
+                    
+                    } else {
+                        this.formTable.post(route('database.store'), {
+                            preserveScroll: true,
+                            preserveState: true,
+                            onSuccess: () => {
+                                this.master.splice(1); //hapus semua dari index 1
+                                this.formTable.reset();
+                            },
+                        })
+                    }
+                }).catch(error => {
+                    toast.add({
+                            message: error,
+                            category : 'warning'
+                        })
+                    console.error('Terjadi kesalahan:', error);
+                });
+                
 
             } else {
-                console.log('ada error');
+                console.error('error, ','saat validasi');
             }
 
 
