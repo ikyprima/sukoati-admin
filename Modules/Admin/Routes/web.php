@@ -49,6 +49,9 @@ Route::group(['middleware' => ['auth','verified']], function () {
         Route::get('/database', 'DatabaseController@index')->name('database.index');
         Route::get('/database/create', 'DatabaseController@create')->name('database.create');
         Route::post('/database', 'DatabaseController@store')->name('database.store');
+        Route::get('/database/{table}/edit','DatabaseController@edit')->name('database.edit');
+        Route::put('/database', 'DatabaseController@update')->name('database.update');
+        Route::get('/database/{table}', 'DatabaseController@show')->name('database.show');
 
     });
 });

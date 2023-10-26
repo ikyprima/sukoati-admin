@@ -61,8 +61,7 @@ abstract class SchemaManager
         }
 
         $indexes = static::manager()->listTableIndexes($tableName);
-
-        return new Table($tableName, $columns, $indexes, $foreignKeys, false, []);
+        return new Table($tableName, $columns, $indexes, [], $foreignKeys, []);
     }
 
     /**
@@ -75,9 +74,7 @@ abstract class SchemaManager
     public static function describeTable($tableName)
     {
         Type::registerCustomPlatformTypes();
-
         $table = static::listTableDetails($tableName);
-
         return collect($table->columns)->map(function ($column) use ($table) {
             $columnArr = Column::toArray($column);
 

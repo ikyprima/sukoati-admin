@@ -24,6 +24,7 @@ import toast from '@/Stores/toast.js';
 
     <AdminLayout>
         <template #textnavbar>
+            
             manajemen database
         </template>
         <template #notif>
@@ -35,11 +36,24 @@ import toast from '@/Stores/toast.js';
         <template #header>
 
             <headers>
+                
                 <template #kontenheader>
-                    <card :minheigth="'min-h-0'">
-                        <div class="bg-white overflow-hidden  w-full transform transition-all sm:w-full sm:mx-auto ">
 
-                            <div class="relative p-6 flex-auto">
+                    <card :minheigth="'min-h-0'">
+                        <!-- <template #headercard>
+                            <div class="pt-2 pb-2 mx-8 border-b border-solid border-blueGray-200 ">
+                                <div class="flex flex-wrap items-center">
+                                    <div class="relative md:w-full md:max-w-full flex-grow flex-1 text-left">
+                                        <div class="hidden md:block">
+                                            <SecondaryButton>Kembali</SecondaryButton>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </template> -->
+                        <div class="bg-white overflow-hidden  w-full transform transition-all sm:w-full sm:mx-auto ">
+                            <div class="relative p-6 mx-2 flex-auto">
                                 <div class="grid grid-cols-2 md:grid-cols-2 gap-2 ">
                                     <div class="relative  ">
 
@@ -71,12 +85,19 @@ import toast from '@/Stores/toast.js';
                                 <div class="relative w-full px-4 max-w-full flex-grow flex-1">
                                     <h3 class="font-semibold text-lg"
                                         :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']">
-                                        Table Column
+                                        Column Table
                                     </h3>
                                 </div>
                                 <div class=" relative md:w-full px-4 md:max-w-full flex-grow flex-1 text-right">
                                     <div class="hidden md:block">
-                                        <ButtonTambah v-on:click="simpan">Simpan</ButtonTambah>
+                                        <ButtonTambah v-on:click="simpan">
+                                            <div v-if="action === 'update'">
+                                                Simpan Perubahan
+                                            </div>
+                                            <div v-else>
+                                                Simpan
+                                            </div>
+                                        </ButtonTambah>
                                     </div>
                                 </div>
 
@@ -289,6 +310,8 @@ export default {
         },
         dataTypes: Object,
         tables: Object,
+        action : String,
+        formAction : String
 
     },
     components: {
@@ -297,18 +320,27 @@ export default {
     watch: {
 
         tableName(newTableName) {
-
-
             this.formTable.name = newTableName;
             for (let i in this.formTable.indexes) {
                 this.formTable.indexes[i].table = newTableName;
             }
         },
 
-
     },
     created() {
-
+        if (this.action === 'update') {
+            let master = [];
+            this.tables.columns.forEach(element => {
+                master.push(
+                    {
+                        dataType: this.dataTypes,
+                        index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
+                    }
+                );
+            });
+            this.master = master;
+            this.tableName = this.tables.name;
+        }
     },
     data() {
         return {
@@ -316,9 +348,9 @@ export default {
             v$: useVuelidate(),
             disallowedNames: ['select', 'insert', 'update', 'delete'],
             tableName: null,
-            formTable: this.$inertia.form({
+            formTable: this.action === 'update' ?this.$inertia.form(this.tables) : this.$inertia.form({
                 name: null,
-                // oldName : '',
+                oldName : '',
                 columns: [
                     {
                         name: 'id',
@@ -480,12 +512,13 @@ export default {
             } else {
                 this.formTable.columns[index].default = 0;
                 this.formTable.columns[index].unsigned = true;
-                this.formTable.columns[index].autoincrement = true;
+                // this.formTable.columns[index].autoincrement = true;
             }
 
         },
 
         pilihIndex: function (e, index) {
+
             const i = e.target.selectedIndex;
             const option = e.target.options[i];
 
@@ -497,16 +530,48 @@ export default {
                     name: option.value.toLowerCase(),
                     table: this.formTable.name
                 };
-                this.formTable.indexes.push(tambahFieldIndex);
+                //cari dan cek apakah ada primarykey
+                if (option.value === 'PRIMARY') {
+                    const cariPrimary = this.formTable.indexes.find((element, index) => {
+                        return element.type === 'PRIMARY';
+                    });
+
+                    if(cariPrimary){
+                        toast.add({
+                            message: '`PRIMARY KEY` Sudah Ada',
+                            category : 'warning'
+                        })
+
+                        e.target.selectedIndex = 0 //pilih index value ''
+                    
+                    }else{
+                        this.formTable.indexes.push(tambahFieldIndex);
+                    }
+                
+                }else{
+                    this.formTable.indexes.push(tambahFieldIndex);
+                }
                 // this.formTable.columns[index].index = option.value;
             } else {
                 //jika pilih index  ==  '' maka cari di array indexes dengan indexColumns == index 
                 //jika ada hapus.
+                if (this.action === 'update') {
+                    //karna indexColumns tidak ada loop sadolahe
+                    const kolom = this.formTable.columns[index].name;
+                    this.formTable.indexes.forEach((element, index) => {
+                        if (element.columns.includes(kolom)) {
+                            this.formTable.indexes.splice(index, 1);
+                        }
+                    });
+                
+                }
                 const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
                 if (i !== -1) {
                     this.formTable.indexes.splice(i, 1);
                     // this.formTable.columns[index].index = null;
                 }
+
+              
             }
         },
 
@@ -650,21 +715,44 @@ export default {
             if (!this.v$.$error) {
                 const cekTable = this.cekNamaTable(this.tableName);
                 cekTable.then(result => {
-                    if (Object.keys(result).length > 0) {
+                    if (Object.keys(result).length > 0 && this.action !== 'update') {
                         toast.add({
                             message: 'Table Sudah Ada Di Database',
                             category : 'warning'
                         })
                     
-                    } else {
-                        this.formTable.post(route('database.store'), {
-                            preserveScroll: true,
-                            preserveState: true,
-                            onSuccess: () => {
-                                this.master.splice(1); //hapus semua dari index 1
-                                this.formTable.reset();
-                            },
+                    }else if(this.formTable.columns.length == 0){
+                        toast.add({
+                            message: 'Silahkan Isi Kolom',
+                            category : 'warning'
                         })
+                    }
+                    else {
+                        if (this.action === 'update') {
+                            this.formTable.put(route('database.update'), {
+                                preserveScroll: true,
+                                preserveState: true,
+                                onSuccess: () => {
+                                    this.master.splice(1); //hapus semua dari index 1
+                                    this.formTable.reset();
+                                },
+                                onError: (errors) => {
+                                    console.log(errors);
+                                }
+                            })
+                        }else{
+                            this.formTable.post(route('database.store'), {
+                                preserveScroll: true,
+                                preserveState: true,
+                                onSuccess: () => {
+                                    this.master.splice(1); //hapus semua dari index 1
+                                    this.formTable.reset();
+                                },
+                                onError: (errors) => {
+                                    console.log(errors);
+                                }
+                            })
+                        }
                     }
                 }).catch(error => {
                     toast.add({

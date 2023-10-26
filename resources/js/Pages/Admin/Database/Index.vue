@@ -97,7 +97,7 @@ import NProgress from 'nprogress'
     </AdminLayout>
     <Modal :show="showModalDetailTable" @close="closeModalDetailTable" :maxWidth="'5xl'">
         <div class="p-2">
-            <div class="flex items-start justify-between p-1 border-b border-solid border-blueGray-200 rounded-t">
+            <div class="mx-4 flex items-start justify-between p-1 border-b border-solid border-blueGray-200 rounded-t">
                 <h3 class="text-xl font-semibold uppercase">
                     DETAIL TABLE {{ detailTableNama }}
                 </h3>
@@ -111,7 +111,7 @@ import NProgress from 'nprogress'
                                 <th class="px-4 py-3 border-b-2 border-pink-500">Field</th>
                                 <th class="px-4 py-3 border-b-2 border-blue-500 ">Type</th>
                                 <th class="px-4 py-3 border-b-2 border-green-500 text-center">Null</th>
-                                <th class="px-4 py-3 border-b-2 border-red-500">Key</th>
+                                <th class="px-4 py-3 border-b-2 border-red-500 text-center">Key</th>
                                 <th class="px-4 py-3 border-b-2 border-purple-500">Default</th>
                                 <th class="px-4 py-3 border-b-2 border-yellow-500">Extra</th>
                             </tr>
@@ -128,7 +128,7 @@ import NProgress from 'nprogress'
                                     <td class="px-4 text-center py-4">
                                         {{ data.notnull }}
                                     </td>
-                                    <td class="px-4  py-4">
+                                    <td class="px-4 text-center py-4">
                                         {{ data.key }}
                                     </td>
                                     <td class="px-4  py-4">
@@ -143,7 +143,7 @@ import NProgress from 'nprogress'
                     </table>
                 </div>
             </div>
-            <div class="mt-6 flex justify-end">
+            <div class="mt-4 flex justify-end mr-6 mb-4">
                 <SecondaryButton @click="closeModalDetailTable">
                     Tutup
                 </SecondaryButton>
@@ -263,6 +263,8 @@ export default {
                     NProgress.done()
                     this.detailTable = res.data;
                     console.log(res);
+                    
+                    // console.log(Object.keys(res.data).length); 
                 })
                 .catch((error) => {
                     //jika error.response.status Check status code
@@ -283,7 +285,7 @@ export default {
         },
 
         edit(value) {
-
+            Inertia.get(route('database.edit',value.name), {}, { replace: true })
         },
 
         hapus(value) {
