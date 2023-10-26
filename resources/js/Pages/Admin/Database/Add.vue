@@ -521,6 +521,13 @@ export default {
 
             const i = e.target.selectedIndex;
             const option = e.target.options[i];
+            
+            const kolom = this.formTable.columns[index].name;
+                this.formTable.indexes.forEach((element, index) => {
+                    if (element.columns.includes(kolom)) {
+                        this.formTable.indexes.splice(index, 1);
+                    }
+                });
 
             if (option.value !== '') {
                 const tambahFieldIndex = {
@@ -555,23 +562,21 @@ export default {
             } else {
                 //jika pilih index  ==  '' maka cari di array indexes dengan indexColumns == index 
                 //jika ada hapus.
-                if (this.action === 'update') {
-                    //karna indexColumns tidak ada loop sadolahe
-                    const kolom = this.formTable.columns[index].name;
-                    this.formTable.indexes.forEach((element, index) => {
-                        if (element.columns.includes(kolom)) {
-                            this.formTable.indexes.splice(index, 1);
-                        }
-                    });
+                // if (this.action === 'update') {
+                //     //karna indexColumns tidak ada loop sadolahe
+                //     const kolom = this.formTable.columns[index].name;
+                //     this.formTable.indexes.forEach((element, index) => {
+                //         if (element.columns.includes(kolom)) {
+                //             this.formTable.indexes.splice(index, 1);
+                //         }
+                //     });
                 
-                }
+                // }
                 const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
                 if (i !== -1) {
                     this.formTable.indexes.splice(i, 1);
                     // this.formTable.columns[index].index = null;
                 }
-
-              
             }
         },
 
