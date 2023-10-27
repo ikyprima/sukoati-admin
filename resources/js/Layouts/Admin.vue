@@ -1,12 +1,15 @@
 <template>
   <div>
+    <slot name="notif" />
     <sidebar />
     
     <div class="relative md:ml-64 bg-blueGray-100">
 
       <admin-navbar #namaheader>
         <slot name="textnavbar" />
+        
       </admin-navbar> 
+      
 
       <slot name="header" />
     
