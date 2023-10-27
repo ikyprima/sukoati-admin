@@ -52,6 +52,7 @@ Route::group(['middleware' => ['auth','verified']], function () {
         Route::get('/database/{table}/edit','DatabaseController@edit')->name('database.edit');
         Route::put('/database', 'DatabaseController@update')->name('database.update');
         Route::get('/database/{table}', 'DatabaseController@show')->name('database.show');
+        Route::delete('/database/{table}', 'DatabaseController@destroy')->name('database.hapus');
 
     });
 });

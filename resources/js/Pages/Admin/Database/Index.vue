@@ -2,18 +2,20 @@
 import AdminLayout from '@/Layouts/Admin.vue';
 import ButtonTambah from '@/Components/Buttons/ButtonTambah.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-
+import Dialog from '@/Components/Dialog.vue';
 import Table from "@/Components/Tables/Table.vue";
 import HeaderStats from "@/Components/Headers/HeaderStats.vue";
 import Modal from '@/Components/Modal.vue';
 import { Head } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
 import NProgress from 'nprogress'
+import ToastList from '@/Components/Notifications/ToastList.vue';
+import toast from '@/Stores/toast.js';
 </script>
 
 <template>
     <Head>
-        <title>Manajemen Menu</title>
+        <title>Manajemen Menu </title>
         <meta name="description" content="halaman manajemen menu" />
         <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     </Head>
@@ -22,7 +24,9 @@ import NProgress from 'nprogress'
         <template #textnavbar>
             manajemen database
         </template>
-
+        <template #notif>
+            <ToastList/>
+        </template>
         <template #header>
             <header-stats>
 
@@ -150,6 +154,25 @@ import NProgress from 'nprogress'
             </div>
         </div>
     </Modal>
+    <Dialog :show="dialogHapus" @close="closeDialogHapus()">
+        <div class="md:flex items-center">
+        
+            <div class="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
+                <p class="font-bold">Hapus Data</p>
+                <p class="text-sm text-gray-700 mt-1">Anda Yakin Akan Menghapus Data Yang Dipilih?
+                </p>
+            </div>
+        </div>
+    
+        <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+            <button v-on:click="hapusAksi()"
+                class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 
+                text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2 " :class="{ 'opacity-25': formTable.processing }" :disabled="formTable.processing">
+                Ya, Hapus</button>
+            <button v-on:click="closeDialogHapus()" class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4
+            md:mt-0 md:order-1">Batal</button>
+        </div>
+    </Dialog>
 </template>
 
 <script>
@@ -175,6 +198,9 @@ export default {
             detailTable: null,
             detailTableNama: null,
             search: '',
+            dialogHapus:false,
+            objRow : null,
+            formTable: this.$inertia.form({}),
             items: this.tables,
             setting: [ //seting header table
                 {
@@ -241,6 +267,15 @@ export default {
             ],
         };
     },
+    created(){
+        if(this.$page.props.flash.message != null){
+            toast.add({
+                message: this.$page.props.flash.message,
+                category : 'info'
+            });
+        }
+        this.$page.props.flash.message = null;
+    },
     methods: {
 
         tambah() {
@@ -289,7 +324,35 @@ export default {
         },
 
         hapus(value) {
-
+            this.objRow = value;
+            this.dialogHapus = !this.dialogHapus;
+        },
+        hapusAksi(){
+            this.formTable.delete(route('database.hapus',this.objRow.name), {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        this.items = this.tables;
+                        this.dialogHapus = !this.dialogHapus;
+                        this.objRow = null;
+                        toast.add({
+                            message: 'Sukses Hapus Data',
+                            category : 'info'
+                        })
+                    },
+                    onError: errors => {
+                        toast.add({
+                            message: errors.error,
+                            category : 'warning',
+                            duration : 10000
+                        })
+                        this.dialogHapus = !this.dialogHapus;
+                        this.objRow = null;
+                    },
+            });
+        },
+        closeDialogHapus: function () {
+            this.dialogHapus = !this.dialogHapus;
         },
     },
 };

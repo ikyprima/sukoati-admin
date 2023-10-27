@@ -40,20 +40,27 @@ import toast from '@/Stores/toast.js';
                 <template #kontenheader>
 
                     <card :minheigth="'min-h-0'">
-                        <!-- <template #headercard>
+                        <template #headercard>
                             <div class="pt-2 pb-2 mx-8 border-b border-solid border-blueGray-200 ">
                                 <div class="flex flex-wrap items-center">
-                                    <div class="relative md:w-full md:max-w-full flex-grow flex-1 text-left">
+                                <div class="max-w-full flex-grow">
+                                    <h3 class="font-semibold text-lg"
+                                        :class="[color === 'light' ? 'text-blueGray-700' : 'text-white']">
+                                        {{ action === 'update' ? 'Update Table' : 'Add Table' }}
+                                       
+                                    </h3>
+                                </div>
+                                    <div class="relative md:w-full md:max-w-full flex-grow flex-1 text-right">
                                         <div class="hidden md:block">
-                                            <SecondaryButton>Kembali</SecondaryButton>
+                                            <PrimaryButton  v-on:click="kembali" class="bg-red-600 hover:bg-red-400 focus:bg-red-400 focus:ring-red-600">Kembali</PrimaryButton>
                                         </div>
                                     </div>
 
                                 </div>
                             </div>
-                        </template> -->
+                        </template> 
                         <div class="bg-white overflow-hidden  w-full transform transition-all sm:w-full sm:mx-auto ">
-                            <div class="relative p-6 mx-2 flex-auto">
+                            <div class="relative px-6 pb-4 mx-2 flex-auto">
                                 <div class="grid grid-cols-2 md:grid-cols-2 gap-2 ">
                                     <div class="relative  ">
 
@@ -474,6 +481,9 @@ export default {
             const response = await axios.get(route('database.show', value));
             return response.data;
         },
+        kembali(){
+            Inertia.get(route('database.index'), {}, { replace: true })
+        },
         //-------kolom table-------//
         inputNamaKolom: function (e, index) {
             const i = this.formTable.indexes.findIndex(item => item.indexColumns === index);
@@ -728,7 +738,7 @@ export default {
                     
                     }else if(this.formTable.columns.length == 0){
                         toast.add({
-                            message: 'Silahkan Isi Kolom',
+                            message: 'Silahkan Tambah Kolom',
                             category : 'warning'
                         })
                     }
