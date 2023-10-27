@@ -89,10 +89,8 @@ class DatabaseController extends Controller
             $table['fkConstraints']=[];
             $table = Table::make($table);
             SchemaManager::createTable($table);
-            return to_route('database.index');
-            // return redirect()->route('database.index');
+            return to_route('database.index')->with(['message'=>'Sukses Simpan Data']);
             
-        
         } catch(\Illuminate\Database\QueryException $e){
             $text= $e->getMessage();
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
@@ -106,7 +104,7 @@ class DatabaseController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
 
     //     $fkColumns = Schema::getConnection()
@@ -116,8 +114,14 @@ class DatabaseController extends Controller
     // return collect($fkColumns)->map(function ($fkColumn) {
     //     return $fkColumn->getColumns();
     // });
-        $table = collect(SchemaManager::describeTable($id));
-        return $table;
+
+        if($request->ajax()){
+            $table = collect(SchemaManager::describeTable($id));
+            return $table;
+        }else{
+            return to_route('database.index');
+        }
+        
     }
 
     /**
@@ -152,14 +156,12 @@ class DatabaseController extends Controller
     {
         try {
 
-        
             Type::registerCustomPlatformTypes();
             $table = $request->all();
             DatabaseUpdater::update($table);
-            return to_route('database.index');
+            return to_route('database.index')->with(['message'=>'Sukses Update Data']);
             // return redirect()->route('database.index');
             
-        
         } catch(\Illuminate\Database\QueryException $e){
             $text= $e->getMessage();
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
@@ -173,9 +175,15 @@ class DatabaseController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function destroy($id)
+    public function destroy($table)
     {
-        //
+        try {
+            SchemaManager::dropTable($table);
+            return back(303);
+        } catch (Exception $e) {
+            $errors = new MessageBag(['error' => [$e->getMessage()]]);
+            return back()->withErrors($errors);
+        }
     }
 
     protected function prepareDbManager($action, $table = '')
