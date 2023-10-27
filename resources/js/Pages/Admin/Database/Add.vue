@@ -679,7 +679,7 @@ export default {
             } else {
                 const tambahField = {
                     name: null,
-                    // oldName : null,
+                    oldName : null,
                     type: {
                         name: "integer",
                         category: "Numbers",
@@ -697,7 +697,7 @@ export default {
                     // index : null
                 };
                 const fieldMaster = {
-                    dataType: this.dataTypes.types,
+                    dataType: this.action === 'update' ? this.dataTypes : this.dataTypes.types,
                     index: ['', 'INDEX', 'UNIQUE', 'PRIMARY'],
                 };
                 this.master.push(fieldMaster);
