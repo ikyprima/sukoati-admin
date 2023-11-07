@@ -45,7 +45,7 @@ Route::group(['middleware' => ['auth','verified']], function () {
         
         Route::put('/menu/update-child/{id}','MenuController@updateMenuChild')->name('menu.update.child');
         Route::put('/menu/update-parent/{id}','MenuController@updateMenuParent')->name('menu.update.parent');
-
+        //database manajemen
         Route::get('/database', 'DatabaseController@index')->name('database.index');
         Route::get('/database/create', 'DatabaseController@create')->name('database.create');
         Route::post('/database', 'DatabaseController@store')->name('database.store');
@@ -53,6 +53,13 @@ Route::group(['middleware' => ['auth','verified']], function () {
         Route::put('/database', 'DatabaseController@update')->name('database.update');
         Route::get('/database/{table}', 'DatabaseController@show')->name('database.show');
         Route::delete('/database/{table}', 'DatabaseController@destroy')->name('database.hapus');
+        //form builder
+        Route::get('/builder','BuilderController@index')->name('builder.index');
+        Route::get('/builder/{table}/create','BuilderController@create')->name('builder.create');
+        Route::get('/builder/{table}/edit','BuilderController@edit')->name('builder.edit');
+        Route::post('/builder', 'BuilderController@store')->name('builder.store');
+        Route::put('/builder', 'BuilderController@update')->name('builder.update');
+        Route::delete('/builder/{table}', 'BuilderController@destroy')->name('builder.hapus');
 
     });
 });
