@@ -9,7 +9,10 @@ module.exports = {
         './resources/views/**/*.blade.php',
         './resources/js/**/*.vue',
         './src/**/*.{html,js}',
-        './node_modules/tw-elements/dist/js/**/*.js'
+        './node_modules/tw-elements/dist/js/**/*.js',
+        './resources/js/vueform.config.js', // or where `vueform.config.js` is located
+        './node_modules/@vueform/vueform/themes/tailwind/**/*.vue',
+        './node_modules/@vueform/vueform/themes/tailwind/**/*.js',
     ],
     safelist: [
             'translate-x-[1rem]',
@@ -83,7 +86,8 @@ module.exports = {
     plugins: [
         require('@tailwindcss/forms'),
         require('tw-elements/dist/plugin'),
-        require('tailwind-animatecss')
+        require('tailwind-animatecss'),
+        require('@vueform/vueform/tailwind'),
     ],
     // daisyui: {
     

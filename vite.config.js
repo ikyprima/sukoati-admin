@@ -18,6 +18,13 @@ export default defineConfig({
             },
         }),
     ],
+    optimizeDeps: {
+    include: [
+        'nouislider',
+        'wnumb',
+        'trix'
+    ]
+    },
     ssr: {
         noExternal: ['@inertiajs/server'],
     },

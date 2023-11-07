@@ -14,6 +14,8 @@ import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+import VueForm from '@vueform/vueform'
+import vueformConfig from './vueform.config'
 // import VueMultiselect from 'vue-multiselect'
 
 
@@ -25,7 +27,7 @@ createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, app, props, plugin }) {
         const myApp = createApp({ 
-           
+        
             render: () => h(app, props) })
             .use(plugin)
             .use(ZiggyVue, Ziggy)
@@ -54,6 +56,7 @@ createInertiaApp({
                 },
             } });
             // myApp.component('VueMultiselect', VueMultiselect)
+            myApp.use(VueForm, vueformConfig); //gunakan sebagai plugin
             myApp.mount(el);
             return myApp;
 
