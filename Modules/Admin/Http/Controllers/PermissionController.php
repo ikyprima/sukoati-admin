@@ -6,7 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Inertia\Inertia;
-use App\Traits\listMidleware;
+use App\Traits\ListMidleware;
 use App\Models\Permission;
 use Auth;
 use Validator;
@@ -14,7 +14,7 @@ use Illuminate\Support\MessageBag;
 use Redirect;
 class PermissionController extends Controller
 {
-    use listMidleware;
+    use ListMidleware;
     /**
      * Display a listing of the resource.
      * @return Renderable
