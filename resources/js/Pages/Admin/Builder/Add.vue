@@ -14,8 +14,10 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
 import toast from '@/Stores/toast.js';
 import draggable from "vuedraggable";
+import { Codemirror } from 'vue-codemirror'
+import { json } from '@codemirror/lang-json'
 import { VAceEditor } from 'vue3-ace-editor';
-import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url'; 
+import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url';
 import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url';
 import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
 ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
@@ -70,7 +72,7 @@ ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
                             </div>
                         </template>
 
-                        
+
                         <div class="bg-white overflow-hidden w-full transform transition-all sm:w-full sm:mx-auto ">
                             <div class="relative px-6 pb-4 mx-2 flex-auto">
                                 <div class="grid grid-cols-2 md:grid-cols-2 gap-2 mt-2 ">
@@ -84,25 +86,26 @@ ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
                                 <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-2 mt-2">
                                     <div class="relative  ">
                                         <InputLabel for="displayName" value="Display Name" class="" />
-                                        <TextInput id="displayName" ref="displayNameInput" type="text" class="mt-1 block w-full"
-                                            v-model="formBuilder.display_name" placeholder="display name" />
+                                        <TextInput id="displayName" ref="displayNameInput" type="text"
+                                            class="mt-1 block w-full" v-model="formBuilder.display_name"
+                                            placeholder="display name" />
                                     </div>
                                     <div class="relative  ">
-                                        <InputLabel for="urlSlug"  value="URL Slug" class="" />
+                                        <InputLabel for="urlSlug" value="URL Slug" class="" />
                                         <TextInput id="urlSlug" ref="urlSlugInput" type="text" class="mt-1 block w-full"
-                                        v-model="formBuilder.slug" placeholder="URL slug" />
+                                            v-model="formBuilder.slug" placeholder="URL slug" />
                                     </div>
                                 </div>
                                 <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-2 mt-2 ">
                                     <div class="relative  ">
                                         <InputLabel for="modelName" value="Model Name" class="" />
                                         <TextInput id="modelName" ref="modelNameInput" type="text" class="mt-1 block w-full"
-                                        v-model="formBuilder.model_name" placeholder="model name" />
+                                            v-model="formBuilder.model_name" placeholder="model name" />
                                     </div>
                                     <div class="relative  ">
                                         <InputLabel for="controllerName" value="Controller Name" class="" />
-                                        <TextInput id="controllerName" ref="controllerNameInput" type="text" class="mt-1 block w-full"
-                                            placeholder="controller name" />
+                                        <TextInput id="controllerName" ref="controllerNameInput" type="text"
+                                            class="mt-1 block w-full" placeholder="controller name" />
                                     </div>
                                 </div>
                             </div>
@@ -125,8 +128,6 @@ ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
                                         Row Table
                                     </h3>
                                 </div>
-
-
                             </div>
                         </div>
                     </template>
@@ -135,9 +136,9 @@ ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
                             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                                 <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                                     <div class="overflow-hidden">
-                                        
-                                        
-                                                <table
+
+
+                                        <table
                                             class="min-w-full border text-center text-sm font-light dark:border-neutral-500">
                                             <thead class="border-b bg-gray-100 font-medium dark:border-neutral-500">
                                                 <tr>
@@ -158,56 +159,60 @@ ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
                                                 </tr>
                                             </thead>
                                             <transition-group>
-                                    <draggable 
+                                                <draggable :list="formBuilder.fieldOptions" :animation="300" item-key="name"
+                                                    :key="item => item.id" tag="tbody" 
+                                                    >
+                                                    <template v-slot:item="{ element, index }">
+                                                        <tr class=" border-b border-gray-200 " :class="{ 'draggable-item': true} ">
+                                                            <td
+                                                                class="whitespace-nowrap border-r px-1 py-1  w-1/5 text-left font-medium dark:border-neutral-500">
+                                                                <ul class="pl-2 list-none">
+                                                                    <li class="pb-2"><b class="italic text-lg underline ">{{
+                                                                        element.field }}</b> </li>
+                                                                    <li><b>Type</b> : {{ element.type }}</li>
+                                                                    <li><b>Key</b> : {{ element.key }}</li>
+                                                                    <li><b>Required</b> : {{ element.required }}</li>
+                                                                </ul>
+
+                                                            </td>
+                                                            <td
+                                                                class="whitespace-nowrap border-r px-2 py-2 align-top w-8 font-medium dark:border-neutral-500">
+
+                                                                <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                                ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
+                                                                focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36">
+                                                            </td>
+                                                            <td
+                                                                class="whitespace-nowrap border-r px-2 py-2 align-top w-8 font-medium dark:border-neutral-500">
+                                                                <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
+                                                                ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
+                                                                focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36">
+                                                            </td>
+                                                            <td class="px-4 text-center py-4 ">
+                                                                
+                                                                <!-- <v-ace-editor
+                                                                    v-model:value="formBuilder.fieldOptions[index].detail"
+                                                                    lang="json" theme="chrome" style="height: 150px" />  -->
+                                                                    <codemirror
+                                        v-model="code"
+                                        placeholder="Code goes here..."
+                                        :style="{ height: '200px' }"
+                                        :autofocus="true"
+                                      
+                                        :extensions="extensions"
+                                        @ready="handleReady"
+                                      
+                                    />
+
+                                                                    
+                                                            </td>
+                                                        </tr>
+
+                                                    </template>
+                                                </draggable>
+                                            </transition-group>
+                                        </table>
                                     
-                                        :list="formBuilder.fieldOptions"
-                                        :animation="200"
-                                        item-key="name"
-                                        :key="item => item.id"
-                                        tag="tbody"
-                                        >
-                                        <template v-slot:item="{ element, index }">
-                                            
-                                           
-                                                <tr class=" border-b border-gray-200">
-                                                        <td class="whitespace-nowrap border-r px-1 py-1  w-1/5 text-left font-medium dark:border-neutral-500">
-                                                            <ul class="pl-2 list-none">
-                                                                <li class="pb-2"><b class="italic text-lg underline ">{{ element.field }}</b> </li>
-                                                                <li><b>Type</b> : {{ element.type }}</li>
-                                                                <li><b>Key</b> : {{ element.key }}</li>
-                                                                <li><b>Required</b> : {{ element.required }}</li>
-                                                            </ul> 
-                                                        
-                                                        </td>
-                                                        <td class="whitespace-nowrap border-r px-2 py-2 align-top w-8 font-medium dark:border-neutral-500">
-                                                    
-                                                        <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
-                                                            ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
-                                                            focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36"
-                                                        >
-                                                    </td>
-                                                        <td class="whitespace-nowrap border-r px-2 py-2 align-top w-8 font-medium dark:border-neutral-500">
-                                                            <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
-                                                            ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
-                                                            focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36"
-                                                        >
-                                                        </td>
-                                                        <td class="px-4 text-center py-4">
-                                                            <v-ace-editor
-                                                            v-model:value="formBuilder.fieldOptions[index].detail"
-                                                            lang="json"
-                                                            theme="chrome"
-                                                            style="height: 100px" />
-                                                        </td>
-                                                    </tr>
-                                                
-                                        </template>
-                                    </draggable>
-                                </transition-group>
-                                </table>
-                              
-                                          
-                                        
                                     </div>
                                 </div>
                             </div>
@@ -215,7 +220,7 @@ ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
                     </div>
                     <template #footercard>
                         <div class="flex mb-4 mr-6 p-2 justify-end">
-                        
+
                             <PrimaryButton class=" ">
                                 <span class="mr-2"> <i class="fas fa-save "></i> </span>
                                 Simpan
@@ -243,9 +248,41 @@ export default {
         data: Object,
 
     },
+
+    setup() {
+      const code = ref(`console.log('Hello, world!')`)
+      const extensions = [json()]
+
+      // Codemirror EditorView instance ref
+      const view = shallowRef()
+      const handleReady = (payload) => {
+        view.value = payload.view
+      }
+
+      // Status is available at all times via Codemirror EditorView
+      const getCodemirrorStates = () => {
+        const state = view.value.state
+        const ranges = state.selection.ranges
+        const selected = ranges.reduce((r, range) => r + range.to - range.from, 0)
+        const cursor = ranges[0].anchor
+        const length = state.doc.length
+        const lines = state.doc.lines
+        // more state info ...
+        // return ...
+      }
+
+      return {
+        code,
+        extensions,
+        handleReady,
+        log: console.log
+      }
+    },
+
     components: {
         VAceEditor,
-        draggable
+        draggable,
+        Codemirror
     },
     watch: {
 
@@ -256,45 +293,45 @@ export default {
     data() {
         return {
             formBuilder: this.$inertia.form({
-                table : null,
-                slug : null,
-                display_name : null,
-                display_name_plural : null,
-                model_name : null,
-                fieldOptions : Object.values(this.data.fieldOptions).map((item) => {
+                table: null,
+                slug: null,
+                display_name: null,
+                display_name_plural: null,
+                model_name: null,
+                fieldOptions: Object.values(this.data.fieldOptions).map((item) => {
                     return {
-                        field : item.field,
-                        type:item.type,
-                        key : item.key,
-                        required : item.notnull,
-                        inputType : null,
-                        display_name : item.name,
-                        detail : '{}'
+                        field: item.field,
+                        type: item.type,
+                        key: item.key,
+                        required: item.notnull,
+                        inputType: null,
+                        display_name: item.name,
+                        detail: '{}'
                     }
                 })
-                
-            
+
+
             }),
             list: [
-        { id: 1, name: "Abby", sport: "basket" },
-        { id: 2, name: "Brooke", sport: "foot" },
-        { id: 3, name: "Courtenay", sport: "volley" },
-        { id: 4, name: "David", sport: "rugby" }
-      ],
-            
+                { id: 1, name: "Abby", sport: "basket" },
+                { id: 2, name: "Brooke", sport: "foot" },
+                { id: 3, name: "Courtenay", sport: "volley" },
+                { id: 4, name: "David", sport: "rugby" }
+            ],
+
             isDragging: false
         };
     },
 
     computed: {
         dragOptions() {
-      return {
-        animation: 200,
-        group: "description",
-        disabled: false,
-        ghostClass: "ghost"
-      };
-    }
+            return {
+                animation: 200,
+                group: "description",
+                disabled: false,
+                ghostClass: "ghost"
+            };
+        }
     },
 
     validations() {
@@ -302,9 +339,25 @@ export default {
 
 
     methods: {
-        kembali(){
+        kembali() {
             Inertia.get(route('builder.index'), {}, { replace: true })
         },
     },
 };
 </script>
+<style scoped> 
+.draggable-item {
+  transition: background-color 0.3s ease; /* Add transition for a smooth effect */
+}
+
+.draggable-item:hover {
+  box-shadow: 0 0 10px rgba(52, 152, 219, 0.7);
+}
+
+.draggable-item:active {
+  cursor: grabbing;
+  box-shadow: 0 0 10px rgba(231, 76, 60, 0.7);
+}
+
+</style>
+

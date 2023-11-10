@@ -81,20 +81,21 @@ import draggable from "vuedraggable";
                                     <th scope="col">Sport</th>
                                 </tr>
                             </thead>
-                            <tbody >
+                          
                                 <transition-group>
                                     <draggable 
-                                    
+                                       
                                         :list="list"
                                         :animation="200"
                                         @start="dragging = true"
                                         @end="dragging = false"
                                         item-key="name"
                                         :key="item => item.id"
+                                        tag="tbody"
                                         >
                                         <template v-slot:item="{ element, index }">
-                                            <tr class="border-b border-gray-200 hover:bg-gray-100 list-group " :key="element.name">
-                                                <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap p-2 list-group-item"
+                                            <tr class="border-b border-gray-200 hover:bg-gray-100 " :key="element.name">
+                                                <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap p-2 "
                                                     scope="row">{{ element.id }}</td>
                                                 <td
                                                     class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap p-2">
@@ -106,7 +107,7 @@ import draggable from "vuedraggable";
                                         </template>
                                     </draggable>
                                 </transition-group>
-                            </tbody>
+                            
                         </table>
                     </template>
                     <div>
@@ -142,9 +143,9 @@ export default {
 
         return {
             schema: {
-      name: { type: 'text', label: 'Name' },
-      email: { type: 'text', label: 'Email' }
-    },
+            name: { type: 'text', label: 'Name' },
+            email: { type: 'text', label: 'Email' }
+            },
             list: [{ id: 1, name: "Abby", sport: "basket" },
             { id: 2, name: "Brooke", sport: "foot" },
             { id: 3, name: "Courtenay", sport: "volley" },
@@ -158,18 +159,7 @@ export default {
 
     },
     methods: {
-        sort() {
-            this.list = this.list.sort((a, b) => a.order - b.order);
-        },
-        add: function () {
-            this.list.push({ name: "Juan " + id, id: id++ });
-        },
-        replace: function () {
-            this.list = [{ name: "Edgard", id: id++ }];
-        },
-        checkMove: function (e) {
-            window.console.log("Future index: " + e.draggedContext.futureIndex);
-        }
+    
     },
 };
 </script>

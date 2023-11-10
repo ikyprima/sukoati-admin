@@ -19,11 +19,11 @@ use Inertia\Inertia;
 use App\Traits\flattenRecursive;
 use App\Traits\buatRecursive;
 use App\Traits\ListController;
-use App\Traits\listMidleware;
+use App\Traits\ListMidleware;
 use Validator;
 class MenuController extends Controller
 {
-    use ListNamaRoute,flattenRecursive,buatRecursive,ListController,listMidleware;
+    use ListNamaRoute,flattenRecursive,buatRecursive,ListController,ListMidleware;
     /**
      * Display a listing of the resource.
      * @return Renderable
