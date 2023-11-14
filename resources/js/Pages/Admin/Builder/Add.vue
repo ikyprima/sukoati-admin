@@ -14,14 +14,8 @@ import { useVuelidate } from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
 import toast from '@/Stores/toast.js';
 import draggable from "vuedraggable";
+import VueJsoneditor from 'vue3-ts-jsoneditor';
 
-import { VAceEditor } from 'vue3-ace-editor';
-import workerJsonUrl from 'ace-builds/src-noconflict/worker-json?url';
-import modeJsonUrl from 'ace-builds/src-noconflict/mode-json?url';
-import themeChromeUrl from 'ace-builds/src-noconflict/theme-chrome?url';
-ace.config.setModuleUrl('ace/mode/json', modeJsonUrl);
-ace.config.setModuleUrl('ace/mode/json_worker', workerJsonUrl);
-ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
 </script>
 
 <template>
@@ -192,11 +186,13 @@ ace.config.setModuleUrl('ace/theme/chrome', themeChromeUrl);
                                                                 focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36" v-model="formBuilder.fieldOptions[index].display_name"
                                                                 :name="'displayName'+index">
                                                             </td>
-                                                            <td class="px-4 text-center py-4 ">
-                                                            
-                                                                    <v-ace-editor 
-                                                                    v-model:value="formBuilder.fieldOptions[index].detail"
-                                                                    lang="json" theme="chrome" style="height: 100px" /> 
+                                                            <td class="px-4 text-left py-4 ">
+                                                        
+                                                                    <vue-jsoneditor
+                                                                        v-model="formBuilder.fieldOptions[index].detail"
+                                                                        :mainMenuBar="false"
+                                                                        :mode="'text'"
+                                                                    />
                                                                 
                                                             </td>
                                                         </tr>
@@ -239,14 +235,12 @@ export default {
             },
         },
         data: Object,
+        action : String
 
     },
 
-    
-
     components: {
-        VAceEditor,
-        draggable,
+        draggable
     },
     watch: {
 
@@ -272,8 +266,8 @@ export default {
                         key: item.key,
                         required: item.notnull,
                         inputType: 'Text',
-                        display_name: item.name,
-                        detail: '{}'
+                        display_name: this.formatText(item.name),
+                        detail: {}
                     }
                 }),
 
@@ -295,12 +289,43 @@ export default {
         kembali() {
             Inertia.get(route('builder.index'), {}, { replace: true })
         },
-        
+        simpan() {
+            if (this.action === 'update') {
+                this.formTable.put(route('database.update'), {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        this.master.splice(1); //hapus semua dari index 1
+                        this.formTable.reset();
+                    },
+                    onError: (errors) => {
+                        console.log(errors);
+                    }
+                })
+            }else{
+                this.formTable.post(route('database.store'), {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        this.master.splice(1); //hapus semua dari index 1
+                        this.formTable.reset();
+                    },
+                    onError: (errors) => {
+                        console.log(errors);
+                    }
+                })
+            }
+        },
+        formatText: function (value) {
+            const stringWithSpaces = value.replace(/_/g, ' ');
+
+            const trimmedString = stringWithSpaces.trim();
+
+            return trimmedString; 
+        },
+    
     },
 };
 </script>
-<style scoped> 
 
-
-</style>
 
