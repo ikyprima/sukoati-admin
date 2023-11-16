@@ -210,7 +210,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                     <template #footercard>
                         <div class="flex mb-4 mr-6 p-2 justify-end">
 
-                            <PrimaryButton class=" ">
+                            <PrimaryButton class=" " v-on:click="simpan">
                                 <span class="mr-2"> <i class="fas fa-save "></i> </span>
                                 Simpan
                             </PrimaryButton>
@@ -291,24 +291,24 @@ export default {
         },
         simpan() {
             if (this.action === 'update') {
-                this.formTable.put(route('database.update'), {
+                this.formBuilder.put(route('database.update'), {
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
                         this.master.splice(1); //hapus semua dari index 1
-                        this.formTable.reset();
+                        this.formBuilder.reset();
                     },
                     onError: (errors) => {
                         console.log(errors);
                     }
                 })
             }else{
-                this.formTable.post(route('database.store'), {
+                this.formBuilder.post(route('builder.store'), {
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
                         this.master.splice(1); //hapus semua dari index 1
-                        this.formTable.reset();
+                        this.formBuilder.reset();
                     },
                     onError: (errors) => {
                         console.log(errors);

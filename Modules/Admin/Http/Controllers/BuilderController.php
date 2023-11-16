@@ -10,7 +10,8 @@ use DB;
 use Str;
 use Modules\Admin\Facades\Admin;
 use Modules\Admin\Database\Schema\SchemaManager;
-
+use Illuminate\Support\MessageBag;
+use Modules\Admin\Entities\DataType;
 class BuilderController extends Controller
 {
     /**
@@ -51,7 +52,27 @@ class BuilderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        try {
+            $dataType = DataType::firstOrCreate([
+                'name'=> $request->table
+            ], [
+
+            
+            ]);
+
+            $idDataType = $dataType->id;
+
+            foreach ($request->fieldOptions as $key => $item) {
+
+            
+            }
+            return back(303);
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
+            return back()->withErrors($errors);
+        }
+        
     }
 
     /**
