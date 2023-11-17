@@ -252,11 +252,12 @@ export default {
         return {
             masterInputType:['Text','Number','Password','Date'],
             formBuilder: this.$inertia.form({
-                table: null,
-                slug: null,
-                display_name: null,
-                display_name_plural: null,
+                table: this.data.table,
+                slug: this.data.slug,
+                display_name: this.data.display_name,
+                display_name_plural: this.data.display_name_plural,
                 model_name: null,
+                controller: null,
                 fieldOptions: Object.values(this.data.fieldOptions).map((item,index) => {
                     let order = index+1;
                     return {

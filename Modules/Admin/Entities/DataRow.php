@@ -3,7 +3,7 @@
 namespace Modules\Admin\Entities;
 
 use Illuminate\Database\Eloquent\Model;
-use TCG\Voyager\Traits\Translatable;
+use Modules\Admin\Traits\Translatable;
 
 class DataRow extends Model
 {

@@ -12,6 +12,7 @@ use Modules\Admin\Facades\Admin;
 use Modules\Admin\Database\Schema\SchemaManager;
 use Illuminate\Support\MessageBag;
 use Modules\Admin\Entities\DataType;
+use Modules\Admin\Entities\DataRow;
 class BuilderController extends Controller
 {
     /**
@@ -57,15 +58,24 @@ class BuilderController extends Controller
             $dataType = DataType::firstOrCreate([
                 'name'=> $request->table
             ], [
-
-            
+                'slug'=> $request->slug,
+                'display_name_singular'=> $request->display_name,
+                'display_name_plural'=> $request->display_name_plural,
+                'model_name'=> $request->model_name,
+                'controller'=> $request->table,
             ]);
 
             $idDataType = $dataType->id;
 
             foreach ($request->fieldOptions as $key => $item) {
 
-            
+                $dataRows = DataRow::updateOrCreate([
+                    'field' =>  $item['field'],
+                    'data_type_id' => $idDataType,
+                ], [
+                    'type' => $item['type'],
+                    'display_name' => $item['display_name']
+                ]);
             }
             return back(303);
         } catch (\Illuminate\Database\QueryException $e) {
