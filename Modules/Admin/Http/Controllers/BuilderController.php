@@ -73,10 +73,11 @@ class BuilderController extends Controller
                     'field' =>  $item['field'],
                     'data_type_id' => $idDataType,
                 ], [
-                    'type' => $item['type'],
+                    'type' => $item['inputType'],
                     'display_name' => $item['display_name']
                 ]);
             }
+            \Artisan::call('route:clear');
             return back(303);
         } catch (\Illuminate\Database\QueryException $e) {
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);

@@ -263,7 +263,6 @@ export default {
                     return {
                         order:order,
                         field: item.field,
-                        type: item.type,
                         key: item.key,
                         required: item.notnull,
                         inputType: 'Text',

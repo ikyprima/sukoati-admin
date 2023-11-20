@@ -11,7 +11,7 @@
 |
 */
 
-
+use Modules\Admin\Entities\DataType;
 
 Route::group(['middleware' => ['auth','verified']], function () {
     //
@@ -60,6 +60,18 @@ Route::group(['middleware' => ['auth','verified']], function () {
         Route::post('/builder', 'BuilderController@store')->name('builder.store');
         Route::put('/builder', 'BuilderController@update')->name('builder.update');
         Route::delete('/builder/{table}', 'BuilderController@destroy')->name('builder.hapus');
+
+        //sukoati controller
+        try {
+            foreach (DataType::all() as $dataType) {
+                $controller = 'SukoatiController';
+                Route::resource($dataType->slug, $controller, ['parameters' => [$dataType->slug => 'id']]); 
+            }
+        } catch (\InvalidArgumentException $e) {
+            throw new \InvalidArgumentException("Terjadi Kesalahan: ".$e->getMessage(), 1);
+        } catch (\Exception $e) {
+
+        }
 
     });
 });
