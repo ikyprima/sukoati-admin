@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\MessageBag;
+use Modules\Admin\Facades\Admin;
 class SukoatiController extends Controller
 {
     /**
@@ -14,10 +15,20 @@ class SukoatiController extends Controller
      */
     public function index(Request $request)
     {
-    
         $slug = $this->getSlug($request);
+        $dataType = Admin::model('DataType')->where('slug', '=', $slug)->first();
 
-        return $slug;
+
+        if (class_exists($dataType->model_name)) {
+            // jika model ada
+            $model= app($dataType->model_name);
+        
+        } else {
+            // Model tidak ada
+        
+        }
+        
+      
     }
 
     /**
