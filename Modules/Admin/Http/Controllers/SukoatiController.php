@@ -16,7 +16,9 @@ class SukoatiController extends Controller
     public function index(Request $request)
     {
         $slug = $this->getSlug($request);
-        $dataType = Admin::model('DataType')->where('slug', '=', $slug)->first();
+        return $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
+            $query->where('browse', '1');
+        }])->where('slug', '=', $slug)->first();
 
 
         if (class_exists($dataType->model_name)) {
@@ -25,10 +27,12 @@ class SukoatiController extends Controller
         
         } else {
             // Model tidak ada
-        
+            $model= app('Modules\Admin\Entities\SukoAtiModel');
+            $model->setTableName($dataType->name);
         }
-        
-      
+    
+        $results = $model->first();
+        return $results;
     }
 
     /**

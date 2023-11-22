@@ -10,7 +10,12 @@ class SukoAtiModel extends Model
     use HasFactory;
 
     protected $fillable = [];
-    
+    protected $table ;
+
+    public function setTableName($tableName)
+    {
+        $this->table = $tableName;
+    }
     protected static function newFactory()
     {
         return \Modules\Admin\Database\factories\SukoAtiModelFactory::new();

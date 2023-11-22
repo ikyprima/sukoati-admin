@@ -28,6 +28,11 @@ class Adminprovider
         return app($this->models[Str::studly($name)]);
     }
     
+    public function modelClass($name)
+    {
+        return $this->models[$name];
+    }
+    
 
     
 }
