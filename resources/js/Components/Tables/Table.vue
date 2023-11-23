@@ -92,7 +92,7 @@
                 <template v-else>
                   <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap p-2 "
                     :class="['text-' + datax.align, 'w-' + datax.size]">
-                    <div v-if="datax.type == 'string'">
+                    <div v-if="datax.type == 'string' || datax.type == 'Text'">
                       {{ data[datax.field] ? data[datax.field] : '-' }}
                     </div>
 
@@ -106,7 +106,7 @@
                       dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-blue-700 dark:focus:bg-blue-700">
                           <i class="fas fa-lg fa-pencil-alt"></i>
                         </button>
-                       
+                      
                         <button type="button" v-on:click="clickhapus(data)"
                           class="inline-flex items-center px-4 py-2 text-sm font-medium text-red-500 bg-transparent border border-red-500 rounded-r-md 
                       shadow transition ease-in-out duration-150  

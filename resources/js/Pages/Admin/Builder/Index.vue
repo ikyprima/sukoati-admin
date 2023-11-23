@@ -54,7 +54,6 @@ import draggable from "vuedraggable";
                                 <div class="max-w-full flex-grow">
                                     <h3 class="font-semibold text-lg">
                                         Form Builder
-
                                     </h3>
                                 
                                 </div>
@@ -73,42 +72,7 @@ import draggable from "vuedraggable";
                         
                         </template>
                         
-                        <table class="table table-striped">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th scope="col">Id</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Sport</th>
-                                </tr>
-                            </thead>
-                          
-                                <transition-group>
-                                    <draggable 
-                                       
-                                        :list="list"
-                                        :animation="200"
-                                        @start="dragging = true"
-                                        @end="dragging = false"
-                                        item-key="name"
-                                        :key="item => item.id"
-                                        tag="tbody"
-                                        >
-                                        <template v-slot:item="{ element, index }">
-                                            <tr class="border-b border-gray-200 hover:bg-gray-100 " :key="element.name">
-                                                <td class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap p-2 "
-                                                    scope="row">{{ element.id }}</td>
-                                                <td
-                                                    class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap p-2">
-                                                    {{ element.name }}</td>
-                                                <td
-                                                    class="border-t-0 px-6 align-middle border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap p-2">
-                                                    {{ element.sport }}</td>
-                                            </tr>
-                                        </template>
-                                    </draggable>
-                                </transition-group>
-                            
-                        </table>
+                        
                     </template>
                     <div>
 
@@ -125,33 +89,21 @@ import draggable from "vuedraggable";
 <script>
 
 export default {
-    name: "table-example",
-    display: "Table",
-    order: 8,
+  
+   
    
     components: {
-        draggable,
+        
        
     },
     computed: {
-        draggingInfo() {
-            return this.dragging ? "under drag" : "";
-        },
+     
     },
    
     data() {
 
         return {
-            schema: {
-            name: { type: 'text', label: 'Name' },
-            email: { type: 'text', label: 'Email' }
-            },
-            list: [{ id: 1, name: "Abby", sport: "basket" },
-            { id: 2, name: "Brooke", sport: "foot" },
-            { id: 3, name: "Courtenay", sport: "volley" },
-            { id: 4, name: "David", sport: "rugby" }],
-            dragging: false,
-            enabled: true,
+        
        
         };
     },
@@ -163,29 +115,5 @@ export default {
     },
 };
 </script>
-<style scoped>
-.flip-list-move {
-    transition: transform 0.5s;
-}
 
-.no-move {
-    transition: transform 0s;
-}
-.ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
-}
-
-.list-group {
-  min-height: 20px;
-}
-
-.list-group-item {
-  cursor: move;
-}
-
-.list-group-item i {
-  cursor: pointer;
-}
-</style>
 

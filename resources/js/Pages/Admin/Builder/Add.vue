@@ -130,20 +130,20 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                 <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
                                     <div class="overflow-hidden">
                                         <table
-                                            class="min-w-full border text-center text-sm font-light dark:border-neutral-500">
-                                            <thead class="border-b bg-gray-100 font-medium dark:border-neutral-500">
+                                            class="min-w-full border text-center text-sm font-light dark:border-gray-300">
+                                            <thead class="border-b bg-gray-100 font-medium dark:border-gray-300">
                                                 <tr>
-                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-gray-300">
                                                         Field
                                                     </th>
-                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-gray-300">
                                                         Input Type
                                                     </th>
-                                                    <th scope="col" class="border-r px-6 py-4 dark:border-neutral-500">
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-gray-300">
                                                         Display Name
                                                     </th>
                                                     <th scope="col"
-                                                        class="border-r px-4 py-4 dark:border-neutral-500 text-left">
+                                                        class="border-r px-4 py-4 dark:border-gray-300 text-left">
                                                         Option Details
                                                     </th>
 
@@ -154,9 +154,9 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                     :key="item => item.id" tag="tbody" 
                                                     >
                                                     <template v-slot:item="{ element, index }">
-                                                        <tr class=" border-b border-gray-200 " >
+                                                        <tr>
                                                             <td
-                                                                class="whitespace-nowrap border-r px-1 py-1  w-1/5 text-left font-medium dark:border-neutral-500">
+                                                                class="whitespace-nowrap border px-1 py-1  w-1/5 text-left font-medium dark:border-gray-300">
                                                                 <ul class="pl-2 list-none">
                                                                     <li class="pb-2"><b class="italic text-lg underline ">{{
                                                                         element.field }}</b> </li>
@@ -167,7 +167,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
 
                                                             </td>
                                                             <td
-                                                                class="whitespace-nowrap border-r px-2 py-2 align-top w-8 font-medium dark:border-neutral-500">
+                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300">
                                                                 <select class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                                         ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                                         focus:ring-indigo-600 sm:text-sm sm:leading-6 w-28" v-model="formBuilder.fieldOptions[index].inputType"
@@ -180,13 +180,13 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                     </select>
                                                             </td>
                                                             <td
-                                                                class="whitespace-nowrap border-r px-2 py-2 align-top w-8 font-medium dark:border-neutral-500">
+                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300">
                                                                 <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                                 ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                                 focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36" v-model="formBuilder.fieldOptions[index].display_name"
                                                                 :name="'displayName'+index">
                                                             </td>
-                                                            <td class="px-4 text-left py-4 ">
+                                                            <td class="px-4 border text-left py-4 dark:border-gray-300">
                                                         
                                                                     <vue-jsoneditor
                                                                         v-model="formBuilder.fieldOptions[index].detail"

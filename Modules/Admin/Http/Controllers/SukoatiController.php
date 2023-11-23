@@ -16,7 +16,9 @@ class SukoatiController extends Controller
     public function index(Request $request)
     {
         $slug = $this->getSlug($request);
-        return $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
+
+        
+         $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
             $query->where('browse', '1');
         }])->where('slug', '=', $slug)->first();
 
@@ -30,9 +32,23 @@ class SukoatiController extends Controller
             $model= app('Modules\Admin\Entities\SukoAtiModel');
             $model->setTableName($dataType->name);
         }
-    
-        $results = $model->first();
-        return $results;
+        
+        
+        $header = $dataType->rows->map(function($item){
+            return [
+                'title'=> $item->display_name,
+                'field'=> $item->field,
+                'type'=> $item->type,
+                'size'=>'auto',
+                'align'=> 'left'
+            ];
+        });
+        $data = $model->get();
+        return Inertia::render('Admin/Sukoati/Index',[
+            'header'=>$header,
+            'data'=> $data,
+            'titleTable'=> $dataType->display_name_singular
+        ]);
     }
 
     /**
