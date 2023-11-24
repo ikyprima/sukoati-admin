@@ -22,14 +22,14 @@ import draggable from "vuedraggable";
 
 <template>
     <Head>
-        <title>Manajemen Menu </title>
+        <title>Builder Menu </title>
         <meta name="description" content="halaman manajemen menu" />
         <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     </Head>
 
     <AdminLayout>
         <template #textnavbar>
-            manajemen database
+            builder table 
         </template>
         <template #notif>
             <ToastList />
@@ -46,42 +46,63 @@ import draggable from "vuedraggable";
         </template>
         <div class="flex flex-wrap mt-4">
 
-            <div class="w-full mb-12 px-4">
-                <card :minheigth="'min-h-0'">
-                    <template #headercard>
-                        <div class="pt-2 pb-2 mx-8 border-b border-solid border-blueGray-200 ">
-                            <div class="flex flex-wrap items-center">
-                                <div class="max-w-full flex-grow">
-                                    <h3 class="font-semibold text-lg">
-                                        Form Builder
-                                    </h3>
-                                
-                                </div>
-                                <div class="relative md:w-full md:max-w-full flex-grow flex-1 text-right">
-                                    <div class="hidden md:block">
-                                        <PrimaryButton
-                                            class="bg-red-600 hover:bg-red-400 focus:bg-red-400 focus:ring-red-600">Kembali
-                                        </PrimaryButton>
-                                    </div>
-                                </div>
+<div class="w-full mb-12 px-4">
+    <Table @klik="klikMethod" :list=tables :header=setting namaTitle='LIST TABLE MySQL'>
+        <template #button>
 
+           
+
+            <div class="md:min-w-full md:hidden block">
+                <div class="flex flex-wrap">
+                    <div class="w-full">
+                        <button
+                            class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
+                            type="button">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </template>
+        <template #pencarian>
+            <div class="w-full lg:w-full mt-5 ">
+
+                <div class="grid grid-cols-1 ">
+                    <div class="text-lg font-bold">
+
+                    </div>
+                    <div class=" text-white rounded-md ">
+
+                        <label for="search"
+                            class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Cari</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
                             </div>
+                            <input type="search" id="search" v-model="search" v-on:keyup.enter="cari"
+                                class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="cari table" required>
+
                         </div>
-                    
-                        <template>
-                        
-                        </template>
-                        
-                        
-                    </template>
-                    <div>
 
                     </div>
 
-                </card>
+                </div>
             </div>
 
-        </div>
+        </template>
+
+    </Table>
+
+</div>
+
+</div>
 
     </AdminLayout>
 </template>
@@ -90,7 +111,10 @@ import draggable from "vuedraggable";
 
 export default {
   
-   
+   props:{
+    dataTypes: Object,
+    tables: Object
+   },
    
     components: {
         
@@ -103,7 +127,62 @@ export default {
     data() {
 
         return {
-        
+            setting: [ //seting header table
+                {
+                    title: 'Nama Table',
+                    field: 'name',
+                    type: 'string',
+                    size: 'auto',
+                    align: 'left'
+                },
+                {
+                    title: 'Prefix',
+                    field: 'prefix',
+                    type: 'string',
+                    size: 'auto',
+                    align: 'left'
+                },
+                {
+                    title: 'Slug',
+                    field: 'slug',
+                    type: 'string',
+                    size: 'auto',
+                    align: 'left'
+                },
+                
+                {
+                    title: 'Aksi',
+                    field: null,
+                    type: 'button-group',
+                    data: [
+                        {
+                            text: '',
+                            type: 'button',
+                            action: 'edit',
+                            class: 'border rounded-l-2xl border-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-blue-500 focus:text-white focus:z-[1]',
+                            icon: 'fas fa-lg fa-pencil-alt'
+                        },
+                        {
+                            text: '',
+                            type: 'button',
+                            action: 'tambah',
+                            class: 'border-t border-b border-blue-500 hover:bg-emerald-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-emerald-500 focus:text-white focus:z-[1]',
+                            icon: 'fas fa-lg fa-plus'
+                        },
+                        {
+                            text: '',
+                            type: 'button',
+                            action: 'hapus',
+                            class: 'border rounded-r-2xl border-blue-500  hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-700 focus:bg-red-500 focus:text-white  focus:z-[1]',
+                            icon: 'fas fa-lg fa-trash-alt'
+                        },
+                    ],
+                    size: 20,
+                    align: 'center'
+                },
+            
+
+            ],
        
         };
     },

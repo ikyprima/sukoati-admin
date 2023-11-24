@@ -22,7 +22,25 @@ class BuilderController extends Controller
     public function index()
     {
         // dd(app('App\Models\User'));
-        return Inertia::render('Admin/Builder/Index');
+        $dataTypes = Admin::model('DataType')->select('id', 'name', 'slug')->get()->keyBy('name')->toArray();
+
+        $tables = array_map(function ($table) use ($dataTypes) {
+            $table = Str::replaceFirst(DB::getTablePrefix(), '', $table);
+
+            $table = [
+                'prefix'     => DB::getTablePrefix(),
+                'name'       => $table,
+                'slug'       => $dataTypes[$table]['slug'] ?? null,
+                'dataTypeId' => $dataTypes[$table]['id'] ?? null,
+            ];
+
+            return (object) $table;
+        }, array_diff(SchemaManager::listTableNames(), config('admin.tabelList')) );
+       
+        return Inertia::render('Admin/Builder/Index',[
+            'dataTypes'=> $dataTypes,
+            'tables' => collect($tables)->values()
+        ]);
     }
 
     /**
@@ -40,7 +58,7 @@ class BuilderController extends Controller
             ? DB::getTablePrefix().app($dataType->model_name)->getTable()
             : DB::getTablePrefix().$table
         );
-
+        
         return Inertia::render('Admin/Builder/Add',[
             'data'=> $data
         ]);
