@@ -11,12 +11,8 @@ import HeaderStats from "@/Components/Headers/HeaderStats.vue";
 import Modal from '@/Components/Modal.vue';
 import { Head } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia';
-import NProgress from 'nprogress'
 import ToastList from '@/Components/Notifications/ToastList.vue';
 import toast from '@/Stores/toast.js';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
-import draggable from "vuedraggable";
 
 </script>
 
@@ -85,7 +81,7 @@ import draggable from "vuedraggable";
                                         stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                             </div>
-                            <input type="search" id="search" v-model="search" v-on:keyup.enter="cari"
+                            <input type="search" id="search" v-on:keyup.enter="cari"
                                 class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="cari table" required>
 
@@ -165,6 +161,13 @@ export default {
                         {
                             text: '',
                             type: 'button',
+                            action: 'view',
+                            class: 'border-t border-b border-r border-blue-500 hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-emerald-500 focus:text-white focus:z-[1]',
+                            icon: 'fas fa-lg fa-file'
+                        },
+                        {
+                            text: '',
+                            type: 'button',
                             action: 'tambah',
                             class: 'border-t border-b border-blue-500 hover:bg-emerald-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-emerald-500 focus:text-white focus:z-[1]',
                             icon: 'fas fa-lg fa-plus'
@@ -187,10 +190,31 @@ export default {
         };
     },
     created() {
-
+        if(this.$page.props.flash.message != null){
+            toast.add({
+                message: this.$page.props.flash.message,
+                category : 'info'
+            });
+        }
+        this.$page.props.flash.message = null;    
     },
     methods: {
-    
+        klikMethod(value) {
+            const method = value.action;
+            this[method](value.value)
+        },
+        tambah(value) {
+            Inertia.get(route('builder.create',value.name), {}, { replace: true })
+        },
+        view(value){
+            // window.open(route(value.slug+'.index'), '_blank');
+            Inertia.get(route(value.slug+'.index'),{},
+                { 
+                    replace: true,
+                    preserveState: true 
+                }
+            )
+        }
     },
 };
 </script>

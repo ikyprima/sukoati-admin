@@ -57,7 +57,8 @@ class SukoatiController extends Controller
      */
     public function create()
     { 
-        return 'create';
+    
+        return Inertia::render('Admin/Sukoati/Add');
     
     }
 

@@ -295,7 +295,6 @@ export default {
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
-                        this.master.splice(1); //hapus semua dari index 1
                         this.formBuilder.reset();
                     },
                     onError: (errors) => {
@@ -307,7 +306,6 @@ export default {
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
-                        this.master.splice(1); //hapus semua dari index 1
                         this.formBuilder.reset();
                     },
                     onError: (errors) => {

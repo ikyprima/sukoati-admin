@@ -96,7 +96,7 @@ class BuilderController extends Controller
                 ]);
             }
             \Artisan::call('route:clear');
-            return back(303);
+            return to_route('builder.index')->with(['message'=>'Sukses Generate Form']);
         } catch (\Illuminate\Database\QueryException $e) {
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
             return back()->withErrors($errors);
