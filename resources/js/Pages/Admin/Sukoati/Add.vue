@@ -1,22 +1,3 @@
-<script setup>
-import AdminLayout from '@/Layouts/Admin.vue';
-import ButtonTambah from '@/Components/Buttons/ButtonTambah.vue';
-import Card from "@/Components/Cards/Card.vue";
-import Headers from "@/Components/Headers/Headers.vue";
-import { Head } from '@inertiajs/vue3';
-import { Inertia } from '@inertiajs/inertia'
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
-import ToastList from '@/Components/Notifications/ToastList.vue';
-import { useVuelidate } from '@vuelidate/core'
-import { required, helpers } from '@vuelidate/validators'
-import toast from '@/Stores/toast.js';
-import draggable from "vuedraggable";
-import VueJsoneditor from 'vue3-ts-jsoneditor';
-
-</script>
 
 <template>
     <Head>
@@ -72,27 +53,13 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
 
                     <div class="bg-white overflow-hidden w-full transform transition-all sm:w-full sm:mx-auto ">
                             <div class="relative px-6 pb-4 mx-2 flex-auto">
-                                
-                                <div class="grid grid-cols-2 md:grid-cols-2 gap-2 mt-2 ">
-                                    <Vueform :schema="schema"></Vueform>
-                                </div>
-                                <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                                    <div class="relative  ">
-                                        <InputLabel for="displayName" value="Display Name" class="" />
-                                        <TextInput id="displayName" ref="displayNameInput" type="text"
-                                            class="mt-1 block w-full" 
-                                            placeholder="display name" />
-                                    </div>
-                                    <div class="relative  ">
-                                        <InputLabel for="urlSlug" value="URL Slug" class="" />
-                                        <TextInput id="urlSlug" ref="urlSlugInput" type="text" class="mt-1 block w-full"
-                                            placeholder="URL slug" />
-                                    </div>
-                                </div>
-                               
+                                <Vueform  v-model="data" sync :schema="schema"></Vueform>
+                                <Vueform ref="form$">
+                                    <TextElement name="name" rules="required" />
+                                </Vueform>
                             </div>
+                            
                         </div>
-                  
                     <template #footercard>
                         <div class="flex mb-4 mr-6 p-2 justify-end">
 
@@ -108,11 +75,32 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
         
     </AdminLayout>
 </template>
+<script setup>
+import AdminLayout from '@/Layouts/Admin.vue';
+import Card from "@/Components/Cards/Card.vue";
+import Headers from "@/Components/Headers/Headers.vue";
+import { Head } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia'
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import ToastList from '@/Components/Notifications/ToastList.vue';
+import draggable from "vuedraggable";
+import { ref, onMounted } from 'vue'
+const form$ = ref(null)
+onMounted(() => {
+        console.log('tess') 
+        })
+
+  
+</script>
+
 
 <script>
 
-export default {
 
+
+export default {
+    
+    
     props: {
         color: {
             default: "light",
@@ -121,9 +109,8 @@ export default {
                 return ["light", "dark"].indexOf(value) !== -1;
             },
         },
-        form: Object,
-        action : String,
-        slug : String
+        formContainer: Object,
+        action : String
 
     },
 
@@ -137,23 +124,11 @@ export default {
 
     },
     data() {
+
         return {
-        
-            schema: {
-                name: { type: 'text', label: 'Name' },
-                email: { 
-                    type: 'text',
-                    inputType: 'password',
-                    label: 'Passwordsss',
-                    columns : {container: 12, label: 3, wrapper: 12 },
-                    overrideClass:{
-                        inputContainer: 'border border-gray-300 w-full transition-all rounded-sm shadow-sm',
-                        inputContainer_default: 'border-black',
-                        inputContainer_focused: '',
-                        inputContainer_md: '',
-                    }
-                }
-            }
+            
+            data : {},
+            schema: this.formContainer
         };
     },
 
@@ -171,34 +146,25 @@ export default {
             Inertia.get(route('builder.index'), {}, { replace: true })
         },
         simpan() {
-            if (this.action === 'update') {
-                this.formBuilder.put(route('database.update'), {
-                    preserveScroll: true,
-                    preserveState: true,
-                    onSuccess: () => {
-                        this.formBuilder.reset();
-                    },
-                    onError: (errors) => {
-                        console.log(errors);
-                    }
-                })
-            }else{
-                this.formBuilder.post(route('builder.store'), {
-                    preserveScroll: true,
-                    preserveState: true,
-                    onSuccess: () => {
-                        this.formBuilder.reset();
-                    },
-                    onError: (errors) => {
-                        console.log(errors);
-                    }
-                })
-            }
+            console.log(form$);
+            this.$inertia.post(route(this.action),this.data, {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: () => {
+                    form$.value.messageBag.append('Appended error')
+                    form$.value.messageBag.prepend('Prepended error')
+
+                    form$.value.messageBag.append('Appended message', 'message')
+                    form$.value.messageBag.prepend('Prepended message', 'message')
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                }
+            })
+            
         },
         
     
     },
 };
 </script>
-
-

@@ -9,7 +9,7 @@ class SukoAtiModel extends Model
 {
     use HasFactory;
 
-    protected $fillable = [];
+    protected $guarded = [];
     protected $table ;
 
     public function setTableName($tableName)

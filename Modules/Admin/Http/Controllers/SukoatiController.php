@@ -18,7 +18,7 @@ class SukoatiController extends Controller
         $slug = $this->getSlug($request);
 
         
-         $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
+        $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
             $query->where('browse', '1');
         }])->where('slug', '=', $slug)->first();
 
@@ -47,7 +47,8 @@ class SukoatiController extends Controller
         return Inertia::render('Admin/Sukoati/Index',[
             'header'=>$header,
             'data'=> $data,
-            'titleTable'=> $dataType->display_name_singular
+            'titleTable'=> $dataType->display_name_singular,
+            
         ]);
     }
 
@@ -55,10 +56,60 @@ class SukoatiController extends Controller
      * Show the form for creating a new resource.
      * @return Renderable
      */
-    public function create()
+    public function create(Request $request)
     { 
-    
-        return Inertia::render('Admin/Sukoati/Add');
+        $slug = $this->getSlug($request);
+        $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
+            $query->where('browse', '1');
+        }])->where('slug', '=', $slug)->first();
+
+        $shema= $dataType->rows->flatMap(function($item){
+        $rules = [];
+        if($item->required === 1){
+            array_push($rules,'required');
+        }
+            return [
+                $item->field =>[
+                    'type'=> $item->type,
+                    'label' => $item->display_name,
+                    'floating' => false,
+                    'placeholder' => $item->display_name,
+                    'fieldName' => $item->display_name,
+                    'rules' => $rules,
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    ),
+                    'overrideClass' => array(
+                        'inputContainer' => 'border border-gray-300 w-full transition-all rounded-lg shadow-sm',
+                        'inputContainer_default' => 'border-black',
+                        'inputContainer_focused' => '',
+                        'inputContainer_md' => '',
+                    ),
+                    'addClasses' => array(
+                        'ElementLabel' => array(
+                            'container' => 'block font-medium text-sm text-gray-700',
+                        ),
+                        'TextElement' => array(
+                            'input' => 'rounded-lg shadow-sm',
+                        ),
+                    ),
+
+                ]
+            ];
+        });
+        
+        $container = collect(
+            ['container'=> [
+                'type'=> 'group',
+                'schema'=> $shema
+            ]]
+        );
+        return Inertia::render('Admin/Sukoati/Add',[
+            'formContainer'=>$container,
+            'action' =>  $slug.'.store'
+        ]);
     
     }
 
@@ -71,7 +122,20 @@ class SukoatiController extends Controller
     {
 
         try {
-        
+            
+            $slug = $this->getSlug($request);
+            $dataType = Admin::model('DataType')->where('slug', '=', $slug)->first();
+
+            if (class_exists($dataType->model_name)) {
+                // jika model ada
+                $model= app($dataType->model_name);
+            
+            } else {
+                // Model tidak ada
+                $model= app('Modules\Admin\Entities\SukoAtiModel');
+                $model->setTableName($dataType->name);
+            }
+            $model->create($request->all());
             return back(303);
         } catch (\Illuminate\Database\QueryException $e) {
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
