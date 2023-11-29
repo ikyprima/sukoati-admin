@@ -99,8 +99,14 @@ class SukoatiController extends Controller
                 ]
             ];
         });
-        
-        $container = collect(
+        $shema['element']=[
+                'type'=> 'button',
+                'button-label'=>'Simpan',
+                'align'=>'right',
+                'submits'=>true
+                
+            ];
+         $container = collect(
             ['container'=> [
                 'type'=> 'group',
                 'schema'=> $shema

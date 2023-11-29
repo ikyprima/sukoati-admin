@@ -46,6 +46,7 @@
         "vue-multiselect": "^3.0.0-beta.1",
         "vue3-ace-editor": "^2.2.4",
         "vue3-form-wizard": "^0.2.1",
+        "vue3-lottie": "^3.2.0",
         "vue3-ts-jsoneditor": "^2.9.0",
         "vuedraggable": "^4.1.0",
         "wnumb": "^1.2.0"

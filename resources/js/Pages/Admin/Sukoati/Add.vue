@@ -41,7 +41,7 @@
                                     </div>
                                     <div class="relative md:w-full md:max-w-full flex-grow flex-1 text-right p-4 mr-4">
                                         <div class="hidden md:block">
-                                            <PrimaryButton v-on:click="kembali"
+                                            <PrimaryButton @click="kembali"
                                                 class="bg-red-600 hover:bg-red-400 focus:bg-red-400 focus:ring-red-600">
                                                 Kembali</PrimaryButton>
                                         </div>
@@ -52,11 +52,13 @@
                     </template>
 
                     <div class="bg-white overflow-hidden w-full transform transition-all sm:w-full sm:mx-auto ">
+                
+        
                             <div class="relative px-6 pb-4 mx-2 flex-auto">
-                                <Vueform  v-model="data" sync :schema="schema"></Vueform>
-                                <Vueform ref="form$">
-                                    <TextElement name="name" rules="required" />
+                                <Vueform :endpoint="endpoint" ref="form$" v-model="data" sync :schema="schema">
+                                
                                 </Vueform>
+                            
                             </div>
                             
                         </div>
@@ -75,32 +77,35 @@
         
     </AdminLayout>
 </template>
+
+
+
 <script setup>
+
+
+
 import AdminLayout from '@/Layouts/Admin.vue';
 import Card from "@/Components/Cards/Card.vue";
 import Headers from "@/Components/Headers/Headers.vue";
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+
+import ToastList from '@/Components/Notifications/ToastList.vue';
+
+import draggable from "vuedraggable";
 import { Head } from '@inertiajs/vue3';
 import { Inertia } from '@inertiajs/inertia'
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import ToastList from '@/Components/Notifications/ToastList.vue';
-import draggable from "vuedraggable";
-import { ref, onMounted } from 'vue'
-const form$ = ref(null)
-onMounted(() => {
-        console.log('tess') 
-        })
 
-  
+
 </script>
-
 
 <script>
 
 
 
+
 export default {
     
-    
+
     props: {
         color: {
             default: "light",
@@ -126,7 +131,26 @@ export default {
     data() {
 
         return {
-            
+            options: {
+                    minimizable: false,
+                    playerSize: "standard",
+                    backgroundColor: '#fff',
+                    backgroundStyle: 'color',
+                    theme: {
+                        controlsView: "standard",
+                        active: "light",
+                        light: {
+                            color: '#3D4852',
+                            backgroundColor: '#fff',
+                            opacity: '0.7',
+                        },
+                        dark: {
+                            color: '#fff',
+                            backgroundColor: '#202020',
+                            opacity: '0.7',
+                        }
+                    }
+                },
             data : {},
             schema: this.formContainer
         };
@@ -139,28 +163,45 @@ export default {
     validations() {
 
     },
-
+    mounted() {
+        
+    },
 
     methods: {
         kembali() {
             Inertia.get(route('builder.index'), {}, { replace: true })
         },
+        endpoints: {
+            submit: {
+            url: '/form/submsit',
+            method: 'post'
+            }
+        },
+      
         simpan() {
-            console.log(form$);
-            this.$inertia.post(route(this.action),this.data, {
-                preserveScroll: true,
-                preserveState: true,
-                onSuccess: () => {
-                    form$.value.messageBag.append('Appended error')
-                    form$.value.messageBag.prepend('Prepended error')
+            
 
-                    form$.value.messageBag.append('Appended message', 'message')
-                    form$.value.messageBag.prepend('Prepended message', 'message')
-                },
-                onError: (errors) => {
-                    console.log(errors);
-                }
-            })
+            // this.$refs.form$.validate()
+            console.log(this.$refs.form$.invalid)
+            // if (this.$refs.form$.invalid == false) {
+            //     console.log('simpan');
+            // }else{
+            //     console.log('stop');
+            // }
+            // if ( this.$refs.form$.validate()) {
+            //     this.$inertia.post(route(this.action),this.data, {
+            //     preserveScroll: true,
+            //     preserveState: true,
+            //     onSuccess: () => {
+            //         this.data ={}
+            //         this.$refs.form$.clearMessages()
+            //     },
+            //     onError: (errors) => {
+            //         console.log(errors);
+            //     }
+            // })
+            // }
+        
             
         },
         
