@@ -15,7 +15,7 @@ import toast from '@/Stores/toast.js';
 
 <template>
     <Head>
-        <title>Manajemen Menu </title>
+        <title>Manajemen {{titleTable}} </title>
         <meta name="description" content="halaman manajemen menu" />
         <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     </Head>
@@ -79,8 +79,8 @@ export default {
     props: {
         header: Object,
         data: Object,
-        titleTable : String
-        
+        titleTable : String,
+        slug : String
     },
     components: {
 
@@ -100,7 +100,7 @@ export default {
     methods: {
 
         tambah() {
-            Inertia.get(route('database.create'), {}, { replace: true })
+            Inertia.get(route(this.slug+'.create'), {}, { replace: true })
         },
 
         klikMethod(value) {

@@ -1,14 +1,25 @@
+<script setup>
+import AdminLayout from '@/Layouts/Admin.vue';
+import Card from "@/Components/Cards/Card.vue";
+import Headers from "@/Components/Headers/Headers.vue";
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import ToastList from '@/Components/Notifications/ToastList.vue';
+import toast from '@/Stores/toast.js';
+import draggable from "vuedraggable";
+import { Head } from '@inertiajs/vue3';
+import { Inertia } from '@inertiajs/inertia'
+</script>
 
 <template>
     <Head>
-        <title>Add Builder Form</title>
+        <title>Tambah {{ display_name }}</title>
         <meta name="description" content="halaman manajemen menu" />
         <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     </Head>
 
     <AdminLayout>
         <template #textnavbar>
-            Form Builder
+            Form Tambah Data
         </template>
         <template #notif>
 
@@ -36,7 +47,7 @@
                                     <div class="max-w-full flex-grow p-4 ml-4">
                                         <h3 class="font-semibold text-lg"
                                             :class="[color === 'light' ? 'text-white' : 'text-white']">
-                                            Table Info
+                                            {{ display_name }}
                                         </h3>
                                     </div>
                                     <div class="relative md:w-full md:max-w-full flex-grow flex-1 text-right p-4 mr-4">
@@ -54,8 +65,8 @@
                     <div class="bg-white overflow-hidden w-full transform transition-all sm:w-full sm:mx-auto ">
                 
         
-                            <div class="relative px-6 pb-4 mx-2 flex-auto">
-                                <Vueform :endpoint="endpoint" ref="form$" v-model="data" sync :schema="schema">
+                            <div class="relative pt-4 px-6 pb-4 mx-2 flex-auto">
+                                <Vueform :endpoint="false" @submit="simpan" ref="form$" v-model="data" sync :schema="schema">
                                 
                                 </Vueform>
                             
@@ -63,13 +74,7 @@
                             
                         </div>
                     <template #footercard>
-                        <div class="flex mb-4 mr-6 p-2 justify-end">
-
-                            <PrimaryButton class=" " v-on:click="simpan">
-                                <span class="mr-2"> <i class="fas fa-save "></i> </span>
-                                Simpan
-                            </PrimaryButton>
-                        </div>
+                    
                     </template>
                 </card>
             </div>
@@ -78,25 +83,6 @@
     </AdminLayout>
 </template>
 
-
-
-<script setup>
-
-
-
-import AdminLayout from '@/Layouts/Admin.vue';
-import Card from "@/Components/Cards/Card.vue";
-import Headers from "@/Components/Headers/Headers.vue";
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-
-import ToastList from '@/Components/Notifications/ToastList.vue';
-
-import draggable from "vuedraggable";
-import { Head } from '@inertiajs/vue3';
-import { Inertia } from '@inertiajs/inertia'
-
-
-</script>
 
 <script>
 
@@ -115,10 +101,11 @@ export default {
             },
         },
         formContainer: Object,
-        action : String
+        action : String, 
+        display_name : String
 
     },
-
+    
     components: {
         draggable
     },
@@ -126,7 +113,7 @@ export default {
 
     },
     created() {
-
+    
     },
     data() {
 
@@ -169,40 +156,31 @@ export default {
 
     methods: {
         kembali() {
-            Inertia.get(route('builder.index'), {}, { replace: true })
+            Inertia.get(route(this.action+'.index'), {}, { replace: true })
         },
-        endpoints: {
-            submit: {
-            url: '/form/submsit',
-            method: 'post'
-            }
-        },
-      
         simpan() {
-            
-
-            // this.$refs.form$.validate()
-            console.log(this.$refs.form$.invalid)
-            // if (this.$refs.form$.invalid == false) {
-            //     console.log('simpan');
-            // }else{
-            //     console.log('stop');
-            // }
-            // if ( this.$refs.form$.validate()) {
-            //     this.$inertia.post(route(this.action),this.data, {
-            //     preserveScroll: true,
-            //     preserveState: true,
-            //     onSuccess: () => {
-            //         this.data ={}
-            //         this.$refs.form$.clearMessages()
-            //     },
-            //     onError: (errors) => {
-            //         console.log(errors);
-            //     }
-            // })
-            // }
-        
-            
+            this.$inertia.post(route(this.action+'.store'),this.data, {
+                    preserveScroll: true,
+                    preserveState: true,
+                    onSuccess: () => {
+                        if(this.$page.props.flash.message != null){
+                            toast.add({
+                                message: this.$page.props.flash.message,
+                                category : 'info'
+                            });
+                        }
+                        this.data ={}
+                    },
+                    onFinish:()=>{
+                        this.$page.props.flash.message = null;
+                        this.$refs.form$.reset()
+                        this.$refs.form$.resetValidators();
+                        this.$refs.form$.clearMessages()
+                    },
+                    onError: (errors) => {
+                        this.$refs.form$.messageBag.append(errors);
+                    }
+            })
         },
         
     

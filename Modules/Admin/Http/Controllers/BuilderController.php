@@ -13,6 +13,9 @@ use Modules\Admin\Database\Schema\SchemaManager;
 use Illuminate\Support\MessageBag;
 use Modules\Admin\Entities\DataType;
 use Modules\Admin\Entities\DataRow;
+use Event;
+use Route;
+use Modules\Admin\Events\ClearRoute;
 class BuilderController extends Controller
 {
     /**
@@ -49,6 +52,7 @@ class BuilderController extends Controller
      */
     public function create($table)
     {
+        
         $dataType = Admin::model('DataType')->whereName($table)->first();
         
         $data = $this->prepopulateBreadInfo($table);
@@ -92,11 +96,28 @@ class BuilderController extends Controller
                     'data_type_id' => $idDataType,
                 ], [
                     'type' => $item['inputType'],
-                    'display_name' => $item['display_name']
+                    'display_name' => $item['display_name'],
+                    'required' => $item['required'],
+                    'browse'=> $item['browse'],
+                    'read' => $item['read'],
+                    'edit'=> $item['edit'],
+                    'add' => $item['add'],
+                    'delete' => $item['delete'],
+                    'order'=> $item['order']
                 ]);
             }
-            \Artisan::call('route:clear');
-            return to_route('builder.index')->with(['message'=>'Sukses Generate Form']);
+           Event::dispatch(new ClearRoute());
+           if (Route::has($request->slug.'.index')) {
+            return 'tidak ada route';
+           }else{
+            // return ' ada route';
+            // Event::dispatch(new ClearRoute());
+            // return redirect()->route($request->slug.'.index');
+            return back(303)->with(['message'=>'Sukses Generate Form']);
+           }
+           
+        //    return back(303)->with(['message'=>'Sukses Generate Form']);
+            // return to_route('builder.index')->with(['message'=>'Sukses Generate Form']);
         } catch (\Illuminate\Database\QueryException $e) {
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
             return back()->withErrors($errors);

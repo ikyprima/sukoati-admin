@@ -12,7 +12,7 @@ import { Head } from '@inertiajs/vue3';
 import Card from "@/Components/Cards/CardKosong.vue";
 import { Inertia } from '@inertiajs/inertia'
 import { ref } from 'vue';
-Inertia.reload({ only: ['admin/menu'] });
+// Inertia.reload({ only: ['admin/menu'] });
 
 </script>
 

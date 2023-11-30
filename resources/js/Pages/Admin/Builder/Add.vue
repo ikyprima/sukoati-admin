@@ -137,6 +137,9 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                         Field
                                                     </th>
                                                     <th scope="col" class="border-r px-6 py-4 dark:border-gray-300">
+                                                        Visibility
+                                                    </th>
+                                                    <th scope="col" class="border-r px-6 py-4 dark:border-gray-300">
                                                         Input Type
                                                     </th>
                                                     <th scope="col" class="border-r px-6 py-4 dark:border-gray-300">
@@ -163,6 +166,58 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                     <li><b>Type</b> : {{ element.type }}</li>
                                                                     <li><b>Key</b> : {{ element.key }}</li>
                                                                     <li><b>Required</b> : {{ element.required }}</li>
+                                                                </ul>
+
+                                                            </td>
+                                                            <td
+                                                                class="whitespace-nowrap border px-1 py-1  w-8 text-left font-medium dark:border-gray-300">
+                                                                <ul class="pl-2 list-none">
+                                                                   
+                                                                        <li class="m-1">
+                                                                            
+                                                                            <div class="form-check"><input class="form-check-input appearance-none h-4 w-4 border border-gray-300 
+                                                                                rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
+                                                                                transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
+                                                                                v-model="element.browse"
+                                                                                type="checkbox">
+                                                                                <label class="form-check-label inline-block text-gray-800" >Browse</label></div>
+                                                                           
+                                                                            </li>
+                                                                        <li  class="m-1">
+                                                                            <div class="form-check"><input class="form-check-input appearance-none h-4 w-4 border border-gray-300 
+                                                                                rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
+                                                                                transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
+                                                                                v-model="element.read"
+                                                                                type="checkbox">
+                                                                                <label class="form-check-label inline-block text-gray-800" >Read</label></div>
+                                                                        </li>
+                                                                        <li  class="m-1">
+                                                                            <div class="form-check"><input class="form-check-input appearance-none h-4 w-4 border border-gray-300 
+                                                                                rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
+                                                                                transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
+                                                                                v-model="element.edit"
+                                                                                type="checkbox">
+                                                                                <label class="form-check-label inline-block text-gray-800" >Edit</label></div>
+                                                                        </li>
+                                                                        <li  class="m-1">
+                                                                            <div class="form-check"><input class="form-check-input appearance-none h-4 w-4 border border-gray-300 
+                                                                                rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
+                                                                                transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
+                                                                                v-model="element.add"
+                                                                                type="checkbox">
+                                                                                <label class="form-check-label inline-block text-gray-800" >Add</label></div>
+                                                                        </li>
+                                                                        <li  class="m-1">
+                                                                            <div class="form-check"><input class="form-check-input appearance-none h-4 w-4 border border-gray-300 
+                                                                                rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
+                                                                                transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
+                                                                                v-model="element.delete"
+                                                                                type="checkbox">
+                                                                                <label class="form-check-label inline-block text-gray-800" >Delete</label></div>
+                                                                        </li>
+                                                                    
+                                     
+                                                                  
                                                                 </ul>
 
                                                             </td>
@@ -267,7 +322,12 @@ export default {
                         required: item.notnull,
                         inputType: 'Text',
                         display_name: this.formatText(item.name),
-                        detail: {}
+                        detail: {},
+                        browse : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        read : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        edit : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        add : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        delete : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true
                     }
                 }),
 
@@ -303,10 +363,12 @@ export default {
                 })
             }else{
                 this.formBuilder.post(route('builder.store'), {
-                    preserveScroll: true,
-                    preserveState: true,
+                    preserveScroll: false,
+                    preserveState: false,
                     onSuccess: () => {
-                        this.formBuilder.reset();
+                        window.location.reload(true);
+                        // this.formBuilder.reset();
+                        // Inertia.get(route('builder.index'), {}, { replace: true })
                     },
                     onError: (errors) => {
                         console.log(errors);

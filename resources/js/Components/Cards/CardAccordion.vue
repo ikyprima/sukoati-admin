@@ -28,8 +28,7 @@
                     <button type="button"  v-on:click="handleClickadd({'id' :id ,'title' : title ,'posisi' : posisi })"  class="inline-flex items-center px-4 py-2 text-sm font-medium text-grey-700 bg-transparent border border-blue-500 rounded-l-lg
                 shadow transition ease-in-out duration-150  
                 hover:bg-blue-500 hover:text-white 
-                focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-blue-500 focus:text-white focus:z-[1]
-                dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-blue-700 dark:focus:bg-blue-700">
+                focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-blue-500 focus:text-white focus:z-[1]">
                         <i class="fas fa-lg fa-plus "></i>
                     </button>
                     <button type="button"  v-on:click="handleClickEdit({'id' :id ,'title' : title ,'posisi' : posisi })"  
@@ -48,8 +47,7 @@
                     <button type="button" class="inline-flex items-center px-4 py-2 text-sm font-medium text-grey-700 bg-transparent border border-blue-500 rounded-r-md 
                 shadow transition ease-in-out duration-150  
                 hover:bg-red-500 hover:text-white
-                focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-red-500 focus:text-white 
-                dark:border-white dark:text-white dark:hover:text-white dark:hover:bg-red-700 dark:focus:bg-red-700">
+                focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-red-500 focus:text-white ">
                         <i class="fas fa-lg fa-trash-alt"></i>
                     </button>
                 </div>

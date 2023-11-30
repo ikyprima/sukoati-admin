@@ -46,6 +46,7 @@ class SukoatiController extends Controller
         $data = $model->get();
         return Inertia::render('Admin/Sukoati/Index',[
             'header'=>$header,
+            'slug' =>  $slug,
             'data'=> $data,
             'titleTable'=> $dataType->display_name_singular,
             
@@ -59,15 +60,15 @@ class SukoatiController extends Controller
     public function create(Request $request)
     { 
         $slug = $this->getSlug($request);
-        $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
-            $query->where('browse', '1');
-        }])->where('slug', '=', $slug)->first();
+        $dataType = Admin::model('DataType')->with(['rows'])->where('slug', '=', $slug)->first();
 
         $shema= $dataType->rows->flatMap(function($item){
         $rules = [];
         if($item->required === 1){
             array_push($rules,'required');
         }
+        if ($item->add === 1) {
+            # code...
             return [
                 $item->field =>[
                     'type'=> $item->type,
@@ -98,6 +99,8 @@ class SukoatiController extends Controller
 
                 ]
             ];
+        }
+            
         });
         $shema['element']=[
                 'type'=> 'button',
@@ -114,7 +117,8 @@ class SukoatiController extends Controller
         );
         return Inertia::render('Admin/Sukoati/Add',[
             'formContainer'=>$container,
-            'action' =>  $slug.'.store'
+            'action' =>  $slug,
+            'display_name'=>$dataType->display_name_singular
         ]);
     
     }
@@ -142,7 +146,7 @@ class SukoatiController extends Controller
                 $model->setTableName($dataType->name);
             }
             $model->create($request->all());
-            return back(303);
+            return back(303)->with(['message'=>'Sukses Simpan Data']);
         } catch (\Illuminate\Database\QueryException $e) {
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
             return back()->withErrors($errors);
