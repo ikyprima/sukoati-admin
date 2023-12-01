@@ -366,7 +366,7 @@ export default {
                     preserveScroll: false,
                     preserveState: false,
                     onSuccess: () => {
-                        window.location.reload(true);
+                        // location.reload(true);
                         // this.formBuilder.reset();
                         // Inertia.get(route('builder.index'), {}, { replace: true })
                     },

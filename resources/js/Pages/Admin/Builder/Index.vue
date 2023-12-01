@@ -101,6 +101,25 @@ import toast from '@/Stores/toast.js';
 </div>
 
     </AdminLayout>
+    <Dialog :show="dialogReload" @close="closeDialogReload()">
+        <div class="md:flex items-center">
+        
+            <div class="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
+                <p class="font-bold">INFO!!</p>
+                <p class="text-sm text-gray-700 mt-1">Untuk Mendapatkan Efek Penambahan "Route-List" Baru Silahkan Reload Halaman
+                </p>
+            </div>
+        </div>
+    
+        <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+            <button v-on:click="reload()"
+                class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 
+                text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2 " >
+                Ya, Reload</button>
+            <button v-on:click="closeDialogHapus()" class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4
+            md:mt-0 md:order-1">Batal</button>
+        </div>
+    </Dialog>
 </template>
 
 <script>
@@ -123,6 +142,7 @@ export default {
     data() {
 
         return {
+            dialogReload:false,
             setting: [ //seting header table
                 {
                     title: 'Nama Table',
@@ -191,14 +211,23 @@ export default {
     },
     created() {
         if(this.$page.props.flash.message != null){
+            this.dialogReload = !this.dialogReload;
             toast.add({
                 message: this.$page.props.flash.message,
                 category : 'info'
             });
+            //buat pesan jika baru buat builder table, jika sukses haruskan reload halaman
+           
         }
         this.$page.props.flash.message = null;    
     },
     methods: {
+        closeDialogReload: function () {
+                this.dialogReload = !this.dialogReload;
+        },
+        reload(){
+            location.reload(true);
+        },
         klikMethod(value) {
             const method = value.action;
             this[method](value.value)
@@ -211,7 +240,7 @@ export default {
             Inertia.get(route(value.slug+'.index'),{},
                 { 
                     replace: true,
-                    preserveState: true 
+                    preserveState: false 
                 }
             )
         }

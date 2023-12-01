@@ -107,17 +107,17 @@ class BuilderController extends Controller
                 ]);
             }
            Event::dispatch(new ClearRoute());
-           if (Route::has($request->slug.'.index')) {
-            return 'tidak ada route';
-           }else{
+        //    if (Route::has($request->slug.'.index')) {
+        //     return 'tidak ada route';
+        //    }else{
             // return ' ada route';
             // Event::dispatch(new ClearRoute());
             // return redirect()->route($request->slug.'.index');
-            return back(303)->with(['message'=>'Sukses Generate Form']);
-           }
-           
+        //     return back(303)->with(['message'=>'Sukses Generate Form']);
+        //    }
+        
         //    return back(303)->with(['message'=>'Sukses Generate Form']);
-            // return to_route('builder.index')->with(['message'=>'Sukses Generate Form']);
+            return to_route('builder.index')->with(['message'=>'Sukses Generate Form']);
         } catch (\Illuminate\Database\QueryException $e) {
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
             return back()->withErrors($errors);
