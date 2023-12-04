@@ -43,7 +43,35 @@ class SukoatiController extends Controller
                 'align'=> 'left'
             ];
         });
-        $data = $model->get();
+        $pencarian = $header->pluck('field');
+        $data = $model->query();
+        foreach ($pencarian as $pencarian) {
+            $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
+        }
+       return $data->get();
+        return $header->pluck('field');
+        $data = $model->paginate(10);
+
+        if ($request->has('search')) {
+            # code...
+            return 'tes';
+            // $MInfoSp2d = MInfoSp2d::where('noSp2d', 'like', '%' . $request->search . '%')
+            // ->orWhere('keteranganSp2d', 'like', '%' . $request->search . '%')
+            // ->orWhere('namaSkpd', 'like', '%' . $request->search . '%')
+            // ->orderBy('tanggalSp2d', 'desc')->paginate(10);
+            // $pagination = $MInfoSp2d->appends ( array (
+            //     'search' => $request->search
+            // ) );
+            
+        }else{
+            // $MInfoSp2d = MInfoSp2d::where('noSp2d', 'like', '%' . $request->search . '%')
+            // ->orWhere('keteranganSp2d', 'like', '%' . $request->search . '%')
+            // ->orWhere('namaSkpd', 'like', '%' . $request->search . '%')
+            // ->orderBy('tanggalSp2d', 'desc')->paginate(10);
+        return '1';
+        }
+    
+
         return Inertia::render('Admin/Sukoati/Index',[
             'header'=>$header,
             'slug' =>  $slug,
