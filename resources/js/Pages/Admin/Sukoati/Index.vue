@@ -1,6 +1,9 @@
 <script setup>
 import AdminLayout from '@/Layouts/Admin.vue';
 import ButtonTambah from '@/Components/Buttons/ButtonTambah.vue';
+
+
+import { Link } from '@inertiajs/inertia-vue3';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import Dialog from '@/Components/Dialog.vue';
 import Table from "@/Components/Tables/Table.vue";
@@ -39,7 +42,7 @@ import toast from '@/Stores/toast.js';
         <div class="flex flex-wrap mt-4">
 
             <div class="w-full mb-12 px-4">
-                <Table @klik="klikMethod" :list=data :header=header :namaTitle="`List ${titleTable}`">
+                <Table @klik="klikMethod" :list=data.data :header=header :namaTitle="`List ${titleTable}`">
                     <template #button>
 
                         <div class="hidden md:block">
@@ -60,13 +63,99 @@ import toast from '@/Stores/toast.js';
                         </div>
 
                     </template>
-                    
+                    <template #pencarian>
+                        <div class="w-full lg:w-full mt-5 ">
+
+                            <div class="grid grid-cols-1 ">
+                                <div class="text-lg font-bold">
+
+                                </div>
+                                <div class=" text-white rounded-md ">
+
+                                    <label for="search"
+                                        class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Cari</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                            </svg>
+                                        </div>
+                                        <input type="search" id="search" 
+                                            v-model="search" v-on:keyup.enter="cari"
+                                            class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            placeholder="Pencarian" required>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </template>
 
                 </Table>
+                <div
+                            class="flex flex-col items-center w-full px-4 py-2 text-sm text-gray-500 sm:justify-between sm:space-y-0 sm:flex-row">
 
+                            <div id="fromTo"> <p class="flex">Menampilkan&nbsp;<span class="font-bold">{{ data.from }} 
+                                </span>&nbsp; sampai &nbsp; <span class="font-bold"> {{ data.to }}
+                                </span>&nbsp; dari &nbsp;<span class="font-bold">{{ data.total }}
+                                </span>  &nbsp; data</p>
+                            </div>
+
+                            <div class="flex items-center justify-between space-x-2">
+                                <div id="prev"></div>
+                                <div class="flex flex-row   space-x-1" id="halaman">
+                                    <template v-if="data.current_page == 1">
+                                        <div class="flex px-2 py-px border border-blue-400 disabled:opacity-50 shadow-md drop-shadow-lg  " >
+                                                <h3>First Page</h3>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <Link class="flex px-2 py-px text-white bg-blue-400 border border-blue-400 hover:bg-blue-400 hover:text-white shadow-md drop-shadow-lg" 
+                                            :href="data.first_page_url"><h3>First Page</h3></Link>
+                                    </template>
+                                
+                                    <template  v-for="paging in data?data.links:[]" >
+                                        <template v-if="paging.active == false && paging.url == null">
+                                            <div class="flex px-2 py-px border border-blue-400 disabled:opacity-50 shadow-md drop-shadow-lg  " >
+                                                <h3 v-html="paging.label"></h3>
+                                            </div>
+                                        </template>
+                                        <template v-else-if="paging.active == true && paging.url != null">
+                                            
+                                            <div class="flex px-2 py-px border border-blue-400 disabled:opacity-50 shadow-md drop-shadow-lg " >
+                                                <h3 v-html="paging.label"></h3>
+                                            </div>
+                                        </template>
+                                        <template v-else>
+
+                                            <Link class="flex px-2 py-px text-white bg-blue-400 border border-blue-400 hover:bg-blue-400 hover:text-white shadow-md drop-shadow-lg" 
+                                            :href="paging.url"><h3 v-html="paging.label"></h3></Link>
+                                        
+                                        </template>
+                                    </template>
+                                    <template v-if="data.current_page == data.last_page">
+                                        <div class="flex px-2 py-px border border-blue-400 disabled:opacity-50 shadow-md drop-shadow-lg  " >
+                                                <h3>Last Page</h3>
+                                        </div>
+                                    </template>
+                                    <template v-else>
+                                        <Link class="flex px-2 py-px text-white bg-blue-400 border border-blue-400 hover:bg-blue-400 hover:text-white shadow-md drop-shadow-lg" 
+                                            :href="data.last_page_url"><h3>Last Page</h3></Link>
+                                    </template>
+                                </div>
+                                <div id="next"></div>
+
+                            </div>
+                        </div>
             </div>
 
         </div>
+        
 
     </AdminLayout>
     
@@ -90,7 +179,7 @@ export default {
     },
     data() {
         return {
-         
+            search : null
         
         };
     },
@@ -143,6 +232,15 @@ export default {
         closeDialogHapus: function () {
             this.dialogHapus = !this.dialogHapus;
         },
+        cari(){
+            Inertia.get(route(this.slug+'.index'), {
+                search: this.search 
+            }, {
+                replace: true,
+                preserveState: true  
+            })
+            
+        }
     },
 };
 </script>
