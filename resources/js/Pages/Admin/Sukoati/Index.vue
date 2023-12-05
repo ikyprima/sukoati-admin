@@ -116,9 +116,8 @@ import toast from '@/Stores/toast.js';
                                     </template>
                                     <template v-else>
                                         <Link class="flex px-2 py-px text-white bg-blue-400 border border-blue-400 hover:bg-blue-400 hover:text-white shadow-md drop-shadow-lg" 
-                                            :href="data.first_page_url"><h3>First Page</h3></Link>
+                                        :href="data.first_page_url" @click.prevent="getHalaman(data.first_page_url)" ><h3>First Page</h3></Link>
                                     </template>
-                                
                                     <template  v-for="paging in data?data.links:[]" >
                                         <template v-if="paging.active == false && paging.url == null">
                                             <div class="flex px-2 py-px border border-blue-400 disabled:opacity-50 shadow-md drop-shadow-lg  " >
@@ -134,7 +133,7 @@ import toast from '@/Stores/toast.js';
                                         <template v-else>
 
                                             <Link class="flex px-2 py-px text-white bg-blue-400 border border-blue-400 hover:bg-blue-400 hover:text-white shadow-md drop-shadow-lg" 
-                                            :href="paging.url"><h3 v-html="paging.label"></h3></Link>
+                                            :href="paging.url"  @click.prevent="getHalaman(paging.url)"><h3 v-html="paging.label"></h3></Link>
                                         
                                         </template>
                                     </template>
@@ -145,7 +144,7 @@ import toast from '@/Stores/toast.js';
                                     </template>
                                     <template v-else>
                                         <Link class="flex px-2 py-px text-white bg-blue-400 border border-blue-400 hover:bg-blue-400 hover:text-white shadow-md drop-shadow-lg" 
-                                            :href="data.last_page_url"><h3>Last Page</h3></Link>
+                                            :href="data.last_page_url" @click.prevent="getHalaman(data.last_page_url)" ><h3>Last Page</h3></Link>
                                     </template>
                                 </div>
                                 <div id="next"></div>
@@ -169,7 +168,8 @@ export default {
         header: Object,
         data: Object,
         titleTable : String,
-        slug : String
+        slug : String,
+        dataSearch : String
     },
     components: {
 
@@ -179,7 +179,7 @@ export default {
     },
     data() {
         return {
-            search : null
+            search : this.dataSearch
         
         };
     },
@@ -237,9 +237,19 @@ export default {
                 search: this.search 
             }, {
                 replace: true,
+                preserveScroll: true,
                 preserveState: true  
             })
             
+        },
+        getHalaman(value){
+            Inertia.get(value, {
+               
+            }, {
+                replace: true,
+                preserveScroll: true,
+                preserveState: true  
+            })
         }
     },
 };

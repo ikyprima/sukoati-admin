@@ -4,9 +4,10 @@ namespace Modules\Admin\Http\Controllers;
 
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\MessageBag;
 use Modules\Admin\Facades\Admin;
+use Modules\Admin\Entities\SukoAtiModel;
+use Inertia\Inertia;
 class SukoatiController extends Controller
 {
     /**
@@ -29,8 +30,9 @@ class SukoatiController extends Controller
         
         } else {
             // Model tidak ada
-            $model= app('Modules\Admin\Entities\SukoAtiModel');
-            $model->setTableName($dataType->name);
+            // $model= app('Modules\Admin\Entities\SukoAtiModel');
+            // $model->setTableName($dataType->name);
+            $model = new SukoAtiModel();
         }
         
         
@@ -43,39 +45,31 @@ class SukoatiController extends Controller
                 'align'=> 'left'
             ];
         });
-        $pencarian = $header->pluck('field');
-        $data = $model->query();
-        foreach ($pencarian as $pencarian) {
-            $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
-        }
-       return $data->get();
-        return $header->pluck('field');
-        $data = $model->paginate(10);
-
         if ($request->has('search')) {
-            # code...
-            return 'tes';
-            // $MInfoSp2d = MInfoSp2d::where('noSp2d', 'like', '%' . $request->search . '%')
-            // ->orWhere('keteranganSp2d', 'like', '%' . $request->search . '%')
-            // ->orWhere('namaSkpd', 'like', '%' . $request->search . '%')
-            // ->orderBy('tanggalSp2d', 'desc')->paginate(10);
-            // $pagination = $MInfoSp2d->appends ( array (
-            //     'search' => $request->search
-            // ) );
+            $pencarian = $header->pluck('field');
+            $data = $model->query();
+            foreach ($pencarian as $pencarian) {
+                $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
+            }
+
+            $listData = $data->from($dataType->name)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+            $listData->appends ( array (
+                'search' => $request->search
+            ) );
             
         }else{
-            // $MInfoSp2d = MInfoSp2d::where('noSp2d', 'like', '%' . $request->search . '%')
-            // ->orWhere('keteranganSp2d', 'like', '%' . $request->search . '%')
-            // ->orWhere('namaSkpd', 'like', '%' . $request->search . '%')
-            // ->orderBy('tanggalSp2d', 'desc')->paginate(10);
-        return '1';
+            $listData = $model->from($dataType->name)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
         }
     
-
         return Inertia::render('Admin/Sukoati/Index',[
             'header'=>$header,
             'slug' =>  $slug,
-            'data'=> $data,
+            'data'=> $listData,
+            'dataSearch'=> $request->search,
             'titleTable'=> $dataType->display_name_singular,
             
         ]);
