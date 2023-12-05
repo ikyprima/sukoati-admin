@@ -8,8 +8,19 @@ use Illuminate\Support\MessageBag;
 use Modules\Admin\Facades\Admin;
 use Modules\Admin\Entities\SukoAtiModel;
 use Inertia\Inertia;
+use App\Traits\ListMidleware;
+use Auth;
 class SukoatiController extends Controller
 {
+    use ListMidleware;
+    public function __construct(Request $request)
+    {
+        $slug = $this->getSlug($request);
+        $midlw = ['role_or_permission:admin|'.$this->namaMidlewarePermission($slug)];
+        $this->middleware($midlw);
+
+        
+    }
     /**
      * Display a listing of the resource.
      * @return Renderable
@@ -17,62 +28,102 @@ class SukoatiController extends Controller
     public function index(Request $request)
     {
         $slug = $this->getSlug($request);
-
-        
-        $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
-            $query->where('browse', '1');
-        }])->where('slug', '=', $slug)->first();
-
-
-        if (class_exists($dataType->model_name)) {
-            // jika model ada
-            $model= app($dataType->model_name);
-        
-        } else {
-            // Model tidak ada
-            // $model= app('Modules\Admin\Entities\SukoAtiModel');
-            // $model->setTableName($dataType->name);
-            $model = new SukoAtiModel();
-        }
-        
-        
-        $header = $dataType->rows->map(function($item){
-            return [
-                'title'=> $item->display_name,
-                'field'=> $item->field,
-                'type'=> $item->type,
-                'size'=>'auto',
-                'align'=> 'left'
-            ];
-        });
-        if ($request->has('search')) {
-            $pencarian = $header->pluck('field');
-            $data = $model->query();
-            foreach ($pencarian as $pencarian) {
-                $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
+        if (Auth::user()->hasAnyPermission([$slug.'-index']) ){
+            $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
+                $query->where('browse', '1');
+            }])->where('slug', '=', $slug)->first();
+            if (class_exists($dataType->model_name)) {
+                // jika model ada
+                $model= app($dataType->model_name);
+            
+            } else {
+                // Model tidak ada
+                // $model= app('Modules\Admin\Entities\SukoAtiModel');
+                // $model->setTableName($dataType->name);
+                $model = new SukoAtiModel();
             }
-
-            $listData = $data->from($dataType->name)
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-            $listData->appends ( array (
-                'search' => $request->search
-            ) );
             
-        }else{
-            $listData = $model->from($dataType->name)
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-        }
+            
+            $dataheader = $dataType->rows->map(function($item){
+                return [
+                    'title'=> $item->display_name,
+                    'field'=> $item->field,
+                    'type'=> $item->type,
+                    'size'=>'auto',
+                    'align'=> 'left'
+                ];
+            });
     
-        return Inertia::render('Admin/Sukoati/Index',[
-            'header'=>$header,
-            'slug' =>  $slug,
-            'data'=> $listData,
-            'dataSearch'=> $request->search,
-            'titleTable'=> $dataType->display_name_singular,
-            
-        ]);
+            $aksi =collect( [
+                    'title' => 'Aksi',
+                    'field' => null,
+                    'type' => 'button-group',
+                    'data' => [
+                        [
+                            'text'=> '',
+                            'type'=> 'button',
+                            'action'=> 'edit',
+                            'class'=> 'border rounded-l-2xl border-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-blue-500 focus:text-white focus:z-[1]',
+                            'icon'=> 'fas fa-lg fa-pencil-alt'
+                        ],
+                        [
+                            'text'=> '',
+                            'type'=> 'button',
+                            'action'=> 'lihatDetail',
+                            'class'=> 'border-t border-b border-blue-500 hover:bg-emerald-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-emerald-500 focus:text-white focus:z-[1]',
+                            'icon'=> 'fas fa-lg fa-file-alt'
+                        ],
+                        [
+                            'text'=> '',
+                            'type'=> 'button',
+                            'action'=> 'hapus',
+                            'class'=> 'border rounded-r-2xl border-blue-500  hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-700 focus:bg-red-500 focus:text-white  focus:z-[1]',
+                            'icon'=> 'fas fa-lg fa-trash-alt'
+                        ],
+                    ],
+                    'size'=> 20,
+                    'align'=> 'center'
+                
+            ]);
+            $header = $dataheader->push($aksi);
+    
+            if ($request->has('search')) {
+                $pencarian = $header->pluck('field');
+                $data = $model->query();
+                foreach ($pencarian as $pencarian) {
+                    $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
+                }
+    
+                $listData = $data->from($dataType->name)
+                ->orderBy('id', 'desc')
+                ->paginate(10);
+                $listData->appends ( array (
+                    'search' => $request->search
+                ) );
+                
+            }else{
+                $listData = $model->from($dataType->name)
+                ->orderBy('id', 'desc')
+                ->paginate(10);
+            }
+        
+            return Inertia::render('Admin/Sukoati/Index',[
+                'header'=>$header,
+                'slug' =>  $slug,
+                'data'=> $listData,
+                'dataSearch'=> $request->search,
+                'titleTable'=> $dataType->display_name_singular,
+                
+            ]);
+
+        }else{
+            return 'tidak ada permission';
+        }
+
+      
+
+        
+      
     }
 
     /**
