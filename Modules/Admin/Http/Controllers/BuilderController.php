@@ -15,6 +15,7 @@ use Modules\Admin\Entities\DataType;
 use Modules\Admin\Entities\DataRow;
 use Event;
 use Route;
+use App\Models\Permission;
 use Modules\Admin\Events\ClearRoute;
 class BuilderController extends Controller
 {
@@ -106,7 +107,19 @@ class BuilderController extends Controller
                     'order'=> $item['order']
                 ]);
             }
-           Event::dispatch(new ClearRoute());
+            $dataPermission = [
+                $request->slug.'-index', $request->slug.'-create',
+                $request->slug.'-read', $request->slug.'-update',
+                $request->slug.'-delete'
+            ];
+
+            foreach ($dataPermission as $key => $value) {
+                Permission::firstOrCreate([
+                    'name' => $value
+                ]);
+            }
+
+            Event::dispatch(new ClearRoute());
         //    if (Route::has($request->slug.'.index')) {
         //     return 'tidak ada route';
         //    }else{
