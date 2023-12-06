@@ -34,7 +34,7 @@ import toast from '@/Stores/toast.js';
             <header-stats>
 
                 <template #kontenheader>
-
+                    
                 </template>
 
             </header-stats>
@@ -44,14 +44,18 @@ import toast from '@/Stores/toast.js';
             <div class="w-full mb-12 px-4">
                 <Table @klik="klikMethod" :list=data.data :header=header :namaTitle="`List ${titleTable}`">
                     <template #button>
-
+                       
                         <div class="hidden md:block">
-                            <ButtonTambah @click="tambah">Tambah</ButtonTambah>
+                            
+                            <ButtonTambah v-if="buttonTambah" @click="tambah">Tambah</ButtonTambah>
                         </div>
 
                         <div class="md:min-w-full md:hidden block">
                             <div class="flex flex-wrap">
+
+                        
                                 <div class="w-full">
+                                    
                                     <button
                                         class="cursor-pointer text-black opacity-50 md:hidden px-3 py-1 text-xl leading-none bg-transparent rounded border border-solid border-transparent"
                                         type="button">
@@ -169,7 +173,8 @@ export default {
         data: Object,
         titleTable : String,
         slug : String,
-        dataSearch : String
+        dataSearch : String,
+        buttonTambah : Boolean
     },
     components: {
 
@@ -179,8 +184,8 @@ export default {
     },
     data() {
         return {
-            search : this.dataSearch
-        
+            search : this.dataSearch,
+            
         };
     },
     created(){
@@ -244,7 +249,7 @@ export default {
         },
         getHalaman(value){
             Inertia.get(value, {
-               
+            
             }, {
                 replace: true,
                 preserveScroll: true,

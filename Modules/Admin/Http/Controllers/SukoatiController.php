@@ -28,7 +28,7 @@ class SukoatiController extends Controller
     public function index(Request $request)
     {
         $slug = $this->getSlug($request);
-        if (Auth::user()->hasAnyPermission([$slug.'-index']) ){
+        if (Auth::user()->hasAnyPermission([$slug.'-index']) || Auth::user()->hasAnyRole(['admin']) ){
             $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
                 $query->where('browse', '1');
             }])->where('slug', '=', $slug)->first();
@@ -43,7 +43,6 @@ class SukoatiController extends Controller
                 $model = new SukoAtiModel();
             }
             
-            
             $dataheader = $dataType->rows->map(function($item){
                 return [
                     'title'=> $item->display_name,
@@ -53,47 +52,79 @@ class SukoatiController extends Controller
                     'align'=> 'left'
                 ];
             });
-    
-            $aksi =collect( [
+            $buttonAksi = collect();
+            $buttonTambah = false;
+            if (Auth::user()->hasAnyPermission([$slug.'-create']) || Auth::user()->hasAnyRole(['admin'])){
+                $buttonTambah = true;
+            }
+            if (Auth::user()->hasAnyPermission([$slug.'-update']) || Auth::user()->hasAnyRole(['admin'])){
+                $buttonAksi->push(
+                    [
+                    'text'=> '',
+                    'type'=> 'button',
+                    'action'=> 'edit',
+                    'class'=> 'border border-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-blue-500 focus:text-white focus:z-[1]',
+                    'icon'=> 'fas fa-lg fa-pencil-alt'
+                    ]
+                );
+            }
+            if (Auth::user()->hasAnyPermission([$slug.'-read']) || Auth::user()->hasAnyRole(['admin'])){
+                $buttonAksi->push(
+                    [
+                    'text'=> '',
+                    'type'=> 'button',
+                    'action'=> 'lihatDetail',
+                    'class'=> 'border border-blue-500 hover:bg-emerald-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-emerald-500 focus:text-white focus:z-[1]',
+                    'icon'=> 'fas fa-lg fa-file-alt'
+                    ]
+                );
+            }
+            if (Auth::user()->hasAnyPermission([$slug.'-delete']) || Auth::user()->hasAnyRole(['admin'])){
+                $buttonAksi->push(
+                    [
+                        'text'=> '',
+                        'type'=> 'button',
+                        'action'=> 'hapus',
+                        'class'=> 'border  border-blue-500  hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-700 focus:bg-red-500 focus:text-white  focus:z-[1]',
+                        'icon'=> 'fas fa-lg fa-trash-alt'
+                    ]
+                );
+            }
+        
+            $buttonAksi = $buttonAksi->map(function ($item, $index) use ($buttonAksi){
+                $indexTerakhir = $buttonAksi->count() - 1;
+                if ($buttonAksi->count() === 1) {
+                    $item['class'] = $item['class'].' rounded-l-lg rounded-r-lg';
+                }else{
+                    if($index === 0){
+                        $item['class'] = $item['class'].' rounded-l-2xl';
+                    }elseif($index  === $indexTerakhir){
+                        $item['class'] = $item['class'].' rounded-r-2xl';
+                    }
+                }
+                return $item;
+            });
+            
+            if ($buttonAksi->count() > 0) {
+                $aksi =collect( [
                     'title' => 'Aksi',
                     'field' => null,
                     'type' => 'button-group',
-                    'data' => [
-                        [
-                            'text'=> '',
-                            'type'=> 'button',
-                            'action'=> 'edit',
-                            'class'=> 'border rounded-l-2xl border-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-blue-500 focus:text-white focus:z-[1]',
-                            'icon'=> 'fas fa-lg fa-pencil-alt'
-                        ],
-                        [
-                            'text'=> '',
-                            'type'=> 'button',
-                            'action'=> 'lihatDetail',
-                            'class'=> 'border-t border-b border-blue-500 hover:bg-emerald-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-emerald-500 focus:text-white focus:z-[1]',
-                            'icon'=> 'fas fa-lg fa-file-alt'
-                        ],
-                        [
-                            'text'=> '',
-                            'type'=> 'button',
-                            'action'=> 'hapus',
-                            'class'=> 'border rounded-r-2xl border-blue-500  hover:bg-red-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-red-700 focus:bg-red-500 focus:text-white  focus:z-[1]',
-                            'icon'=> 'fas fa-lg fa-trash-alt'
-                        ],
-                    ],
+                    'data' => $buttonAksi,
                     'size'=> 20,
                     'align'=> 'center'
-                
-            ]);
-            $header = $dataheader->push($aksi);
-    
+                ]);
+                $header = $dataheader->push($aksi);
+            }else{
+                $header = $dataheader;
+            }
             if ($request->has('search')) {
-                $pencarian = $header->pluck('field');
+                $pencarian = $dataheader->pluck('field')->filter();
                 $data = $model->query();
                 foreach ($pencarian as $pencarian) {
                     $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
                 }
-    
+                
                 $listData = $data->from($dataType->name)
                 ->orderBy('id', 'desc')
                 ->paginate(10);
@@ -106,9 +137,9 @@ class SukoatiController extends Controller
                 ->orderBy('id', 'desc')
                 ->paginate(10);
             }
-        
             return Inertia::render('Admin/Sukoati/Index',[
                 'header'=>$header,
+                'buttonTambah'=>$buttonTambah,
                 'slug' =>  $slug,
                 'data'=> $listData,
                 'dataSearch'=> $request->search,
@@ -117,13 +148,8 @@ class SukoatiController extends Controller
             ]);
 
         }else{
-            return 'tidak ada permission';
+            abort(403, 'Maaf Anda Tidak Ada Permission Untuk Halaman Ini - Silahkan Hubungi Admin');
         }
-
-      
-
-        
-      
     }
 
     /**
@@ -133,6 +159,7 @@ class SukoatiController extends Controller
     public function create(Request $request)
     { 
         $slug = $this->getSlug($request);
+        if (Auth::user()->hasAnyPermission([$slug.'-create']) || Auth::user()->hasAnyRole(['admin']) ){
         $dataType = Admin::model('DataType')->with(['rows'])->where('slug', '=', $slug)->first();
 
         $shema= $dataType->rows->flatMap(function($item){
@@ -169,7 +196,6 @@ class SukoatiController extends Controller
                             'input' => 'rounded-lg shadow-sm',
                         ),
                     ),
-
                 ]
             ];
         }
@@ -193,7 +219,10 @@ class SukoatiController extends Controller
             'action' =>  $slug,
             'display_name'=>$dataType->display_name_singular
         ]);
-    
+        
+        }else{
+            abort(403, 'Maaf Anda Tidak Ada Permission Untuk Halaman Ini - Silahkan Hubungi Admin');
+        }
     }
 
     /**
@@ -203,28 +232,29 @@ class SukoatiController extends Controller
      */
     public function store(Request $request)
     {
-
-        try {
-            
-            $slug = $this->getSlug($request);
-            $dataType = Admin::model('DataType')->where('slug', '=', $slug)->first();
-
-            if (class_exists($dataType->model_name)) {
-                // jika model ada
-                $model= app($dataType->model_name);
-            
-            } else {
-                // Model tidak ada
-                $model= app('Modules\Admin\Entities\SukoAtiModel');
-                $model->setTableName($dataType->name);
+        $slug = $this->getSlug($request);
+        if (Auth::user()->hasAnyPermission([$slug.'-create']) || Auth::user()->hasAnyRole(['admin']) ){
+            try {
+                
+                $dataType = Admin::model('DataType')->where('slug', '=', $slug)->first();
+                if (class_exists($dataType->model_name)) {
+                    // jika model ada
+                    $model= app($dataType->model_name);
+                
+                } else {
+                    // Model tidak ada
+                    $model= app('Modules\Admin\Entities\SukoAtiModel');
+                    $model->setTableName($dataType->name);
+                }
+                $model->create($request->all());
+                return back(303)->with(['message'=>'Sukses Simpan Data']);
+            } catch (\Illuminate\Database\QueryException $e) {
+                $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
+                return back()->withErrors($errors);
             }
-            $model->create($request->all());
-            return back(303)->with(['message'=>'Sukses Simpan Data']);
-        } catch (\Illuminate\Database\QueryException $e) {
-            $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
-            return back()->withErrors($errors);
+        }else{
+            abort(403, 'Maaf Anda Tidak Ada Permission Untuk Halaman Ini - Silahkan Hubungi Admin');
         }
-        
     }
 
     /**
