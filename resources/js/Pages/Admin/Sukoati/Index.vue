@@ -161,7 +161,38 @@ import toast from '@/Stores/toast.js';
         
 
     </AdminLayout>
-    
+    <Modal :show="showModalDetailTable" @close="closeModalDetailTable" :maxWidth="'5xl'">
+        <div class="p-2">
+            <div class="mx-4 flex items-start justify-between p-1 border-b border-solid border-blueGray-200 rounded-t">
+                <h3 class="text-xl font-semibold uppercase">
+                    DETAIL {{ detailNama }}
+                </h3>
+            </div>
+
+            <div class="relative p-6 flex-auto animatecss animatecss-fadeIn">
+                <div class="overflow-hidden">
+                    <table class="w-full border border-collapse table-auto">
+                        <thead class="">
+                            <tr class="text-base font-bold text-left bg-gray-50">
+                                <th class="px-4 py-3 border-b-2 border-pink-500">Field</th>
+                                <th class="px-4 py-3 border-b-2 border-blue-500 ">Type</th>
+                                <th class="px-4 py-3 border-b-2 border-green-500 text-center">Null</th>
+                                <th class="px-4 py-3 border-b-2 border-red-500 text-center">Key</th>
+                                <th class="px-4 py-3 border-b-2 border-purple-500">Default</th>
+                                <th class="px-4 py-3 border-b-2 border-yellow-500">Extra</th>
+                            </tr>
+                        </thead>
+                        
+                    </table>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end mr-6 mb-4">
+                <SecondaryButton @click="closeModalDetailTable">
+                    Tutup
+                </SecondaryButton>
+            </div>
+        </div>
+    </Modal>
 
 </template>
 
@@ -184,7 +215,10 @@ export default {
     },
     data() {
         return {
+            showModalDetailTable: false,
+            detailNama: null,
             search : this.dataSearch,
+            
             
         };
     },
@@ -203,9 +237,37 @@ export default {
         },
 
         edit(value) {
-            Inertia.get(route('database.edit',value.name), {}, { replace: true })
+            Inertia.get(route(this.slug+'.edit',value.id), {}, { replace: true })
         },
 
+        lihatDetail(value) {
+            NProgress.start()
+            console.log(value);
+            axios.get(route(this.slug+'.show', value.id), {
+            })
+                .then((res) => {
+                    //jika sukses
+                    this.showModalDetailTable = !this.showModalDetailTable;
+                    NProgress.done()
+                    console.log(res);
+                    
+                })
+                .catch((error) => {
+                    //jika error.response.status Check status code
+                    NProgress.done()
+                    this.showModalDetailTable = false;
+
+                }).finally(() => {
+                    //selesai 
+                    NProgress.done();
+
+                });
+
+        },
+        closeModalDetailTable() {
+            this.showModalDetailTable = !this.showModalDetailTable;
+            this.detailNama = null;
+        },
         hapus(value) {
             this.objRow = value;
             this.dialogHapus = !this.dialogHapus;

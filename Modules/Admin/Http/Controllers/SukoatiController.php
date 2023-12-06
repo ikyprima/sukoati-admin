@@ -262,9 +262,14 @@ class SukoatiController extends Controller
      * @param int $id
      * @return Renderable
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        return view('admin::show');
+        if ($request->ajax()) {
+            return [$id];
+        }else{
+            return 'bukan ajax ok';
+        }
+        
     }
 
     /**
@@ -274,7 +279,7 @@ class SukoatiController extends Controller
      */
     public function edit($id)
     {
-        return view('admin::edit');
+        return 'edit form';
     }
 
     /**
