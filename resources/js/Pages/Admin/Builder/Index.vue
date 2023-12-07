@@ -183,7 +183,7 @@ export default {
                             type: 'button',
                             action: 'view',
                             class: 'border-t border-b border-r border-blue-500 hover:bg-indigo-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-emerald-500 focus:text-white focus:z-[1]',
-                            icon: 'fas fa-lg fa-file'
+                            icon: 'fas fa-lg fa-link'
                         },
                         {
                             text: '',

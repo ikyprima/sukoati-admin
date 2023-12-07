@@ -171,28 +171,50 @@ import toast from '@/Stores/toast.js';
 
             <div class="relative p-6 flex-auto animatecss animatecss-fadeIn">
                 <div class="overflow-hidden">
+
                     <table class="w-full border border-collapse table-auto">
-                        <thead class="">
-                            <tr class="text-base font-bold text-left bg-gray-50">
-                                <th class="px-4 py-3 border-b-2 border-pink-500">Field</th>
-                                <th class="px-4 py-3 border-b-2 border-blue-500 ">Type</th>
-                                <th class="px-4 py-3 border-b-2 border-green-500 text-center">Null</th>
-                                <th class="px-4 py-3 border-b-2 border-red-500 text-center">Key</th>
-                                <th class="px-4 py-3 border-b-2 border-purple-500">Default</th>
-                                <th class="px-4 py-3 border-b-2 border-yellow-500">Extra</th>
-                            </tr>
-                        </thead>
                         
+                        <tbody class="text-sm font-normal text-gray-700">
+                            <template v-for="( data, index ) in detailData.display_name" :key="index">
+                                <tr class="py-10  border-gray-200 ">
+                                    <th class="px-2 py-2 w-1/4 border text-left">
+                                        {{ data.display_name }}
+                                    </th>
+                                    <td class="px-2 py-2 border">
+                                        {{ detailData.data[data.display_name] }}
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
                     </table>
                 </div>
             </div>
-            <div class="mt-4 flex justify-end mr-6 mb-4">
+            <div class="mt-1 flex justify-end mr-6 mb-4">
                 <SecondaryButton @click="closeModalDetailTable">
                     Tutup
                 </SecondaryButton>
             </div>
         </div>
     </Modal>
+    <Dialog :show="dialogHapus" @close="closeDialogHapus()">
+        <div class="md:flex items-center">
+        
+            <div class="mt-4 md:mt-0 md:ml-6 text-center md:text-left">
+                <p class="font-bold">Hapus Data</p>
+                <p class="text-sm text-gray-700 mt-1">Anda Yakin Akan Menghapus Data Yang Dipilih?
+                </p>
+            </div>
+        </div>
+    
+        <div class="text-center md:text-right mt-4 md:flex md:justify-end">
+            <button v-on:click="hapusAksi()"
+                class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 
+                text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2 " :class="{ 'opacity-25': prosesRequest }" :disabled="prosesRequest">
+                Ya, Hapus</button>
+            <button v-on:click="closeDialogHapus()" class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4
+            md:mt-0 md:order-1">Batal</button>
+        </div>
+    </Dialog>
 
 </template>
 
@@ -211,19 +233,23 @@ export default {
 
     },
     computed: {
-     
+    
     },
     data() {
         return {
             showModalDetailTable: false,
+            dialogHapus:false,
+            objRow : null,
             detailNama: null,
             search : this.dataSearch,
+            detailData: {},
+            prosesRequest:false,
             
             
         };
     },
     created(){
-      
+    
     },
     methods: {
 
@@ -242,12 +268,12 @@ export default {
 
         lihatDetail(value) {
             NProgress.start()
-            console.log(value);
             axios.get(route(this.slug+'.show', value.id), {
             })
                 .then((res) => {
                     //jika sukses
                     this.showModalDetailTable = !this.showModalDetailTable;
+                    this.detailData = res.data;
                     NProgress.done()
                     console.log(res);
                     
@@ -273,11 +299,12 @@ export default {
             this.dialogHapus = !this.dialogHapus;
         },
         hapusAksi(){
-            this.formTable.delete(route('database.hapus',this.objRow.name), {
+            this.prosesRequest = true;
+            Inertia.delete(route(this.slug+'.destroy',this.objRow.id), {
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
-                        this.items = this.tables;
+                        this.prosesRequest = false;
                         this.dialogHapus = !this.dialogHapus;
                         this.objRow = null;
                         toast.add({
@@ -285,7 +312,12 @@ export default {
                             category : 'info'
                         })
                     },
+                    onFinish:()=>{
+                        this.prosesRequest = false;
+                        this.objRow = null;
+                    },
                     onError: errors => {
+                        this.prosesRequest = false;
                         toast.add({
                             message: errors.error,
                             category : 'warning',

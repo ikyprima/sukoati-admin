@@ -101,8 +101,10 @@ export default {
             },
         },
         formContainer: Object,
+        slug : String,
         action : String, 
-        display_name : String
+        display_name : String,
+        isiData : Object
 
     },
     
@@ -138,7 +140,7 @@ export default {
                         }
                     }
                 },
-            data : {},
+            data : this.isiData?this.isiData:{},
             schema: this.formContainer
         };
     },
@@ -156,31 +158,70 @@ export default {
 
     methods: {
         kembali() {
-            Inertia.get(route(this.action+'.index'), {}, { replace: true })
+            Inertia.get(route(this.slug+'.index'), {}, { replace: true })
         },
         simpan() {
-            this.$inertia.post(route(this.action+'.store'),this.data, {
+            if (this.action === '.update') {
+                this.$inertia.put(route(this.slug+this.action, this.isiData.id), _.omit(this.data, ['id']) ,{
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {
-                        if(this.$page.props.flash.message != null){
+                            if(this.$page.props.flash.message != null){
+                                toast.add({
+                                    message: this.$page.props.flash.message,
+                                    category : 'info'
+                                });
+                            }
+                        },
+                        onFinish:()=>{
+                            this.$page.props.flash.message = null;
+                            this.$refs.form$.resetValidators();
+                            this.$refs.form$.clearMessages()
+                        },
+                        onError: (errors) => {
                             toast.add({
-                                message: this.$page.props.flash.message,
-                                category : 'info'
-                            });
+                                    message: this.$page.props.errors.error ,
+                                    category : 'warning',
+                                    duration : 10000
+                                });
+                            
+                            this.$refs.form$.messageBag.append(errors);
                         }
-                        this.data ={}
-                    },
-                    onFinish:()=>{
-                        this.$page.props.flash.message = null;
-                        this.$refs.form$.reset()
-                        this.$refs.form$.resetValidators();
-                        this.$refs.form$.clearMessages()
-                    },
-                    onError: (errors) => {
-                        this.$refs.form$.messageBag.append(errors);
-                    }
-            })
+                })
+
+            } else {
+                this.$inertia.post(route(this.slug+this.action),this.data, {
+                        preserveScroll: true,
+                        preserveState: true,
+                        onSuccess: () => {
+                            if(this.$page.props.flash.message != null){
+                                toast.add({
+                                    message: this.$page.props.flash.message,
+                                    category : 'info'
+                                });
+                            }
+                            this.data = {}
+                        },
+                        onFinish:()=>{
+                            this.$page.props.flash.message = null;
+                            this.$refs.form$.reset()
+                            this.$refs.form$.resetValidators();
+                            this.$refs.form$.clearMessages()
+                        },
+                        onError: (errors) => {
+                            toast.add({
+                                    message: this.$page.props.errors.error ,
+                                    category : 'warning',
+                                    duration : 10000
+                                });
+                            this.$refs.form$.messageBag.append(errors);
+                        }
+                })
+            
+            }
+
+
+            
         },
         
     

@@ -297,7 +297,6 @@ export default {
                     this.showModalDetailTable = !this.showModalDetailTable;
                     NProgress.done()
                     this.detailTable = res.data;
-                    console.log(res);
                     
                     // console.log(Object.keys(res.data).length); 
                 })
