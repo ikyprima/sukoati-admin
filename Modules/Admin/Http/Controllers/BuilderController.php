@@ -12,8 +12,11 @@ use Modules\Admin\Database\Schema\SchemaManager;
 use Illuminate\Support\MessageBag;
 use Modules\Admin\Entities\DataType;
 use Modules\Admin\Entities\DataRow;
+use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\MenuHasRole;
+use App\Models\MenuHasPermission;
+use Spatie\Permission\Models\Role;
 use Event;
 use Route;
 use App\Models\Permission;
@@ -98,8 +101,10 @@ class BuilderController extends Controller
                 ]);
             }
             $dataPermission = [
-                $request->slug.'-index', $request->slug.'-create',
-                $request->slug.'-read', $request->slug.'-update',
+                $request->slug.'-index', 
+                $request->slug.'-create',
+                $request->slug.'-read', 
+                $request->slug.'-update',
                 $request->slug.'-delete'
             ];
 
@@ -111,24 +116,41 @@ class BuilderController extends Controller
 
             Event::dispatch(new ClearRoute());
 
+            $kategoriMenu =  Menu::firstOrCreate(
+                [
+                    'name'=> 'sukoati',
+                    'order' =>3
+                ]
+            );
             $menuItem =  MenuItem::firstOrCreate(
                 [
                     'is_parent'=> 1,
-                    'id_menu' => 3,
+                    'id_menu' => $kategoriMenu->id,
                     'title' => $request->display_name,
                     'url'=>url('/').'/admin'.'/'. $request->slug, 
                     'name_route'=>$request->slug.'.index' 
                 ]
             );
 
-            //menambahkan role admin ke setting menu
+            //menambahkan role admin ke menu yang dibuat (role admin otomatis dapat akses menu)
+            $role =  Role::firstOrCreate(
+                    [
+                        'name'=> 'admin'
+                    ]
+            );
             MenuHasRole::firstOrCreate(
                 [
                     'id_menu' => $menuItem->id, //id menu item
-                    'id_roles' => 1,
+                    'id_roles' =>  $role->id,
                     'ket' => 'role admin memiliki menu form '. $request->display_name
                 ]
             );
+            // tambah permision ke menu (permission index saja);
+            $permission = Permission::where('name', $request->slug.'-index')->first();
+            MenuHasPermission::firstOrCreate([
+                'id_menu' =>  $menuItem->id,
+                'id_permissions' =>  $permission->id
+            ]);
 
         //    if (Route::has($request->slug.'.index')) {
         //     return 'tidak ada route';

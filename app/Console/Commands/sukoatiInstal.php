@@ -9,22 +9,21 @@ use Spatie\Permission\Models\Permission;
 use App\Models\Menu;
 use App\Models\MenuItem;
 use App\Models\MenuHasRole;
-
-class buatAdmin extends Command
+class sukoatiInstal extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'buat:admin';
+    protected $signature = 'sukoati:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Membuat Admin Baru';
+    protected $description = 'install Sukoati-Admin meliputi generate role, permission, menu dan user admin';
 
     /**
      * Execute the console command.
@@ -35,7 +34,7 @@ class buatAdmin extends Command
     {
         $permission = Permission::firstOrCreate(
             [
-                'name'=> 'view admin'
+                'name'=> 'admin.index'
             ]
         );
 
@@ -44,24 +43,25 @@ class buatAdmin extends Command
                     'name'=> 'admin'
                 ]
         );
+
         $role->givePermissionTo($permission->name);
         
         $user = User::updateOrCreate([
-            'username' => 'administrator',
+            'username' => 'sukoatiadmin',
     
             ], [
-            'email' => 'administrator@mail.com',
-            'name' =>  'admin',
-            'password' => bcrypt('12345678')
+            'email' => 'sukoatiadmin@mail.com',
+            'name' =>  'administrator',
+            'password' => bcrypt('password')
         
         ]);
         
         $user->assignRole(['admin']);
 
-        //membuat kategori menu
+        //membuat kategori menu setting
         $menu =  Menu::firstOrCreate(
             [
-                'name'=> 'setting', //Kategori Setting
+                'name'=> 'setting',
                 'order' =>1
             ]
         );
@@ -127,7 +127,7 @@ class buatAdmin extends Command
         );
 
          //membuat item menu Permission
-         $menuPermissions =  MenuItem::firstOrCreate(
+        $menuPermissions =  MenuItem::firstOrCreate(
             [
                 'is_parent'=> 1,
                 'id_menu' =>$menu->id,
@@ -146,7 +146,62 @@ class buatAdmin extends Command
             ]
         );
 
+        //buat menu kategori tools
+        $tools =  Menu::firstOrCreate(
+            [
+                'name'=> 'tools',
+                'order' =>2
+            ]
+        );
 
-        echo 'sukses generate admin(administrator@mail.com password = 12345678 )' . "\n";
+        //membuat item menu database
+        $menuDatabase =  MenuItem::firstOrCreate(
+            [
+                'is_parent'=> 1,
+                'id_menu' =>$tools->id,
+                'title' => 'Database',
+                'url'=>url('/').'/admin/database', //lihat di route (web)
+                'name_route'=>'database.index' //lihat di name route (web)
+            ]
+        );
+
+        //menambahkan role admin ke setting menu
+        MenuHasRole::firstOrCreate(
+            [
+                'id_menu' => $menuDatabase->id, 
+                'id_roles' => $role->id,
+                'ket' => 'role admin memiliki menu tools database'
+            ]
+        );
+
+        //membuat item menu builder
+        $menuBuilder =  MenuItem::firstOrCreate(
+            [
+                'is_parent'=> 1,
+                'id_menu' =>$tools->id,
+                'title' => 'Form Builder',
+                'url'=>url('/').'/admin/builder', 
+                'name_route'=>'builder.index' 
+            ]
+        );
+
+        //menambahkan role admin ke setting menu
+        MenuHasRole::firstOrCreate(
+            [
+                'id_menu' => $menuBuilder->id, 
+                'id_roles' => $role->id,
+                'ket' => 'role admin memiliki menu tools builder'
+            ]
+        );
+
+         //buat menu kategori general
+        $general =  Menu::firstOrCreate(
+            [
+                'name'=> 'sukoati',
+                'order' =>3
+            ]
+        );
+
+        echo 'sukses install sukoati-admin (username = "sukoatiadmin@mail.com" password = "password" )' . "\n";
     }
 }
