@@ -38,6 +38,46 @@ kemudian sesuaikan konfigurasi database anda.
 ```shell
     php artisan sukoati:install
 ```
+## Referensi
+
+#### Penting!!!
+
+agar proyek berjalan ubah beberapa baris kode pada file:
+```path
+path vendor\doctrine\dbal\src\Schema\Column.php
+
+```
+silahkan ubah 
+```bash
+ public function setOptions(array $options)
+    {
+        foreach ($options as $name => $value) {
+            $method = 'set' . $name;
+
+            if (! method_exists($this, $method)) {
+                // throw UnknownColumnOption::new($name); Komen baris ini
+                continue;
+            }
+
+            $this->$method($value);
+        }
+
+        return $this;
+    }
+```
+ini terkait update atau perbedaan versi doctrine DBAL 
+
+
+## Credits
+
+- [Laravel](https://github.com/laravel/laravel) (Framework)
+- [Vue](https://github.com/vuejs/vue) (Framework Javascript)
+- [Inertia.JS](https://github.com/inertiajs) (Not a framework 😜)
+- [Tailwind](https://github.com/tailwindlabs/tailwindcss) (CSS framework)
+- [Voyager](https://github.com/thedevdojo/voyager) (referensi)
+- [vue-notus](https://github.com/creativetimofficial/vue-notus) (template)
+
+- [Spatie Laravel-permission](https://github.com/spatie/laravel-permission/tree/main) (Roles dan Permission Manajemen)
 ## Lisensi
 
 Proyek ini dilisensakan di bawah [MIT license](https://opensource.org/licenses/MIT).
