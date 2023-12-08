@@ -181,7 +181,7 @@ import toast from '@/Stores/toast.js';
                                         {{ data.display_name }}
                                     </th>
                                     <td class="px-2 py-2 border">
-                                        {{ detailData.data[data.display_name] }}
+                                        {{ detailData.data[data.field] }}
                                     </td>
                                 </tr>
                             </template>
