@@ -67,7 +67,7 @@ class DatabaseController extends Controller
 
         return Inertia::render('Admin/Database/Index',[
             'dataTypes'=>$dataTypes,
-            'tables'=>$tables
+            'tables'=>collect($tables)->values()
         ]);
     
     }

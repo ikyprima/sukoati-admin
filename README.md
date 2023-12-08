@@ -38,6 +38,17 @@ kemudian sesuaikan konfigurasi database anda.
 ```shell
     php artisan sukoati:install
 ```
+setelah proses instalasi selesai makan akan muncul username dan password yang sudah digenerate
+````shell
+sukses install sukoati-admin (username = "sukoatiadmin@mail.com" password = "password" )
+````
+7. Jalankan Project
+````shell
+php artisan serve
+#dan buka terminal baru pada direktori yang sama 
+#jalankan NPM
+npm run dev
+````
 ## Referensi
 
 #### Penting!!!
