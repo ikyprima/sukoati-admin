@@ -173,20 +173,25 @@ class SukoatiController extends Controller
                             'label' => 12,
                             'wrapper' => 12,
                         ),
-                        'overrideClass' => array(
-                            'inputContainer' => 'border border-gray-300 w-full transition-all rounded-lg shadow-sm',
-                            'inputContainer_default' => 'border-black',
-                            'inputContainer_focused' => '',
-                            'inputContainer_md' => '',
-                        ),
-                        'addClasses' => array(
-                            'ElementLabel' => array(
-                                'container' => 'block font-medium text-sm text-gray-700',
-                            ),
-                            'TextElement' => array(
-                                'input' => 'rounded-lg shadow-sm',
-                            ),
-                        ),
+                        'addons'=> [
+                            'before'=> '<i class=\'fas fa-lg fa-calendar mr-2\'></i>',
+                           
+                            ],
+                       
+                        // 'overrideClass' => array(
+                        //     'inputContainer' => 'border border-gray-300 w-full transition-all rounded-lg shadow-sm',
+                        //     'inputContainer_default' => 'border-black',
+                        //     'inputContainer_focused' => '',
+                        //     'inputContainer_md' => '',
+                        // ),
+                        // 'addClasses' => array(
+                        //     'ElementLabel' => array(
+                        //         'container' => 'block font-medium text-sm text-gray-700',
+                        //     ),
+                        //     'TextElement' => array(
+                        //         'input' => 'rounded-lg shadow-sm',
+                        //     ),
+                        // ),
                     ]
                 ];
             }

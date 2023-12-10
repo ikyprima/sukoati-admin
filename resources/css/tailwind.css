@@ -557,9 +557,13 @@ video {
      -moz-appearance: none;
           appearance: none;
   background-color: #fff;
-  border-color: #71717a;
+  /* border-color: #71717a; */
+  border-color: #3F9478;
   border-width: 1px;
-  border-radius: 0px;
+  border-top-right-radius: 0.20rem;
+  border-bottom-right-radius: 0.20rem;
+  border-top-left-radius: 0rem;
+  border-bottom-left-radius: 0rem;
   padding-top: 0.5rem;
   padding-right: 0.75rem;
   padding-bottom: 0.5rem;
@@ -574,12 +578,15 @@ video {
   --tw-ring-inset: var(--tw-empty,/*!*/ /*!*/);
   --tw-ring-offset-width: 0px;
   --tw-ring-offset-color: #fff;
-  --tw-ring-color: #2563eb;
+  --tw-ring-color: #3F9478;
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   -webkit-box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
           box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  border-color: #2563eb;
+  border-color: #3F9478;
+  border-radius: 0.20rem; /* You can adjust the radius as needed */
+
+  /* border-color: #2563eb; */
 }
 
 input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {

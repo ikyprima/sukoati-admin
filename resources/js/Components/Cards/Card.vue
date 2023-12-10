@@ -3,7 +3,7 @@
     :class="[color === 'light' ? 'bg-white' : 'bg-emerald-900 text-white']">
 
     <slot name="headercard" />
-    <div class="block w-full overflow-x-auto">
+    <div class="block w-full ">
 
       <div class="flex flex-col container mt-2 mb-2 mx-auto w-full items-center justify-center bg-white dark:bg-gray-800 "
         :class="[heigth, minheigth]">

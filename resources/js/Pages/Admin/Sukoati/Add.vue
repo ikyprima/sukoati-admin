@@ -1,5 +1,6 @@
 <script setup>
 import AdminLayout from '@/Layouts/Admin.vue';
+import AppIcon from "@/Components/Icon/AppIcon.vue";
 import Card from "@/Components/Cards/Card.vue";
 import Headers from "@/Components/Headers/Headers.vue";
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -41,6 +42,7 @@ import { Inertia } from '@inertiajs/inertia'
             <div class="w-full mb-12 ">
                 <card :minheigth="'min-h-32'">
                     <template #headercard>
+                        
                             <div
                                 class="pt-2 pb-2 z-1 -mt-8 mx-4 rounded-xl bg-gradient-to-r from-emerald-500 to-lime-400 shadow-lg">
                                 <div class="flex flex-wrap items-center">
@@ -49,6 +51,7 @@ import { Inertia } from '@inertiajs/inertia'
                                             :class="[color === 'light' ? 'text-white' : 'text-white']">
                                             {{ display_name }}
                                         </h3>
+                                    
                                     </div>
                                     <div class="relative md:w-full md:max-w-full flex-grow flex-1 text-right p-4 mr-4">
                                         <div class="hidden md:block">
@@ -60,12 +63,22 @@ import { Inertia } from '@inertiajs/inertia'
 
                                 </div>
                             </div>
+                           
                     </template>
-
-                    <div class="bg-white overflow-hidden w-full transform transition-all sm:w-full sm:mx-auto ">
-                
+                    <!-- <div class="max-w-full flex-grow p-4 ml-4">
+                                        <h3 class="font-semibold text-lg"
+                                            :class="[color === 'light' ? 'text-white' : 'text-white']">
+                                            {{ display_name }}
+                                        </h3>
+                                        <Vueform>
+                                            <DatesElement name="dates" />
+                                        </Vueform>
+                                    </div> -->
+                    <div class="bg-white w-full transform transition-all sm:w-full sm:mx-auto ">
+                        
         
                             <div class="relative pt-4 px-6 pb-4 mx-2 flex-auto">
+                            
                                 <Vueform :endpoint="false" @submit="simpan" ref="form$" v-model="data" sync :schema="schema">
                                 
                                 </Vueform>
@@ -109,7 +122,8 @@ export default {
     },
     
     components: {
-        draggable
+        draggable,
+        AppIcon
     },
     watch: {
 
