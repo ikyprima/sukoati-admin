@@ -34,6 +34,13 @@
           </tr>
         </thead>
         <tbody>
+          <template v-if="list.length < 1">
+              <tr class=" border-gray-200  ">
+                <td  class="border-t-0 px-6 align-middle text-center border-l-0 border-r-0 text-s text-slate-500 whitespace-nowrap pt-20" 
+                :colspan="header.length"> Tidak Ada Data Yang Ditampilkan</td>
+              </tr>
+              
+            </template>
           <template v-for="( data, index ) in list">
             <tr class="border-b border-gray-200  ">
               <template v-for="(datax, index) in header">

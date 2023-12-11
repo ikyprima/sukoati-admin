@@ -155,46 +155,13 @@ class SukoatiController extends Controller
         if (Auth::user()->hasAnyPermission([$slug.'-create']) || Auth::user()->hasAnyRole(['admin']) ){
             $dataType = Admin::model('DataType')->with(['rows'])->where('slug', '=', $slug)->first();
             $shema= $dataType->rows->flatMap(function($item){
-            $rules = [];
-            if($item->required === 1){
-                array_push($rules,'required');
-            }
-            if ($item->add === 1) {
-                return [
-                    $item->field =>[
-                        'type'=> $item->type,
-                        'label' => $item->display_name,
-                        'floating' => false,
-                        'placeholder' => $item->display_name,
-                        'fieldName' => $item->display_name,
-                        'rules' => $rules,
-                        'columns' => array(
-                            'container' => 6,
-                            'label' => 12,
-                            'wrapper' => 12,
-                        ),
-                        'addons'=> [
-                            'before'=> '<i class=\'fas fa-lg fa-calendar mr-2\'></i>',
-                           
-                            ],
-                       
-                        // 'overrideClass' => array(
-                        //     'inputContainer' => 'border border-gray-300 w-full transition-all rounded-lg shadow-sm',
-                        //     'inputContainer_default' => 'border-black',
-                        //     'inputContainer_focused' => '',
-                        //     'inputContainer_md' => '',
-                        // ),
-                        // 'addClasses' => array(
-                        //     'ElementLabel' => array(
-                        //         'container' => 'block font-medium text-sm text-gray-700',
-                        //     ),
-                        //     'TextElement' => array(
-                        //         'input' => 'rounded-lg shadow-sm',
-                        //     ),
-                        // ),
-                    ]
-                ];
-            }
+                $rules = [];
+                if($item->required === 1){
+                    array_push($rules,'required');
+                }
+                if ($item->add === 1) {
+                    return  collect($this->buatSchema($item,$rules));
+                }
                 
             });
             $shema['element']=[
@@ -210,6 +177,8 @@ class SukoatiController extends Controller
                     'schema'=> $shema
                 ]]
             );
+
+            // return $container;
             return Inertia::render('Admin/Sukoati/Add',[
                 'formContainer'=>$container,
                 'slug'=> $slug,
@@ -434,6 +403,75 @@ class SukoatiController extends Controller
             }
         }else{
             abort(403, 'Maaf Anda Tidak Ada Permission Untuk Halaman Ini - Silahkan Hubungi Admin');
+        }
+    }
+
+    private function buatSchema($item,$rules){
+
+        if($item->type == 'Text' || $item->type == 'textarea'){
+            return[
+                $item->field =>[
+                    'type'=> $item->type,
+                    'id'=>$item->field,
+                    'label' => $item->display_name,
+                    'floating' => false,
+                    'placeholder' => $item->display_name,
+                    'fieldName' => $item->display_name,
+                    'rules' => $rules,
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    ),
+                ]
+            ];
+        }else if($item->type == 'Date'){
+            return[
+                $item->field =>[
+                    'type'=> $item->type,
+                    'id'=>$item->field,
+                    'label' => $item->display_name,
+                    'floating' => false,
+                    'placeholder' => $item->display_name,
+                    'fieldName' => $item->display_name,
+                    'rules' => $rules,
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    ),
+                    'addons' => [
+                        'before' => ($item->type == 'Date') ? '<i class=\'fas fa-lg fa-calendar-alt mr-2 text-slate-500\'></i>' : '',
+                    ]
+                ]
+            ];
+        }else if($item->type == 'radiogroup'){
+            
+            $detailItem =json_decode($item->details, true) ;
+            if (isset($detailItem['item'])) {
+                if (isset($detailItem['item']['lokal'])) {
+                    $lokalArray = $detailItem['item']['lokal'];
+                    $itemRadio = $lokalArray;
+                } else {
+                    $itemRadio = [];
+                }
+            } else {
+                $itemRadio = [];
+            }
+        
+            return[
+                $item->field =>[
+                    'type'=> $item->type,
+                    'label' => $item->display_name,
+                    'items'=>$itemRadio,
+                    'rules' => $rules,
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    )
+                ]
+            ];
         }
     }
 
