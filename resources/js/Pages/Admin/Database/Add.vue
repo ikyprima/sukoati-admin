@@ -361,7 +361,7 @@ export default {
                 columns: [
                     {
                         name: 'id',
-                        // oldName : null,
+                        oldName : null,
                         type: {
                             name: "integer",
                             category: "Numbers",
@@ -606,6 +606,7 @@ export default {
                 if (!cariCreatedAt) {
                     const tambahField = {
                         name: 'created_at',
+                        oldName : null,
                         type: {
                             name: "timestamp",
                             category: "Date and Time"
@@ -631,6 +632,7 @@ export default {
                 if (!cariUpdatedAt) {
                     const tambahFieldUpdated = {
                         name: 'updated_at',
+                        oldName : null,
                         type: {
                             name: "timestamp",
                             category: "Date and Time"
@@ -658,6 +660,7 @@ export default {
                 if (!cariDeletedAt) {
                     const tambahField = {
                         name: 'deleted_at',
+                        oldName : null,
                         type: {
                             name: "timestamp",
                             category: "Date and Time"
