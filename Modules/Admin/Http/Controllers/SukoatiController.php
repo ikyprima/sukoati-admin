@@ -451,10 +451,34 @@ class SukoatiController extends Controller
             if (isset($detailItem['item'])) {
                 if (isset($detailItem['item']['lokal'])) {
                     $lokalArray = $detailItem['item']['lokal'];
-                    $itemRadio = $lokalArray;
+                    $itemRadioLokal = $lokalArray;
                 } else {
-                    $itemRadio = [];
+                    $itemRadioLokal = [];
                 }
+
+                if (isset($detailItem['item']['tabel'])) {
+                    if (isset($detailItem['item']['tabel']['nama_tabel']) && isset($detailItem['item']['tabel']['value']) && isset($detailItem['item']['tabel']['label'])) {
+                        $namaTabel = $detailItem['item']['tabel']['nama_tabel'];
+                        $value =  $detailItem['item']['tabel']['value'];
+                        $label =  $detailItem['item']['tabel']['label'];
+                        $model = new SukoAtiModel();
+                        $listData = $model->from($namaTabel)
+                        ->get()->map(function($item) use ($value,$label){
+                            return [
+                                'value'=>$item->{$value},
+                                'label'=>$item->{$label}
+                            ];
+                        });
+                    }else{
+                        $listData = [];
+                    }
+                
+                    $itemRadioTabel = $listData;
+                } else {
+                    $itemRadioTabel = [];
+                }
+
+                $itemRadio = collect($itemRadioLokal)->merge($itemRadioTabel)->unique('value')->values()->all();
             } else {
                 $itemRadio = [];
             }
