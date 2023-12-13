@@ -60,7 +60,7 @@ class BuilderController extends Controller
             ? DB::getTablePrefix().app($dataType->model_name)->getTable()
             : DB::getTablePrefix().$table
         );
-        
+        return $data;
         return Inertia::render('Admin/Builder/Add',[
             'data'=> $data
         ]);
@@ -176,9 +176,25 @@ class BuilderController extends Controller
         return view('admin::show');
     }
 
-    public function edit($id)
+    public function edit($table)
     {
-        return view('admin::edit');
+        
+ 
+        $dataType = Admin::model('DataType')->whereName($table)->first();
+        $fieldOptions = SchemaManager::describeTable(
+            (strlen($dataType->model_name) != 0)
+            ? DB::getTablePrefix().app($dataType->model_name)->getTable()
+            : DB::getTablePrefix().$dataType->name
+        );
+
+       
+        $tables = SchemaManager::listTableNames();
+        $dataTypeRelationships = Admin::model('DataRow')->where('data_type_id', '=', $dataType->id)->where('type', '=', 'relationship')->get();
+        $scopes = [];
+        if ($dataType->model_name != '') {
+            $scopes = $this->getModelScopes($dataType->model_name);
+        }
+        return  compact('dataType', 'fieldOptions', 'tables', 'dataTypeRelationships', 'scopes');
     }
 
     public function update(Request $request, $id)
@@ -193,7 +209,7 @@ class BuilderController extends Controller
     private function prepopulateBreadInfo($table)
     {
         $displayName = Str::singular(implode(' ', explode('_', Str::title($table))));
-        $modelNamespace = config('voyager.models.namespace', app()->getNamespace());
+        $modelNamespace = app()->getNamespace().'Models\\';
         if (empty($modelNamespace)) {
             $modelNamespace = app()->getNamespace();
         }
@@ -207,7 +223,6 @@ class BuilderController extends Controller
             'model_name'           => $modelNamespace.Str::studly(Str::singular($table)),
             'generate_permissions' => true,
             'server_side'          => false,
-            'namesp'=> app()->getNamespace()
         ];
     }
 }

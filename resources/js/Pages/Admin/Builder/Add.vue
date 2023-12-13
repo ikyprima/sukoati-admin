@@ -165,12 +165,13 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                         element.field }}</b> </li>
                                                                     <li><b>Type</b> : {{ element.type }}</li>
                                                                     <li><b>Key</b> : {{ element.key }}</li>
+                                                                    <li><b>AutoIncrement</b> : {{ element.autoincrement }}</li>
                                                                     <li><b>Required</b> : {{ element.required }}</li>
                                                                 </ul>
 
                                                             </td>
                                                             <td
-                                                                class="whitespace-nowrap border px-1 py-1  w-8 text-left font-medium dark:border-gray-300">
+                                                                class="whitespace-nowrap border px-1 py-1  w-8 text-left font-medium dark:border-gray-300 " >
                                                                 <ul class="pl-2 list-none">
                                                                    
                                                                         <li class="m-1">
@@ -179,7 +180,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                                 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
                                                                                 transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
                                                                                 v-model="element.browse"
-                                                                                type="checkbox">
+                                                                                type="checkbox"  :disabled="element.autoincrement ? true : false">
                                                                                 <label class="form-check-label inline-block text-gray-800" >Browse</label></div>
                                                                            
                                                                             </li>
@@ -188,7 +189,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                                 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
                                                                                 transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
                                                                                 v-model="element.read"
-                                                                                type="checkbox">
+                                                                                type="checkbox" :disabled="element.autoincrement ? true : false">
                                                                                 <label class="form-check-label inline-block text-gray-800" >Read</label></div>
                                                                         </li>
                                                                         <li  class="m-1">
@@ -196,7 +197,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                                 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
                                                                                 transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
                                                                                 v-model="element.edit"
-                                                                                type="checkbox">
+                                                                                type="checkbox" :disabled="element.autoincrement ? true : false">
                                                                                 <label class="form-check-label inline-block text-gray-800" >Edit</label></div>
                                                                         </li>
                                                                         <li  class="m-1">
@@ -204,7 +205,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                                 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
                                                                                 transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer" 
                                                                                 v-model="element.add"
-                                                                                type="checkbox">
+                                                                                type="checkbox" :disabled="element.autoincrement ? true : false">
                                                                                 <label class="form-check-label inline-block text-gray-800" >Add</label></div>
                                                                         </li>
                                                                         <li  class="m-1">
@@ -212,12 +213,10 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                                 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none 
                                                                                 transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
                                                                                 v-model="element.delete"
-                                                                                type="checkbox">
+                                                                                type="checkbox" :disabled="element.autoincrement ? true : false">
                                                                                 <label class="form-check-label inline-block text-gray-800" >Delete</label></div>
                                                                         </li>
                                                                     
-                                     
-                                                                  
                                                                 </ul>
 
                                                             </td>
@@ -226,7 +225,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                 <select class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                                         ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                                         focus:ring-indigo-600 sm:text-sm sm:leading-6 w-28" v-model="formBuilder.fieldOptions[index].inputType"
-                                                                        :name="'inputType'+index">
+                                                                        :name="'inputType'+index"  :disabled="element.autoincrement ? true : false">
                                                                         <template v-for="option in masterInputType">
                                                                             <option :value="option">
                                                                                 {{ option }}
@@ -239,7 +238,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                 <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                                 ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                                 focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36" v-model="formBuilder.fieldOptions[index].display_name"
-                                                                :name="'displayName'+index">
+                                                                :name="'displayName'+index" :disabled="element.autoincrement ? true : false">
                                                             </td>
                                                             <td class="px-4 border text-left py-4 dark:border-gray-300">
                                                         
@@ -247,6 +246,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                         v-model="formBuilder.fieldOptions[index].detail"
                                                                         :mainMenuBar="false"
                                                                         :mode="'text'"
+                                                                        :disabled="element.autoincrement ? true : false"
                                                                     />
                                                                 
                                                             </td>
@@ -319,6 +319,7 @@ export default {
                         order:order,
                         field: item.field,
                         key: item.key,
+                        autoincrement : item.autoincrement,
                         required: item.notnull,
                         inputType: 'Text',
                         display_name: this.formatText(item.name),
