@@ -311,7 +311,7 @@ export default {
                 slug: this.data.slug,
                 display_name: this.data.display_name,
                 display_name_plural: this.data.display_name_plural,
-                model_name: null,
+                model_name: "App\\Models\\Sukoati\\"+ this.data.table.charAt(0).toUpperCase() + this.data.table.slice(1),
                 controller: null,
                 fieldOptions: Object.values(this.data.fieldOptions).map((item,index) => {
                     let order = index+1;

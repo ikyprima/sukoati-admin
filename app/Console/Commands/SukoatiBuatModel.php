@@ -50,7 +50,7 @@ class SukoatiBuatModel extends GeneratorCommand
             'NAMESPACE'         => 'App\\Sukoati\\Models',
             'CLASS_NAME'        => $this->getSingularClassName($this->argument('name')),
             'TABLE'             => "protected \$table = '{$this->getNameTable($this->argument('name'))}';",
-            'FILLABLE'          => "protected \$fillable = ['attribute1', 'attribute2', 'attribute3'];"
+            'FILLABLE'          => "protected \$fillable = [{$this->getFillableAttributes()}];"
         ];
     }
 
@@ -131,10 +131,10 @@ class SukoatiBuatModel extends GeneratorCommand
      */
     protected function getFillableAttributes()
     {
-        // For simplicity, you can prompt the user for fillable attributes
-        $fillable = $this->ask('Enter fillable attributes (comma-separated)');
-
-        // Convert the user input to an array and format for the stub
+    
+        // $fillable = $this->ask('Enter fillable attributes (comma-separated)');
+        $fillable = '';
+        
         $fillableArray = array_map('trim', explode(',', $fillable));
         $fillableString = implode(', ', array_map(function ($attribute) {
             return "'$attribute'";

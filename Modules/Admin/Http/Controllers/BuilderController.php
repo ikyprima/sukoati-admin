@@ -60,7 +60,7 @@ class BuilderController extends Controller
             ? DB::getTablePrefix().app($dataType->model_name)->getTable()
             : DB::getTablePrefix().$table
         );
-        return $data;
+        // return $data;
         return Inertia::render('Admin/Builder/Add',[
             'data'=> $data
         ]);
