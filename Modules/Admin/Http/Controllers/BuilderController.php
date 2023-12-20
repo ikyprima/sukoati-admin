@@ -82,7 +82,15 @@ class BuilderController extends Controller
             ]);
 
             $idDataType = $dataType->id;
-
+            $datareject = collect(['created_at','updated_at','deleted_at']);
+            $primaryKey = collect( $request->fieldOptions)->where('key','PRI');
+            $datareject = $datareject->merge($primaryKey->pluck('field'));
+            $data = collect( $request->fieldOptions)->pluck('field');
+            $data = $data->reject(function ($value) use ($datareject){
+                return  $datareject->contains($value);
+            });
+            $fillAble = implode(',', $data->toArray());
+            
             foreach ($request->fieldOptions as $key => $item) {
 
                 $dataRows = DataRow::updateOrCreate([
