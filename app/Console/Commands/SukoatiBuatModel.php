@@ -11,7 +11,7 @@ class SukoatiBuatModel extends GeneratorCommand
      *
      * @var string
      */
-    protected $signature = 'sukoati:buat-model {name}';
+    protected $signature = 'sukoati:buat-model {name} {--primarykey=}';
 
     /**
      * The console command description.
@@ -46,11 +46,24 @@ class SukoatiBuatModel extends GeneratorCommand
     */
     public function getStubVariables()
     {
+        $primaryKeyValue = $this->input->getOption('primarykey');
+        if($primaryKeyValue){
+            if ($primaryKeyValue != 'id') {
+                $primaryKey = "protected \$primaryKey = '{$primaryKeyValue}';";
+            }else{
+                $primaryKey = null;
+            }
+        }else{
+            $primaryKey = null;
+        }
+    
+        $name = $this->argument('name');
         return [
             'NAMESPACE'         => 'App\\Sukoati\\Models',
-            'CLASS_NAME'        => $this->getSingularClassName($this->argument('name')),
+            'CLASS_NAME'        => $this->getSingularClassName($name),
             'TABLE'             => "protected \$table = '{$this->getNameTable($this->argument('name'))}';",
-            'FILLABLE'          => "protected \$fillable = [{$this->getFillableAttributes()}];"
+            'FILLABLE'          => $this->hasArgument('fillable') ? "protected \$fillable = [{$this->getFillableAttributes($this->argument('fillable'))}];":null,
+            'PRIMARYKEY'        => $primaryKey
         ];
     }
 
@@ -129,12 +142,11 @@ class SukoatiBuatModel extends GeneratorCommand
      *
      * @return string
      */
-    protected function getFillableAttributes()
+    protected function getFillableAttributes($fillable=null)
     {
     
         // $fillable = $this->ask('Enter fillable attributes (comma-separated)');
-        $fillable = '';
-        
+    
         $fillableArray = array_map('trim', explode(',', $fillable));
         $fillableString = implode(', ', array_map(function ($attribute) {
             return "'$attribute'";

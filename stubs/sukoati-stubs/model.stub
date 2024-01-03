@@ -8,6 +8,6 @@ class $CLASS_NAME$ extends Model
 {
     use HasFactory;
     $TABLE$
+    $PRIMARYKEY$
     $FILLABLE$
-    
 }
