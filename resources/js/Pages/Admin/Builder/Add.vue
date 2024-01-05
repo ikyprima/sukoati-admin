@@ -305,13 +305,14 @@ export default {
     },
     data() {
         return {
-            masterInputType:['Text','Number','Password','Date'],
+            masterInputType:['Text','Number','Password','Date','Radiogroup'],
             formBuilder: this.$inertia.form({
                 table: this.data.table,
                 slug: this.data.slug,
                 display_name: this.data.display_name,
                 display_name_plural: this.data.display_name_plural,
-                model_name: "App\\Models\\Sukoati\\"+ this.data.table.charAt(0).toUpperCase() + this.data.table.slice(1),
+               // model_name: "App\\Models\\Sukoati\\"+ this.data.table.charAt(0).toUpperCase() + this.data.table.slice(1),
+               model_name: this.data.model_names,
                 controller: null,
                 fieldOptions: Object.values(this.data.fieldOptions).map((item,index) => {
                     let order = index+1;

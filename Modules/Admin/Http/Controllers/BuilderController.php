@@ -90,7 +90,9 @@ class BuilderController extends Controller
                 return  $datareject->contains($value);
             });
             $fillAble = implode(',', $data->toArray());
-            
+            $nameModel = Str::singular($request->table);
+            $nameTable = $request->table;
+            $primaryKeyTable = $primaryKey?$primaryKey->pluck('field')->first() : null;
             foreach ($request->fieldOptions as $key => $item) {
 
                 $dataRows = DataRow::updateOrCreate([
@@ -123,6 +125,8 @@ class BuilderController extends Controller
             }
 
             Event::dispatch(new ClearRoute());
+            
+            \Artisan::call('sukoati:buat-model '.$nameModel.' --primarykey='.$primaryKeyTable.' --tablename='.$nameTable.' --fillable='.$fillAble ); 
 
             $kategoriMenu =  Menu::firstOrCreate(
                 [
@@ -217,7 +221,7 @@ class BuilderController extends Controller
     private function prepopulateBreadInfo($table)
     {
         $displayName = Str::singular(implode(' ', explode('_', Str::title($table))));
-        $modelNamespace = app()->getNamespace().'Models\\';
+        $modelNamespace = app()->getNamespace().'Models\\Sukoati\\';
         if (empty($modelNamespace)) {
             $modelNamespace = app()->getNamespace();
         }
@@ -228,7 +232,7 @@ class BuilderController extends Controller
             'slug'                 => Str::slug($table),
             'display_name'         => $displayName,
             'display_name_plural'  => Str::plural($displayName),
-            'model_name'           => $modelNamespace.Str::studly(Str::singular($table)),
+            'model_names'           => $modelNamespace.Str::studly(Str::singular($table)),
             'generate_permissions' => true,
             'server_side'          => false,
         ];

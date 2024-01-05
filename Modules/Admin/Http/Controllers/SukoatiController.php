@@ -28,16 +28,7 @@ class SukoatiController extends Controller
             $dataType = Admin::model('DataType')->with(['rows' => function ($query) {
                 $query->where('browse', '1');
             }])->where('slug', '=', $slug)->first();
-            if (class_exists($dataType->model_name)) {
-                // jika model ada
-                $model= app($dataType->model_name);
             
-            } else {
-                // Model tidak ada
-                // $model= app('Modules\Admin\Entities\SukoAtiModel');
-                // $model->setTableName($dataType->name);
-                $model = new SukoAtiModel();
-            }
             
             $dataheader = $dataType->rows->map(function($item){
                 return [
@@ -114,25 +105,55 @@ class SukoatiController extends Controller
             }else{
                 $header = $dataheader;
             }
-            if ($request->has('search')) {
-                $pencarian = $dataheader->pluck('field')->filter();
-                $data = $model->query();
-                foreach ($pencarian as $pencarian) {
-                    $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
+            if (class_exists($dataType->model_name)) {
+                // jika model ada
+                $model= app($dataType->model_name);
+                if ($request->has('search')) {
+                    $pencarian = $dataheader->pluck('field')->filter();
+                    $data = $model->query();
+                    foreach ($pencarian as $pencarian) {
+                        $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
+                    }
+                    
+                    $listData = $data
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+                    $listData->appends ( array (
+                        'search' => $request->search
+                    ) );
+                    
+                }else{
+                    $listData = $model
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
                 }
-                
-                $listData = $data->from($dataType->name)
-                ->orderBy('id', 'desc')
-                ->paginate(10);
-                $listData->appends ( array (
-                    'search' => $request->search
-                ) );
-                
-            }else{
-                $listData = $model->from($dataType->name)
-                ->orderBy('id', 'desc')
-                ->paginate(10);
+            
+            } else {
+                // Model tidak ada
+                // $model= app('Modules\Admin\Entities\SukoAtiModel');
+                // $model->setTableName($dataType->name);
+                $model = new SukoAtiModel();
+                if ($request->has('search')) {
+                    $pencarian = $dataheader->pluck('field')->filter();
+                    $data = $model->query();
+                    foreach ($pencarian as $pencarian) {
+                        $data->orWhere($pencarian, 'like', '%' . $request->search . '%');
+                    }
+                    
+                    $listData = $data->from($dataType->name)
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+                    $listData->appends ( array (
+                        'search' => $request->search
+                    ) );
+                    
+                }else{
+                    $listData = $model->from($dataType->name)
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+                }
             }
+           
             return Inertia::render('Admin/Sukoati/Index',[
                 'header'=>$header,
                 'buttonTambah'=>$buttonTambah,
