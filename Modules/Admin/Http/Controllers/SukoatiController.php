@@ -478,6 +478,58 @@ class SukoatiController extends Controller
                 }
 
                 if (isset($detailItem['item']['tabel'])) {
+                
+                    if (isset($detailItem['item']['tabel']['nama_tabel']) && isset($detailItem['item']['tabel']['value']) && isset($detailItem['item']['tabel']['label'])) {
+                        $namaTabel = $detailItem['item']['tabel']['nama_tabel'];
+                        $value =  $detailItem['item']['tabel']['value'];
+                        $label =  $detailItem['item']['tabel']['label'];
+                        $model = new SukoAtiModel();
+                        $listData = $model->from($namaTabel)
+                        ->get()->map(function($item) use ($value,$label){
+                            return [
+                                'value'=>$item->{$value},
+                                'label'=>$item->{$label}
+                            ];
+                        });
+                    }else{
+                        $listData = [];
+                    }
+                
+                    $itemRadioTabel = $listData;
+                } else {
+                    $itemRadioTabel = [];
+                }
+                //apabila value sama antara data dari table dan data object statis maka yang diambil salah satu
+                $itemRadio = collect($itemRadioLokal)->merge($itemRadioTabel)->unique('value')->values()->all();
+            } else {
+                $itemRadio = [];
+            }
+        
+            return[
+                $item->field =>[
+                    'type'=> $item->type,
+                    'label' => $item->display_name,
+                    'items'=>$itemRadio,
+                    'rules' => $rules,
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    )
+                ]
+            ];
+        }elseif($item->type == 'select'){
+              
+            $detailItem =json_decode($item->details, true) ;
+            if (isset($detailItem['item'])) {
+                if (isset($detailItem['item']['lokal'])) {
+                    $lokalArray = $detailItem['item']['lokal'];
+                    $itemRadioLokal = $lokalArray;
+                } else {
+                    $itemRadioLokal = [];
+                }
+
+                if (isset($detailItem['item']['tabel'])) {
                     if (isset($detailItem['item']['tabel']['nama_tabel']) && isset($detailItem['item']['tabel']['value']) && isset($detailItem['item']['tabel']['label'])) {
                         $namaTabel = $detailItem['item']['tabel']['nama_tabel'];
                         $value =  $detailItem['item']['tabel']['value'];
@@ -507,6 +559,10 @@ class SukoatiController extends Controller
             return[
                 $item->field =>[
                     'type'=> $item->type,
+                    'search'=> true,
+                    'native'=>false, 
+                    'inputType'=> 'search',
+                    'autocomplete'=> 'disabled',
                     'label' => $item->display_name,
                     'items'=>$itemRadio,
                     'rules' => $rules,
