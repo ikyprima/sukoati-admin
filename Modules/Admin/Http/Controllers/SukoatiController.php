@@ -573,6 +573,29 @@ class SukoatiController extends Controller
                     )
                 ]
             ];
+        }elseif($item->type == 'number'){
+            return[
+                $item->field =>[
+                    'type'=> 'text',
+                    'inputType'=> 'number', 
+                    'id'=>$item->field,
+                    'label' => $item->display_name,
+                    'floating' => false,
+                    'placeholder' => $item->display_name,
+                    'fieldName' => $item->display_name,
+                    'rules'=> [
+                        'nullable',
+                        'min:0',
+                        'max:9',
+                        'numeric',
+                      ],
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    ),
+                ]
+            ];
         }
     }
 

@@ -305,7 +305,7 @@ export default {
     },
     data() {
         return {
-            masterInputType:['Text','Number','Password','Date','Radiogroup'],
+            masterInputType:['Text','textarea','Number','Password','Date','Radiogroup','select'],
             formBuilder: this.$inertia.form({
                 table: this.data.table,
                 slug: this.data.slug,

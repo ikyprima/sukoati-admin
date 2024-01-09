@@ -34,7 +34,10 @@ import { Inertia } from '@inertiajs/inertia'
 
                 <template #kontenheader>
 
-                    
+                    <Vueform>
+                        <!-- <TextElement input-type="number" rules="min=0"/> -->
+
+                    </Vueform>
                 </template>
             </headers>
         </template>
@@ -78,17 +81,7 @@ import { Inertia } from '@inertiajs/inertia'
                         
         
                             <div class="relative pt-4 px-6 pb-4 mx-2 flex-auto">
-                                <Vueform>
-                                    <SelectElement
-                                    name="select"
-                                    :native=false
-                                    :items="[
-                                        'Vue.jss',
-                                        'React',
-                                        'AngussslarJS',
-                                    ]"
-                                    />
-                                </Vueform>
+                              
                                 <Vueform :endpoint="false" @submit="simpan" ref="form$" v-model="data" sync :schema="schema">
                                 
                                 </Vueform>

@@ -3,7 +3,7 @@ import './bootstrap';
 
 import '../css/app.css';
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import "../css/tailwind.css";
+// import "../css/tailwind.css"; disable karena bentrok dengan vueform
 
 
 
