@@ -429,7 +429,7 @@ class SukoatiController extends Controller
 
     private function buatSchema($item,$rules){
 
-        if($item->type == 'Text' || $item->type == 'textarea'){
+        if($item->type == 'Text' || $item->type == 'textarea' ){
             return[
                 $item->field =>[
                     'type'=> $item->type,
@@ -439,6 +439,7 @@ class SukoatiController extends Controller
                     'placeholder' => $item->display_name,
                     'fieldName' => $item->display_name,
                     'rules' => $rules,
+                    'autocomplete'=> 'off',
                     'columns' => array(
                         'container' => 6,
                         'label' => 12,
@@ -519,14 +520,14 @@ class SukoatiController extends Controller
                 ]
             ];
         }elseif($item->type == 'select'){
-              
+        
             $detailItem =json_decode($item->details, true) ;
             if (isset($detailItem['item'])) {
                 if (isset($detailItem['item']['lokal'])) {
                     $lokalArray = $detailItem['item']['lokal'];
-                    $itemRadioLokal = $lokalArray;
+                    $itemSelectLokal = $lokalArray;
                 } else {
-                    $itemRadioLokal = [];
+                    $itemSelectLokal = [];
                 }
 
                 if (isset($detailItem['item']['tabel'])) {
@@ -546,14 +547,14 @@ class SukoatiController extends Controller
                         $listData = [];
                     }
                 
-                    $itemRadioTabel = $listData;
+                    $itemSelectTabel = $listData;
                 } else {
-                    $itemRadioTabel = [];
+                    $itemSelectTabel = [];
                 }
 
-                $itemRadio = collect($itemRadioLokal)->merge($itemRadioTabel)->unique('value')->values()->all();
+                $itemSelect = collect($itemSelectLokal)->merge($itemSelectTabel)->unique('value')->values()->all();
             } else {
-                $itemRadio = [];
+                $itemSelect = [];
             }
         
             return[
@@ -564,7 +565,7 @@ class SukoatiController extends Controller
                     'inputType'=> 'search',
                     'autocomplete'=> 'disabled',
                     'label' => $item->display_name,
-                    'items'=>$itemRadio,
+                    'items'=>$itemSelect,
                     'rules' => $rules,
                     'columns' => array(
                         'container' => 6,
@@ -573,7 +574,64 @@ class SukoatiController extends Controller
                     )
                 ]
             ];
-        }elseif($item->type == 'number'){
+        }elseif($item->type == 'multiselect'){
+        
+            $detailItem =json_decode($item->details, true) ;
+            if (isset($detailItem['item'])) {
+                if (isset($detailItem['item']['lokal'])) {
+                    $lokalArray = $detailItem['item']['lokal'];
+                    $itemSelectLokal = $lokalArray;
+                } else {
+                    $itemSelectLokal = [];
+                }
+
+                if (isset($detailItem['item']['tabel'])) {
+                    if (isset($detailItem['item']['tabel']['nama_tabel']) && isset($detailItem['item']['tabel']['value']) && isset($detailItem['item']['tabel']['label'])) {
+                        $namaTabel = $detailItem['item']['tabel']['nama_tabel'];
+                        $value =  $detailItem['item']['tabel']['value'];
+                        $label =  $detailItem['item']['tabel']['label'];
+                        $model = new SukoAtiModel();
+                        $listData = $model->from($namaTabel)
+                        ->get()->map(function($item) use ($value,$label){
+                            return [
+                                'value'=>$item->{$value},
+                                'label'=>$item->{$label}
+                            ];
+                        });
+                    }else{
+                        $listData = [];
+                    }
+                
+                    $itemSelectTabel = $listData;
+                } else {
+                    $itemSelectTabel = [];
+                }
+
+                $itemSelect = collect($itemSelectLokal)->merge($itemSelectTabel)->unique('value')->values()->all();
+            } else {
+                $itemSelect = [];
+            }
+        
+            return[
+                $item->field =>[
+                    'type'=> $item->type,
+                    'search'=> true,
+                    'native'=>false, 
+                    'inputType'=> 'search',
+                    'autocomplete'=> 'off',
+                    'label' => $item->display_name,
+                    'items'=>$itemSelect,
+                    'rules' => $rules,
+                    'closeOnSelect'=> false,
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    )
+                ]
+            ];
+        }
+        elseif($item->type == 'number'){
             return[
                 $item->field =>[
                     'type'=> 'text',
@@ -589,6 +647,24 @@ class SukoatiController extends Controller
                         'max:9',
                         'numeric',
                       ],
+                    'columns' => array(
+                        'container' => 6,
+                        'label' => 12,
+                        'wrapper' => 12,
+                    ),
+                ]
+            ];
+        }elseif($item->type == 'password'){
+            return[
+                $item->field =>[
+                    'type'=> 'text',
+                    'inputType'=> 'password', 
+                    'id'=>$item->field,
+                    'label' => $item->display_name,
+                    'floating' => false,
+                    'placeholder' => $item->display_name,
+                    'fieldName' => $item->display_name,
+                    'rules'=> $rules,
                     'columns' => array(
                         'container' => 6,
                         'label' => 12,

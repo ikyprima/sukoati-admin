@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import IndexDropdown from "@/components/Dropdowns/IndexDropdown.vue";
+import IndexDropdown from "@/Components/Dropdowns/IndexDropdown.vue";
 
 export default {
   data() {

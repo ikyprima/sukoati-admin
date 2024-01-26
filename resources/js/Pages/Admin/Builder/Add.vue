@@ -305,9 +305,9 @@ export default {
     },
     data() {
         return {
-            masterInputType:['Text','textarea','Number','Password','Date','Radiogroup','select'],
+            masterInputType:['Text','textarea','Number','Password','Date','Radiogroup','select','multiselect'],
             formBuilder: this.$inertia.form({
-                table: this.data.table,
+                table: this.action == 'edit' ? this.data.dataType.name : this.data.table,
                 slug: this.data.slug,
                 display_name: this.data.display_name,
                 display_name_plural: this.data.display_name_plural,

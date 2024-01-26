@@ -60,7 +60,7 @@ class BuilderController extends Controller
             ? DB::getTablePrefix().app($dataType->model_name)->getTable()
             : DB::getTablePrefix().$table
         );
-        // return $data;
+        //  return $data;
         return Inertia::render('Admin/Builder/Add',[
             'data'=> $data
         ]);
@@ -191,22 +191,21 @@ class BuilderController extends Controller
     public function edit($table)
     {
         
- 
-        $dataType = Admin::model('DataType')->whereName($table)->first();
+        $dataType = Admin::model('DataType')->with('rows')->whereName($table)->first();
         $fieldOptions = SchemaManager::describeTable(
             (strlen($dataType->model_name) != 0)
             ? DB::getTablePrefix().app($dataType->model_name)->getTable()
             : DB::getTablePrefix().$dataType->name
         );
 
-       
         $tables = SchemaManager::listTableNames();
         $dataTypeRelationships = Admin::model('DataRow')->where('data_type_id', '=', $dataType->id)->where('type', '=', 'relationship')->get();
-        $scopes = [];
-        if ($dataType->model_name != '') {
-            $scopes = $this->getModelScopes($dataType->model_name);
-        }
-        return  compact('dataType', 'fieldOptions', 'tables', 'dataTypeRelationships', 'scopes');
+        $data = compact('dataType', 'fieldOptions', 'tables', 'dataTypeRelationships');
+        return Inertia::render('Admin/Builder/Add',[
+            'data'=> $data,
+            'action' =>'edit'
+        ]);
+    
     }
 
     public function update(Request $request, $id)

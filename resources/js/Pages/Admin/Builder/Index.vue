@@ -235,6 +235,9 @@ export default {
         tambah(value) {
             Inertia.get(route('builder.create',value.name), {}, { replace: true })
         },
+        edit(value) {
+            Inertia.get(route('builder.edit',value.name), {}, { replace: true })
+        },
         view(value){
             // window.open(route(value.slug+'.index'), '_blank');
             Inertia.get(route(value.slug+'.index'),{},
