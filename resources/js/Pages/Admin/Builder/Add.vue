@@ -98,7 +98,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                     <div class="relative  ">
                                         <InputLabel for="controllerName" value="Controller Name" class="" />
                                         <TextInput id="controllerName" ref="controllerNameInput" type="text"
-                                            class="mt-1 block w-full" placeholder="controller name" />
+                                            class="mt-1 block w-full" v-model="formBuilder.controller" placeholder="controller name" />
                                     </div>
                                 </div>
                             </div>
@@ -306,13 +306,32 @@ export default {
     data() {
         return {
             masterInputType:['Text','textarea','Number','Password','Date','Radiogroup','select','multiselect'],
-            formBuilder: this.$inertia.form({
-                table: this.action == 'edit' ? this.data.dataType.name : this.data.table,
+            formBuilder:  this.action == 'edit' ? this.dataUpdate() : this.dataTambahBaru()
+    
+        };
+    },
+
+    computed: {
+    
+    },
+
+    validations() {
+
+    },
+
+
+    methods: {
+        dataTambahBaru(){
+            
+            return this.$inertia.form(
+                //  this.action == 'edit' ? this.data.dataType.name :
+                {
+                table: this.data.table,
                 slug: this.data.slug,
                 display_name: this.data.display_name,
                 display_name_plural: this.data.display_name_plural,
-               // model_name: "App\\Models\\Sukoati\\"+ this.data.table.charAt(0).toUpperCase() + this.data.table.slice(1),
-               model_name: this.data.model_names,
+                // model_name: "App\\Models\\Sukoati\\"+ this.data.table.charAt(0).toUpperCase() + this.data.table.slice(1),
+                model_name: this.data.model_names,
                 controller: null,
                 fieldOptions: Object.values(this.data.fieldOptions).map((item,index) => {
                     let order = index+1;
@@ -333,21 +352,39 @@ export default {
                     }
                 }),
 
-            }),
-    
-        };
-    },
+            })
+        },
+        dataUpdate(){
+            return this.$inertia.form(
+                {
+                table: this.data.dataType.name,
+                slug: this.data.dataType.slug,
+                display_name: this.data.dataType.display_name_singular,
+                display_name_plural: this.data.dataType.display_name_plural,
+                // model_name: "App\\Models\\Sukoati\\"+ this.data.table.charAt(0).toUpperCase() + this.data.table.slice(1),
+                model_name: this.data.dataType.model_name,
+                controller: this.data.dataType.controller,
+                fieldOptions: Object.values(this.data.fieldOptions).map((item,index) => {
+                    let order = index+1;
+                    return {
+                        order:order,
+                        field: item.field,
+                        key: item.key,
+                        autoincrement : item.autoincrement,
+                        required: item.notnull,
+                        inputType: 'Text',
+                        display_name: this.formatText(item.name),
+                        detail: {},
+                        browse : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        read : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        edit : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        add : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                        delete : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true
+                    }
+                }),
 
-    computed: {
-    
-    },
-
-    validations() {
-
-    },
-
-
-    methods: {
+            })
+        },
         kembali() {
             Inertia.get(route('builder.index'), {}, { replace: true })
         },
