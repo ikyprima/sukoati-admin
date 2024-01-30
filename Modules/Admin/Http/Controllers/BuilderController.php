@@ -62,7 +62,8 @@ class BuilderController extends Controller
         );
         //  return $data;
         return Inertia::render('Admin/Builder/Add',[
-            'data'=> $data
+            'data'=> $data,
+            'title' => 'tambah form builder'
         ]);
     }
 
@@ -203,7 +204,8 @@ class BuilderController extends Controller
         $data = compact('dataType', 'fieldOptions', 'tables', 'dataTypeRelationships');
         return Inertia::render('Admin/Builder/Add',[
             'data'=> $data,
-            'action' =>'edit'
+            'action' =>'edit',
+            'title'=>'edit builder'
         ]);
     
     }

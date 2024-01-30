@@ -20,7 +20,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
 
 <template>
     <Head>
-        <title>Add Builder Form</title>
+        <title>{{title}}</title>
         <meta name="description" content="halaman manajemen menu" />
         <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     </Head>
@@ -290,7 +290,8 @@ export default {
             },
         },
         data: Object,
-        action : String
+        action : String,
+        title: String
 
     },
 
@@ -305,7 +306,7 @@ export default {
     },
     data() {
         return {
-            masterInputType:['Text','textarea','Number','Password','Date','Radiogroup','select','multiselect'],
+            masterInputType:['Text','textarea','Number','password','Date','Radiogroup','select','multiselect'],
             formBuilder:  this.action == 'edit' ? this.dataUpdate() : this.dataTambahBaru()
     
         };
@@ -366,21 +367,42 @@ export default {
                 controller: this.data.dataType.controller,
                 fieldOptions: Object.values(this.data.fieldOptions).map((item,index) => {
                     let order = index+1;
-                    return {
-                        order:order,
-                        field: item.field,
-                        key: item.key,
-                        autoincrement : item.autoincrement,
-                        required: item.notnull,
-                        inputType: 'Text',
-                        display_name: this.formatText(item.name),
-                        detail: {},
-                        browse : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
-                        read : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
-                        edit : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
-                        add : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
-                        delete : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true
+                    let data= this.data.dataType.rows.filter(itemdata => itemdata.field == item.field);
+                    
+                    if(data.length > 0){
+                        return {
+                            order:order,
+                            field: item.field,
+                            key: item.key,
+                            autoincrement : item.autoincrement,
+                            required: item.notnull,
+                            inputType: data[0].type,
+                            display_name: data[0].display_name,
+                            detail: JSON.parse(data[0].details),
+                            browse : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:(data[0].browse==1?true:false),
+                            read : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:(data[0].read==1?true:false),
+                            edit : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:(data[0].edit==1?true:false),
+                            add : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:(data[0].add==1?true:false),
+                            delete : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:(data[0].delete==1?true:false)
+                        }
+                    }else{
+                        return {
+                            order:order,
+                            field: item.field,
+                            key: item.key,
+                            autoincrement : item.autoincrement,
+                            required: item.notnull,
+                            inputType: 'Text',
+                            display_name: this.formatText(item.name),
+                            detail: {},
+                            browse : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                            read : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                            edit : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                            add : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true,
+                            delete : item.field === 'id' || item.field === 'deleted_at' || item.field ==='created_at' || item.field === 'updated_at' ? false:true
+                        }
                     }
+                    
                 }),
 
             })
