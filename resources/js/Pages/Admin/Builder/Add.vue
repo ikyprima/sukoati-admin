@@ -149,6 +149,10 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                         class="border-r px-4 py-4 dark:border-gray-300 text-left">
                                                         Option Details
                                                     </th>
+                                                    <th v-if="action == 'edit'" scope="col"
+                                                        class="border-r px-4 py-4 dark:border-gray-300 text-center">
+                                                        Action
+                                                    </th>
 
                                                 </tr>
                                             </thead>
@@ -159,7 +163,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                     <template v-slot:item="{ element, index }">
                                                         <tr>
                                                             <td
-                                                                class="whitespace-nowrap border px-1 py-1  w-1/5 text-left font-medium dark:border-gray-300">
+                                                                class="whitespace-nowrap border align-top px-1 py-1  w-1/5 text-left font-medium dark:border-gray-300">
                                                                 <ul class="pl-2 list-none">
                                                                     <li class="pb-2"><b class="italic text-lg underline ">{{
                                                                         element.field }}</b> </li>
@@ -171,7 +175,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
 
                                                             </td>
                                                             <td
-                                                                class="whitespace-nowrap border px-1 py-1  w-8 text-left font-medium dark:border-gray-300 " >
+                                                                class="whitespace-nowrap border px-1 py-1  align-top w-8 text-left font-medium dark:border-gray-300 " >
                                                                 <ul class="pl-2 list-none">
                                                                    
                                                                         <li class="m-1">
@@ -240,7 +244,7 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                 focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36" v-model="formBuilder.fieldOptions[index].display_name"
                                                                 :name="'displayName'+index" :disabled="element.autoincrement ? true : false">
                                                             </td>
-                                                            <td class="px-4 border text-left py-4 dark:border-gray-300">
+                                                            <td class="px-4 border text-left py-4 align-top dark:border-gray-300">
                                                         
                                                                     <vue-jsoneditor
                                                                         v-model="formBuilder.fieldOptions[index].detail"
@@ -249,6 +253,14 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                         :disabled="element.autoincrement ? true : false"
                                                                     />
                                                                 
+                                                            </td>
+                                                            <td v-if="action == 'edit'"
+                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300">
+                                                                <PrimaryButton  v-on="{ click: formBuilder.fieldOptions[index].is_diHapus ? () => kembalikanYangDiHapus(index) : () => hapus(index) }"
+                                                                class="bg-red-600 hover:bg-red-400 focus:bg-red-400 focus:ring-red-600"> 
+                                                                <i class="fas fa-lg fa-trash"></i>
+                                                                
+                                                            </PrimaryButton>
                                                             </td>
                                                         </tr>
 
@@ -407,6 +419,16 @@ export default {
 
             })
         },
+        hapus: function (index) {
+            console.log(index);
+            // const valueAsli = this.objMenuKategori.menu_item[index].title; //kembalikan ke nilai awal jika field nama menu dikosongkan, untuk cek validasi dibackend
+            // this.formmenu.menuItem[index].is_diHapus = true;
+            // this.formmenu.menuItem[index].nama_menu = valueAsli;
+        },
+        kembalikanYangDiHapus: function (index) {
+            // this.formmenu.menuItem[index].is_diHapus = false;
+        },
+
         kembali() {
             Inertia.get(route('builder.index'), {}, { replace: true })
         },
