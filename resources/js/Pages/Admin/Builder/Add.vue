@@ -160,11 +160,23 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                 <draggable :list="formBuilder.fieldOptions" :animation="300" item-key="name"
                                                     :key="item => item.id" tag="tbody" 
                                                     >
+                                                
                                                     <template v-slot:item="{ element, index }">
-                                                        <tr>
+                                                        
+                                                        <tr >
+                                                            
                                                             <td
-                                                                class="whitespace-nowrap border align-top px-1 py-1  w-1/5 text-left font-medium dark:border-gray-300">
+                                                                class="whitespace-nowrap border align-top px-1 py-1  w-1/5 text-left font-medium dark:border-gray-300" >
+                                                                <div class="relative box-border border-2 p-2 mt-2 md:box-content shadow-lg rounded "
+                                                                :class="[element.is_diHapus ? 'border-rose-500' : null]">
+                                                                <div v-if="element.is_diHapus"
+                                                                    class="ribbon absolute -top-2 -left-2 h-40 w-40 overflow-hidden before:absolute before:top-0 before:right-0 before:-z-[1] before:border-4 before:border-rose-500 after:absolute after:left-0 after:bottom-0 after:-z-[1] after:border-4 after:border-rose-500">
+                                                                    <div
+                                                                        class="z-10 absolute -left-14 top-[43px] w-60 -rotate-45 bg-gradient-to-br from-rose-600 via-rose-400 to-rose-500 py-2.5 text-center text-white shadow-md">
+                                                                        DIHAPUS</div>
+                                                                </div>
                                                                 <ul class="pl-2 list-none">
+                                                                    
                                                                     <li class="pb-2"><b class="italic text-lg underline ">{{
                                                                         element.field }}</b> </li>
                                                                     <li><b>Type</b> : {{ element.type }}</li>
@@ -172,6 +184,9 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                     <li><b>AutoIncrement</b> : {{ element.autoincrement }}</li>
                                                                     <li><b>Required</b> : {{ element.required }}</li>
                                                                 </ul>
+                                                                </div>
+                                                               
+                                                              
 
                                                             </td>
                                                             <td
@@ -420,13 +435,43 @@ export default {
             })
         },
         hapus: function (index) {
-            console.log(index);
+            
+            let field=  this.formBuilder.fieldOptions[index].field;
+            let order=  this.formBuilder.fieldOptions[index].order;
+            let dataAwal = this.data.fieldOptions[field];
             // const valueAsli = this.objMenuKategori.menu_item[index].title; //kembalikan ke nilai awal jika field nama menu dikosongkan, untuk cek validasi dibackend
-            // this.formmenu.menuItem[index].is_diHapus = true;
+            this.formBuilder.fieldOptions[index].is_diHapus = true;
+            this.formBuilder.fieldOptions[index].order = order;
+            this.formBuilder.fieldOptions[index].field = dataAwal.field;
+            this.formBuilder.fieldOptions[index].key = dataAwal.key;
+            this.formBuilder.fieldOptions[index].autoincrement = dataAwal.autoincrement;
+            this.formBuilder.fieldOptions[index].required = dataAwal.notnull;
+            this.formBuilder.fieldOptions[index].inputType = 'Text';
+            this.formBuilder.fieldOptions[index].display_name = this.formatText(dataAwal.name);
+            this.formBuilder.fieldOptions[index].detail = {};
+            this.formBuilder.fieldOptions[index].browse = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:true;
+            this.formBuilder.fieldOptions[index].read = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:true;
+            this.formBuilder.fieldOptions[index].edit = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:true;
+            this.formBuilder.fieldOptions[index].add = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:true;
+            this.formBuilder.fieldOptions[index].delete = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:true;
+            
             // this.formmenu.menuItem[index].nama_menu = valueAsli;
         },
         kembalikanYangDiHapus: function (index) {
-            // this.formmenu.menuItem[index].is_diHapus = false;
+            let field=  this.formBuilder.fieldOptions[index].field;
+            let dataAwal = this.data.fieldOptions[field];
+            let data= this.data.dataType.rows.filter(itemdata => itemdata.field == field);
+            this.formBuilder.fieldOptions[index].is_diHapus = false;
+            if(data.length > 0){
+                this.formBuilder.fieldOptions[index].inputType = data[0].type;
+                this.formBuilder.fieldOptions[index].display_name = data[0].display_name;
+                this.formBuilder.fieldOptions[index].detail = JSON.parse(data[0].details);
+                this.formBuilder.fieldOptions[index].browse = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:(data[0].browse==1?true:false);
+                this.formBuilder.fieldOptions[index].read = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:(data[0].read==1?true:false);
+                this.formBuilder.fieldOptions[index].edit = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:(data[0].edit==1?true:false);
+                this.formBuilder.fieldOptions[index].add = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:(data[0].add==1?true:false);
+                this.formBuilder.fieldOptions[index].delete = dataAwal.field === 'id' || dataAwal.field === 'deleted_at' || dataAwal.field ==='created_at' || dataAwal.field === 'updated_at' ? false:(data[0].delete==1?true:false);
+            }
         },
 
         kembali() {
