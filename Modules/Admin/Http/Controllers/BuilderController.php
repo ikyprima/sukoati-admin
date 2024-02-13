@@ -41,7 +41,7 @@ class BuilderController extends Controller
 
             return (object) $table;
         }, array_diff(SchemaManager::listTableNames(), config('admin.tabelList')) );
-    
+        
         return Inertia::render('Admin/Builder/Index',[
             'dataTypes'=> $dataTypes,
             'tables' => collect($tables)->values()
@@ -50,21 +50,45 @@ class BuilderController extends Controller
 
     public function create($table)
     {
-        
-        $dataType = Admin::model('DataType')->whereName($table)->first();
-        
-        $data = $this->prepopulateBreadInfo($table);
+        $dataTypes = Admin::model('DataType')->select('id', 'name', 'slug')->get()->keyBy('name')->toArray();
 
-        $data['fieldOptions'] = SchemaManager::describeTable(
-            (isset($dataType) && strlen($dataType->model_name) != 0)
-            ? DB::getTablePrefix().app($dataType->model_name)->getTable()
-            : DB::getTablePrefix().$table
-        );
-        //  return $data;
-        return Inertia::render('Admin/Builder/Add',[
-            'data'=> $data,
-            'title' => 'tambah form builder'
-        ]);
+        $tables = array_map(function ($table) use ($dataTypes) {
+            $table = Str::replaceFirst(DB::getTablePrefix(), '', $table);
+
+            $table = [
+                'prefix'     => DB::getTablePrefix(),
+                'name'       => $table,
+                'slug'       => $dataTypes[$table]['slug'] ?? null,
+                'dataTypeId' => $dataTypes[$table]['id'] ?? null,
+            ];
+
+            return (object) $table;
+        }, array_diff(SchemaManager::listTableNames(), config('admin.tabelList')) );
+
+        $table_yang_ada = collect($tables)->values()->where('name',$table)->first();
+
+        if($table_yang_ada){
+
+            $dataType = Admin::model('DataType')->whereName($table)->first();
+            if($dataType){
+                return to_route('builder.edit',['table'=>$table]);
+            }else {
+                $data = $this->prepopulateBreadInfo($table);
+                $data['fieldOptions'] = SchemaManager::describeTable(
+                    (isset($dataType) && strlen($dataType->model_name) != 0)
+                    ? DB::getTablePrefix().app($dataType->model_name)->getTable()
+                    : DB::getTablePrefix().$table
+                );
+                return Inertia::render('Admin/Builder/Add',[
+                    'data'=> $data,
+                    'title' => 'tambah form builder'
+                ]);
+            }  
+            
+        }else{
+            return to_route('builder.index')->with(['message'=>'Table Tidak Ada Di Database']);
+        }
+
     }
 
 
@@ -79,7 +103,7 @@ class BuilderController extends Controller
                 'display_name_singular'=> $request->display_name,
                 'display_name_plural'=> $request->display_name_plural,
                 'model_name'=> $request->model_name,
-                'controller'=> $request->table,
+                'controller'=> $request->controller,
             ]);
 
             $idDataType = $dataType->id;
@@ -175,7 +199,10 @@ class BuilderController extends Controller
         //    }
         
         //    return back(303)->with(['message'=>'Sukses Generate Form']);
-            return to_route('builder.index')->with(['message'=>'Sukses Generate Form']);
+            return to_route('builder.index')->with([
+                'hardreload'=> true,
+                'message'=>'Sukses Generate Form'
+            ]);
         } catch (\Illuminate\Database\QueryException $e) {
             $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
             return back()->withErrors($errors);
@@ -210,9 +237,84 @@ class BuilderController extends Controller
     
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            DataType::where('id',$request->id)->update(
+                [
+                    'name'=> $request->table,
+                    'slug'=> $request->slug,
+                    'display_name_singular'=> $request->display_name,
+                    'display_name_plural'=> $request->display_name_plural,
+                    'model_name'=> $request->model_name,
+                    'controller'=> $request->controller,
+                ],
+            );
+            foreach ($request->fieldOptions as $key => $item) {
+                if (array_key_exists("id",$item)){
+                    // update
+                    if (array_key_exists("is_diHapus",$item)){
+                        $is_diHapus = $item['is_diHapus'];
+                    }else{
+                        $is_diHapus = false;
+                    }
+                
+                    if ($is_diHapus == true) {
+                        DataRow::where('id', $item['id'] )
+                        ->delete();
+                    }else{
+                        DataRow::where('id',$item['id'])->update(
+                            [
+                                'field' =>  $item['field'],
+                                'type' => $item['inputType'],
+                                'display_name' => $item['display_name'],
+                                'required' => $item['required'],
+                                'browse'=> $item['browse'],
+                                'read' => $item['read'],
+                                'edit'=> $item['edit'],
+                                'add' => $item['add'],
+                                'delete' => $item['delete'],
+                                'order'=> $item['order']
+                                
+                                
+                            ],
+                        );
+                    }
+                }else{
+                    // tambah baru
+                    if (array_key_exists("is_diHapus",$item)){
+                        $is_diHapus = $item['is_diHapus'];
+                    }else{
+                        $is_diHapus = false;
+                    }
+                    
+                    if (!$is_diHapus) {
+                        DataRow::create(
+                            [
+                                'field' =>  $item['field'],
+                                'data_type_id' => $request->id,
+                                'type' => $item['inputType'],
+                                'display_name' => $item['display_name'],
+                                'required' => $item['required'],
+                                'browse'=> $item['browse'],
+                                'read' => $item['read'],
+                                'edit'=> $item['edit'],
+                                'add' => $item['add'],
+                                'delete' => $item['delete'],
+                                'order'=> $item['order']
+                            ]
+                        );
+                    }
+                
+                }
+            }
+    
+            return to_route('builder.index')->with(['message'=>'Sukses Update Form']);
+        } catch (\Illuminate\Database\QueryException $e) {
+            $errors = new MessageBag(['error' => [$e->errorInfo[2]]]);
+            return back()->withErrors($errors);
+        }
+        
     }
 
     public function destroy($id)

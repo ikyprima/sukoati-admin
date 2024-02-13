@@ -116,7 +116,7 @@ import toast from '@/Stores/toast.js';
                 class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-red-200 
                 text-red-700 rounded-lg font-semibold text-sm md:ml-2 md:order-2 " >
                 Ya, Reload</button>
-            <button v-on:click="closeDialogHapus()" class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4
+            <button v-on:click="closeDialogReload()" class="block w-full md:inline-block md:w-auto px-4 py-3 md:py-2 bg-gray-200 rounded-lg font-semibold text-sm mt-4
             md:mt-0 md:order-1">Batal</button>
         </div>
     </Dialog>
@@ -210,14 +210,19 @@ export default {
         };
     },
     created() {
-        if(this.$page.props.flash.message != null){
+        if(this.$page.props.flash.hardreload == true){
             this.dialogReload = !this.dialogReload;
             toast.add({
                 message: this.$page.props.flash.message,
                 category : 'info'
             });
             //buat pesan jika baru buat builder table, jika sukses haruskan reload halaman
-           
+        
+        }else if(this.$page.props.flash.message != null){
+            toast.add({
+                message: this.$page.props.flash.message,
+                category : 'warning'
+            });
         }
         this.$page.props.flash.message = null;    
     },
@@ -240,10 +245,14 @@ export default {
         },
         view(value){
             // window.open(route(value.slug+'.index'), '_blank');
+            if(value.slug !== null)
             Inertia.get(route(value.slug+'.index'),{},
                 { 
                     replace: true,
-                    preserveState: false 
+                    preserveState: false,
+                    // onError: (errors) => {
+                    //     console.log('errooos');
+                    // }
                 }
             )
         }

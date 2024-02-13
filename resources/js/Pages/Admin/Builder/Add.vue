@@ -162,19 +162,14 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                     >
                                                 
                                                     <template v-slot:item="{ element, index }">
-                                                        
+                                                  
                                                         <tr >
-                                                            
+                                                           
                                                             <td
-                                                                class="whitespace-nowrap border align-top px-1 py-1  w-1/5 text-left font-medium dark:border-gray-300" >
-                                                                <div class="relative box-border border-2 p-2 mt-2 md:box-content shadow-lg rounded "
-                                                                :class="[element.is_diHapus ? 'border-rose-500' : null]">
-                                                                <div v-if="element.is_diHapus"
-                                                                    class="ribbon absolute -top-2 -left-2 h-40 w-40 overflow-hidden before:absolute before:top-0 before:right-0 before:-z-[1] before:border-4 before:border-rose-500 after:absolute after:left-0 after:bottom-0 after:-z-[1] after:border-4 after:border-rose-500">
-                                                                    <div
-                                                                        class="z-10 absolute -left-14 top-[43px] w-60 -rotate-45 bg-gradient-to-br from-rose-600 via-rose-400 to-rose-500 py-2.5 text-center text-white shadow-md">
-                                                                        DIHAPUS</div>
-                                                                </div>
+                                                                class="whitespace-nowrap border align-top px-1 py-1  w-1/5 text-left font-medium dark:border-gray-300 " 
+                                                                 
+                                                                >
+                                                              
                                                                 <ul class="pl-2 list-none">
                                                                     
                                                                     <li class="pb-2"><b class="italic text-lg underline ">{{
@@ -184,13 +179,13 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                     <li><b>AutoIncrement</b> : {{ element.autoincrement }}</li>
                                                                     <li><b>Required</b> : {{ element.required }}</li>
                                                                 </ul>
-                                                                </div>
-                                                               
+                                                                
                                                               
-
+                                                               
                                                             </td>
                                                             <td
-                                                                class="whitespace-nowrap border px-1 py-1  align-top w-8 text-left font-medium dark:border-gray-300 " >
+                                                                class="whitespace-nowrap border px-1 py-1  align-top w-8 text-left font-medium dark:border-gray-300 "
+                                                                  >
                                                                 <ul class="pl-2 list-none">
                                                                    
                                                                         <li class="m-1">
@@ -240,7 +235,8 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
 
                                                             </td>
                                                             <td
-                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300">
+                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300"
+                                                                 >
                                                                 <select class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                                         ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                                         focus:ring-indigo-600 sm:text-sm sm:leading-6 w-28" v-model="formBuilder.fieldOptions[index].inputType"
@@ -253,13 +249,13 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                     </select>
                                                             </td>
                                                             <td
-                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300">
+                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300"   >
                                                                 <input type="text" class="rounded-md border-0 py-1 text-gray-900 shadow-sm ring-1 ring-inset
                                                                 ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset
                                                                 focus:ring-indigo-600 sm:text-sm sm:leading-6 w-36" v-model="formBuilder.fieldOptions[index].display_name"
                                                                 :name="'displayName'+index" :disabled="element.autoincrement ? true : false">
                                                             </td>
-                                                            <td class="px-4 border text-left py-4 align-top dark:border-gray-300">
+                                                            <td class="px-4 border text-left py-4 align-top dark:border-gray-300"   >
                                                         
                                                                     <vue-jsoneditor
                                                                         v-model="formBuilder.fieldOptions[index].detail"
@@ -270,11 +266,17 @@ import VueJsoneditor from 'vue3-ts-jsoneditor';
                                                                 
                                                             </td>
                                                             <td v-if="action == 'edit'"
-                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300">
+                                                                class="whitespace-nowrap border px-2 py-2 align-top w-8 font-medium dark:border-gray-300"   >
                                                                 <PrimaryButton  v-on="{ click: formBuilder.fieldOptions[index].is_diHapus ? () => kembalikanYangDiHapus(index) : () => hapus(index) }"
-                                                                class="bg-red-600 hover:bg-red-400 focus:bg-red-400 focus:ring-red-600"> 
-                                                                <i class="fas fa-lg fa-trash"></i>
-                                                                
+                                                                    :class="[element.is_diHapus ? 'bg-indigo-700 border-indigo-700 hover:bg-indigo-800 focus:bg-indigo-800 focus:ring-indigo-300' :
+                                                    'bg-red-700 border-red-700 hover:bg-red-800 focus:bg-red-800 focus:ring-red-300']"> 
+                                                        
+                                                            <template v-if="element.is_diHapus">
+                                                                <i class="fas fa-lg fa-sync"></i>
+                                                            </template>
+                                                            <template v-else>
+                                                                <i class="fas fa-lg fa-trash-alt"></i>
+                                                            </template>
                                                             </PrimaryButton>
                                                             </td>
                                                         </tr>
@@ -385,6 +387,7 @@ export default {
         dataUpdate(){
             return this.$inertia.form(
                 {
+                id:this.data.dataType.id,
                 table: this.data.dataType.name,
                 slug: this.data.dataType.slug,
                 display_name: this.data.dataType.display_name_singular,
@@ -398,6 +401,7 @@ export default {
                     
                     if(data.length > 0){
                         return {
+                            id: data[0].id,
                             order:order,
                             field: item.field,
                             key: item.key,
@@ -478,8 +482,8 @@ export default {
             Inertia.get(route('builder.index'), {}, { replace: true })
         },
         simpan() {
-            if (this.action === 'update') {
-                this.formBuilder.put(route('database.update'), {
+            if (this.action === 'edit') {
+                this.formBuilder.put(route('builder.update'), {
                     preserveScroll: true,
                     preserveState: true,
                     onSuccess: () => {

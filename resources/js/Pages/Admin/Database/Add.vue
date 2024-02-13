@@ -208,7 +208,7 @@ import toast from '@/Stores/toast.js';
 
                                                     <td
                                                         class="whitespace-nowrap border-r px-2 py-2 text-center w-8 font-medium dark:border-neutral-500">
-                                                        <input class="form-check-input appearance-none h-4 w-2 border
+                                                        <input class="form-check-input appearance-none h-4 w-4 border
                                                         border-gray-300 rounded-sm bg-white 
                                                         checked:bg-blue-600 checked:border-blue-600 
                                                         focus:outline-none transition duration-200 mt-1 
@@ -218,7 +218,7 @@ import toast from '@/Stores/toast.js';
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-2 py-2 text-center w-4 font-medium dark:border-neutral-500">
-                                                        <input class="form-check-input appearance-none h-4 w-2 border
+                                                        <input class="form-check-input appearance-none h-4 w-4 border
                                                         border-gray-300 rounded-sm bg-white 
                                                         checked:bg-blue-600 checked:border-blue-600 
                                                         focus:outline-none transition duration-200 mt-1 
@@ -230,7 +230,7 @@ import toast from '@/Stores/toast.js';
                                                     </td>
                                                     <td
                                                         class="whitespace-nowrap border-r px-2 py-2 text-center w-8 font-medium dark:border-neutral-500">
-                                                        <input class="form-check-input appearance-none h-4 w-2 border
+                                                        <input class="form-check-input appearance-none h-4 w-4 border
                                                         border-gray-300 rounded-sm bg-white 
                                                         checked:bg-blue-600 checked:border-blue-600 
                                                         focus:outline-none transition duration-200 mt-1 
